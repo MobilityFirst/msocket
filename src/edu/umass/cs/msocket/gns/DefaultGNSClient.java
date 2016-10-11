@@ -48,7 +48,7 @@ import edu.umass.cs.gnsclient.client.util.KeyPairUtils;
  */
 public class DefaultGNSClient
 {
-	public static final String GNS_CONFIG_DIRNAME	= "gnsConfigFiles";
+	public static final String GNS_CONFIG_DIRNAME	= "conf";
 	
 	public static final int PROXY_PORT			  	= 3033;
 	public static final String PROXY_NAME 		  	= "ananas.cs.umass.edu";
@@ -109,7 +109,7 @@ public class DefaultGNSClient
 	private void checkAndCreateConfigFiles() throws IOException
 	{
 		// create a directory if it is not there.
-		File directoryFile = new File("gnsConfigFiles");
+		File directoryFile = new File(GNS_CONFIG_DIRNAME);
         if ( !directoryFile.exists() )
         {
             if ( directoryFile.mkdir() )
@@ -132,7 +132,8 @@ public class DefaultGNSClient
             }
             else
             {
-                throw new IOException("Failed to create the gnsConfigFiles directory");
+                throw new IOException("Failed to create the "
+                						+GNS_CONFIG_DIRNAME+" directory");
             }
         }
         else
@@ -225,7 +226,6 @@ public class DefaultGNSClient
 				}
     		}
     	}
-    	
 	}
 	
 	

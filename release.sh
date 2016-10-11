@@ -1,5 +1,4 @@
 #!/bin/bash
-#BINARIES="./bin/*"
 REPO="msocket"
 OWNER="MobilityFirst"
 USAGE='Usage: "./release.sh Description for the release notes.".  To change auth token, use: export MSocketGitHubToken="YOUR_GITHUB_AUTH_TOKEN"'
@@ -25,12 +24,12 @@ REVISION=$(cat build.properties | grep build.revision | sed 's/^build.revision.n
 echo $REVISION.
 VERSION=v$MAJOR.$MINOR.$REVISION
 echo $VERSION
-BINARIES="GNS-$MAJOR.$MINOR.$REVISION"
+
 #DESCRIPTION="${*:2}" #Second argument and on is the description.
 DESCRIPTION="$@" #The commandline argument is the description.
 # First prompt for an auth token if one is not already stored.
 if [ "$MSocketGitHubToken" == "" ]; then
-	echo "Please enter a git token that has write access to the GNS repository: "
+	echo "Please enter a git token that has write access to the MobilityFirst/msocket repository: "
 	read input
 	export MSocketGitHubToken="$input"
 fi
@@ -39,8 +38,15 @@ curl --data '{"tag_name": "'"$VERSION"'","target_commitish": "master","name": "'
 RELEASEID=$(curl "https://api.github.com/repos/$OWNER/$REPO/releases/tags/$VERSION" | grep id\": | sed 's/.*id": //' | sed 's/,$//' | grep [0-9][0-9]* -m 1 )
 #curl "https://api.github.com/repos/$OWNER/$REPO/releases/tags/$VERSION" > testFile2.txt
 echo "ID: $RELEASEID"
-# Tar the release binaries, and add them to the release.
-TARNAME="$BINARIES.tgz"
-tar zcf $TARNAME $BINARIES 
-echo "https://api.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=$TARNAME&access_token=$MSocketGitHubToken"
-curl -X POST --header "Content-Type:application/gzip" --data-binary @"$TARNAME" "https://uploads.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=$TARNAME&access_token=$MSocketGitHubToken"
+
+MSOCKET="msocket-$MAJOR.$MINOR.$REVISION.jar"
+MSOCKETPROXY="msocket-proxy-console-$MAJOR.$MINOR.$REVISION.jar"
+
+#echo "https://api.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=$TARNAME&access_token=$MSocketGitHubToken"
+
+curl -X POST --header "Content-Type:application/gzip" --data-binary @"jars/$MSOCKET" "https://uploads.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=$MSOCKET&access_token=$MSocketGitHubToken"
+
+curl -X POST --header "Content-Type:application/gzip" --data-binary @"jars/$MSOCKETPROXY" "https://uploads.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=$MSOCKETPROXY&access_token=$MSocketGitHubToken"
+
+
+curl -X POST --header "Content-Type:text/plain" --data-binary @"LICENSE.txt" "https://uploads.github.com/repos/$OWNER/$REPO/releases/$RELEASEID/assets?name=LICENSE.txt&access_token=$MSocketGitHubToken"

@@ -85,7 +85,26 @@ ${build.major.number}.${build.minor.number}.${build.revision.number})</h1>]]>
       <fileset dir="${build.dir}/doc" includes="**"/>
     </copy> 
   </target>
-    
+
+
+  <target name="dist" depends="clean, jar">
+     <mkdir dir="${dist.dir}"/>
+     <mkdir dir="${dist.dir}/${build.jar.dir}"/>
+     
+     <copy todir="${dist.dir}/${build.jar.dir}">
+     	<fileset dir="${build.jar.dir}" includes="*.jar"/>
+     </copy>
+
+     <copy todir="${dist.dir}">
+        <fileset dir="." includes="LICENSE.txt README.md"/>
+     </copy>
+
+     <copy todir="${dist.dir}/${conf.dir}">
+        <fileset dir="conf"/>
+     </copy>
+
+  </target>
+
 
   <target name="jar" depends="msocket-jar, msocket-proxy-console-jar">
   </target>  
