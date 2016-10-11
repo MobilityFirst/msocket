@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  name="Build file for msocket"
+  basedir="."
+  default="jar" >
+
+  <!-- Properties -->
+  <property file="build.properties" />
+
+  <property name="src.dir" value="src"/>
+  <property name="test.dir" value="test" />
+  <property name="build.dir" value="build"/>
+  <property name="build.classes.dir" value="${build.dir}/classes"/>
+  <property name="build.test.classes.dir" value="${build.dir}/test/classes"/>
+  <property name="build.test.dir" value="${build.dir}/test"/>
+  <property name="build.jar.dir" value="jars"/>
+  <property name="lib.dir" value="lib"/>
+  <property name="dist.dir"
+            value="msocket-${build.major.number}.${build.minor.number}.${build.revision.number}"/>
+  <!--<property name="jars.dir" value="jars"/>-->
+  <property name="conf.dir" value="conf"/>
+  <property name="bin.dir" value="bin"/>
+  <property name="scripts.dir" value="scripts"/>
+  
+  <path id="classpath.base">
+    <pathelement location="${build.dir}"/>
+    <pathelement location="${build.classes.dir}"/>
+    <pathelement location="${conf.dir}"/>
+    <fileset dir="${lib.dir}">
+      <include name="*.jar"/>
+      <exclude name="android.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${build.classes.dir}"/>
+    <mkdir dir="${build.test.classes.dir}"/>
+  </target>
+
+  <!-- pretty much everything depends on this -->
+  <target name="compile" depends="init, buildnumber" description="compile java files">
+    <javac srcdir="${src.dir}" destdir="${build.classes.dir}" debug="true" debuglevel="lines,vars,source"
+           includeantruntime="false">
+      <compilerarg value="-Xlint:unchecked"/>
+      <classpath refid="classpath.base"/>
+    </javac>
+    <javac srcdir="${test.dir}" destdir="${build.test.classes.dir}" debug="true" debuglevel="lines,vars,source"
+           includeantruntime="false">
+      <classpath refid="classpath.base"/>
+    </javac>
+  </target>
+
+
+  <target name="clean" description="remove generated files">
+    <delete dir="${build.dir}"/>
+    <delete dir="${build.jar.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="doc" description="generate javadoc">
+    <mkdir dir="${build.dir}/doc"/>
+    <javadoc packagenames="edu.umass.cs.*" 
+             sourcepath="${src.dir}" 
+             destdir="${build.dir}/doc"
+             additionalparam="-Xdoclint:none"
+             author="true"
+             version="true"
+             use="true"
+             public="true"
+             windowtitle="GNS API (specification
+${build.major.number}.${build.minor.number}.${build.revision.number})">
+      <doctitle>
+       <![CDATA[<h1>GNS API (specification
+${build.major.number}.${build.minor.number}.${build.revision.number})</h1>]]>
+      </doctitle>
+      <bottom>
+      <![CDATA[<i>Copyright &#169; 2014-2016 University of Massachusetts - All Rights Reserved.</i>]]>
+      </bottom>
+      <classpath refid="classpath.base"/>
+    </javadoc>
+    <mkdir dir="${dist.dir}/doc"/>
+    <copy todir="${dist.dir}/doc">
+      <fileset dir="${build.dir}/doc" includes="**"/>
+    </copy> 
+  </target>
+    
+
+  <target name="jar" depends="msocket-jar, msocket-proxy-console-jar">
+  </target>  
+
+  <target name="all" depends="clean,jar"
+          description="build all files"/>
+    
+  <target name="buildnumber" description="Generates version number and sets it in properties file.">
+    <buildnumber file="build.number" />
+
+    <property name="version.code" value="${build.major.number}.${build.minor.number}.${build.revision.number}_build${build.number}" />
+
+    <echo>Version: ${version.code}</echo>
+
+  </target>
+	
+	
+  <!-- Msocket jar build -->
+	
+  <!-- Documentation -->
+	
+  <target name="msocketdoc" depends="compile" description="Builds the Javadoc">
+    <javadoc packagenames="edu.umass.cs.msocket.*"
+             sourcepath="${src.dir}"
+             destdir="${build.dir}/docs/api"
+             author="true"
+             version="true"
+             use="true"
+             public="true"
+             windowtitle="mSocket library API (specification ${VERSION}-${RELEASE})">
+      <doctitle>
+        <![CDATA[<h1>mSocket library API (specification ${VERSION}-${RELEASE})</h1>]]>
+      </doctitle>
+      <bottom>
+      <![CDATA[<i>Copyright &#169; 2013-2014 University of Massachusetts - All Rights Reserved.</i>]]>
+      </bottom>
+      <classpath refid="classpath.base" />
+    </javadoc>
+  </target>
+
+
+  <!-- Release -->
+  <target name="msocket-jar"
+          depends="compile"
+          description="Builds the mSocket Jar">
+    <mkdir dir="${build.jar.dir}"/>
+    <jar jarfile="${build.jar.dir}/msocket-${build.major.number}.${build.minor.number}.${build.revision.number}.jar">
+
+      <!-- including msocket core code -->
+      <fileset dir="${build.classes.dir}">
+        <include name="edu/umass/cs/msocket/**" />
+        <exclude name="edu/umass/cs/msocket/docs/**" />
+        <exclude name="edu/umass/cs/msocket/proxy/**" />
+        <exclude name="edu/umass/cs/msocket/watchdog/**" />
+      </fileset>
+
+      <zipgroupfileset dir="${lib.dir}/" includes="*.jar"/>
+
+      <fileset dir="${conf.dir}">
+        <include name="gnsclient.msocket.properties" />
+	<include name="trustStore.jks" />
+	<include name="keyStore.jks" />
+      </fileset>
+
+	  
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Implementation-Vendor"
+                   value="University of Massachusetts" />
+        <attribute name="Implementation-Title" value="MSocket Library" />
+        <attribute name="Implementation-Version"
+                   value="${build.major.number}.${build.minor.number}.${build.revision.number}" />
+        <attribute name="Build-Version" value="${version.code}" />
+      </manifest>
+    </jar>
+  </target>
+	
+  <target name="msocket-proxy-console-jar"
+          depends="compile"
+          description="Builds the mSocket proxy console Jar">
+    <mkdir dir="${build.jar.dir}"/>
+    <jar jarfile="${build.jar.dir}/msocket-proxy-console-${build.major.number}.${build.minor.number}.${build.revision.number}.jar">
+
+      <zipgroupfileset dir="${lib.dir}/" includes="*.jar"/>
+			
+      <!-- including msocket core code -->
+      <fileset dir="${build.classes.dir}">
+        <include name="edu/umass/cs/msocket/**" />
+      </fileset>
+
+      <fileset dir="${conf.dir}">
+        <include name="gnsclient.msocket.properties" />
+	<include name="trustStore.jks" />
+	<include name="keyStore.jks" />
+      </fileset>
+			
+      <fileset dir="${src.dir}">
+        <include name="edu/umass/cs/msocket/proxy/console/console.ini" />
+      </fileset>
+		  
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Implementation-Vendor"
+                   value="University of Massachusetts" />
+        <attribute name="Implementation-Title" value="MSocket Library" />
+        <attribute name="Implementation-Version"
+                   value="${build.major.number}.${build.minor.number}.${build.revision.number}" />
+        <attribute name="Build-Version" value="${version.code}" />
+      </manifest>
+    </jar>
+  </target>
+
+
+
+  <!-- Stuff below for updating versions -->
+
+  <property file="build.properties"/>
+  <property name="build.mmr.number"
+            value="${build.major.number}.${build.minor.number}.${build.revision.number}"/>
+
+  <target name="current-number">
+    <echo>Current build number:${build.mmr.number}</echo>
+  </target>
+
+  <target name="revision">
+    <propertyfile  file="build.properties">
+      <entry key="build.revision.number" type="int"
+                   operation="+" value="1" pattern="00"/>
+    </propertyfile>
+  </target>
+
+  <target name="minor">
+    <propertyfile  file="build.properties">
+      <entry key="build.minor.number" type="int" operation="+"
+                   value="1" pattern="00"/>
+      <entry key="build.revision.number" type="int" value="0"
+                   pattern="00"/>
+    </propertyfile>
+  </target>
+
+  <target name="major">
+    <propertyfile  file="build.properties">
+      <entry key="build.major.number" type="int" operation="+"
+                   value="1" pattern="00"/>
+      <entry key="build.minor.number" type="int" value="0"
+                   pattern="00"/>
+      <entry key="build.revision.number" type="int" value="0"
+                   pattern="00"/>
+    </propertyfile>
+  </target>
+
+</project>
