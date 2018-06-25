@@ -117,7 +117,7 @@ public class MobilityManagerClient implements Runnable
     UDPControllerHashMap.stopAllUDPControllers();
     TemporaryTasksES.shutdownES();
     KeepAliveStaticThread.stopKeepAlive();
-    DefaultGNSClient.getGnsClient().close();
+    // DefaultGNSClient.getGnsClient().close();
   }
 
   @Override
