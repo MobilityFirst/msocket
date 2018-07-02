@@ -15,7 +15,11 @@ public class SimpleClient
 	
 	public static void main(String[] args)
 	{
-		String serverIPOrName = LOCALHOST;
+		String serverIPOrName = null;
+		if(args.length == 0)
+			serverIPOrName = LOCALHOST;
+		else
+			serverIPOrName = args[0];
 		int serverPort = LOCAL_PORT;
 		
 		if(args.length == 1)
@@ -35,15 +39,26 @@ public class SimpleClient
 	    	InputStream is = ms.getInputStream();
 	    	
 	    	// TODO: Might need to bind it to a specific IP address here.
-	    	FlowPath path1 = ms.addFlowPath(null);
+	    	// FlowPath path1 = ms.addFlowPath(null);
+		for(int i=0; i<ms.getActiveFlowPaths().size(); i++)
+	    	{
+	    		FlowPath currfp = ms.getActiveFlowPaths().get(i);
+	    		System.out.println("Flowpath id="+currfp.getFlowPathId()+" local ip="+currfp.getLocalEndpoint().toString());
+	    	}
 	    	byte[] b = new byte[1024 * 1024];
 		    int numRead = 0;
+		    int totalRead = 0;
+		    long start = -1; // System.currentTimeMillis();
 		    do
 		    {
 		    	numRead = is.read(b);
-		    	System.out.println("Recvd " + numRead + " bytes from server");
+			if (start < 0)
+			    start = System.currentTimeMillis();
+			totalRead += numRead;
+		    	//System.out.println("Received " + numRead + " bytes from server, total read "+totalRead+" bytes.");
 		    } while(numRead != -1);
-		    System.out.println("Closing socket.");
+		    long elapsed = System.currentTimeMillis() - start;
+		    System.out.println("Closing socket, it takes "+elapsed/1000.0+" seconds to transfer "+totalRead+" bytes. Throughput is "+totalRead/elapsed+"kB/s");
 		    ms.close();
 		    System.out.println("Socket closed");
 			MobilityManagerClient.shutdownMobilityManager();

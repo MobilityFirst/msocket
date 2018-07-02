@@ -10,10 +10,13 @@ import java.util.Random;
 import edu.umass.cs.msocket.MServerSocket;
 import edu.umass.cs.msocket.MSocket;
 
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime; 
+
 public class SimpleServer 
 {
 	private static final int    LOCAL_PORT = 5454;
-	private static final String LOCALHOST  = "127.0.0.1";
+	private static final String LOCALHOST  = "0.0.0.0";
 	
 	private static MServerSocket mss = null;
 	
@@ -57,23 +60,27 @@ public class SimpleServer
 		{
 			int numTimes = 1;
 			int count = 0;
-			
+			DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
 			// Sleeping for 10 s to wait for other flowpaths to be added.
 			try 
 			{
-				Thread.sleep(10000);
+				Thread.sleep(2000);
 				System.out.println("Starting to send data.");
 				OutputStream os = msocket.getOutputStream();
-				byte[] b = new byte[1024 * 1024];
-			
+				byte[] b = new byte[1024 * 1024 * 16];
+				int totalBytes = b.length; 	
+				long start = System.currentTimeMillis();
 				while(count < numTimes)
 				{
 					new Random().nextBytes(b);
 					os.write(b);
 					count++;
 				}
+				long elapsed = System.currentTimeMillis() - start;
 				os.flush();
-				System.out.println("Data sending finished. Closing socket.");
+				
+				LocalDateTime now = LocalDateTime.now();
+				System.out.println("["+dtf.format(now)+"] Data sending finished. Closing socket, it takes "+elapsed/1000.0+" seconds to transfer "+totalBytes+" bytes. Throughput is "+totalBytes/elapsed+"kB/s");
 				msocket.close();
 				System.out.println("Socket closed.");
 			} catch (InterruptedException | IOException e) {
