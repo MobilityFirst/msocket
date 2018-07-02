@@ -40,8 +40,8 @@ public class RoundRobinWritingPolicy extends MultipathWritingPolicy
 	public RoundRobinWritingPolicy(ConnectionInfo cinfo)
 	{
 	    this.cinfo = cinfo;
-	    //cinfo.startRetransmissionThread();
-	    //cinfo.startEmptyQueueThread();
+	    cinfo.startRetransmissionThread();
+	    cinfo.startEmptyQueueThread();
 	}
 	
 	@Override
@@ -191,10 +191,10 @@ public class RoundRobinWritingPolicy extends MultipathWritingPolicy
 		// MSocketLogger.getLogger().fine(print);
 		// need to empty the write queues here, can't return
 		// before that, otherwise it would desynchronize the output stream
-		// long emptyQueueStartTime = System.currentTimeMillis();
-		// cinfo.emptyTheWriteQueues();
-		// long emptyQueueEndTime = System.currentTimeMillis();
-		// System.out.println( "Write empty queue time "+(emptyQueueEndTime-emptyQueueStartTime) );
+		//long emptyQueueStartTime = System.currentTimeMillis();
+		cinfo.emptyTheWriteQueues();
+		//long emptyQueueEndTime = System.currentTimeMillis();
+		//System.out.println( "Write empty queue time "+(emptyQueueEndTime-emptyQueueStartTime) );
 	}
 	
 	private Vector<SocketInfo> removeClosingFPsFromList()

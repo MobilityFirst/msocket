@@ -214,10 +214,10 @@ public class ConnectionInfo
   // true means background writing thread running, false not
   private boolean                  backgroundThreadStatus     = false;
   
-  //private BackgroundWritingThread  backWritingThread          = null;
+  private BackgroundWritingThread  backWritingThread          = null;
   
   //empty queue thread
-  //private BackgroundEmptyQueueThread  emptyQueueThread	      = null;
+  private BackgroundEmptyQueueThread  emptyQueueThread	      = null;
 
   //user set send buffer size
   private int                 	   userSetSendBufferSize	  = 0;
@@ -262,20 +262,20 @@ public class ConnectionInfo
   /**
    * starts retransmission thread.
    */
-  /*public void startRetransmissionThread()
+  public void startRetransmissionThread()
   {
     backWritingThread = new BackgroundWritingThread(this);
     new Thread(backWritingThread).start();
-  }*/
+  }
   
   /**
    * starts empty Queue thread.
    */
-  /*public void startEmptyQueueThread()
+  public void startEmptyQueueThread()
   {
     this.emptyQueueThread = new BackgroundEmptyQueueThread(this);
     new Thread(emptyQueueThread).start();
-  }*/
+  }
 
   /**
    * return the socket state
