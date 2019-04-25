@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="gnsclient-1.19.06">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Downloads/gnsclient-1.19.06.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/Downloads/gnsclient-1.19.06.jar!/" />
+    </SOURCES>
+  </library>
+</component>

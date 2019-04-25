@@ -109,6 +109,7 @@ public class OutBuffer
 
     System.arraycopy(src, offset, dst, 0, length);
     sbuf.add(dst);
+    dst=null;
     dataSendSeq += length;
     return true;
   }
