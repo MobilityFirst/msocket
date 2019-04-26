@@ -96,7 +96,7 @@ public class RetransmitTask extends TimerTask
         MSocketLogger.getLogger().fine("Sending ack " + cmsg);
         retransmit();
       }
-      else if (cinfo.getCtrlBaseSeq() <= cmsg.getSendseq())
+      else if (cinfo.getCtrlBaseSeq() - cmsg.getSendseq() <= 0)
       {
         if (txCount > 0)
           MSocketLogger.getLogger().fine("Retransmitting message " + cmsg + " coz baseseq=" + cinfo.getCtrlBaseSeq());

@@ -68,7 +68,7 @@ public class InBufferHeapImpl {
 	                                         // retransmissions due to migration or
 	                                         // otherwise
 	    
-	    if( dataReadSeq >= (Obj.startSeqNum+Obj.chunkSize) )
+	    if( dataReadSeq - (Obj.startSeqNum+Obj.chunkSize) >= 0 )
 		{
 			return false;
 		}
@@ -90,7 +90,7 @@ public class InBufferHeapImpl {
 	    
 	    if(curChunk != null)
 	    {
-		    while( dataReadSeq >= (curChunk.startSeqNum + curChunk.chunkSize) )
+		    while( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) >= 0)
 		    {
 		    	MSocketLogger.getLogger().fine("data delete loop "+ rbuf.size() + " dataReadSeq "+ dataReadSeq+
 		    			" curChunk.startSeqNum "+ curChunk.startSeqNum+" curChunk.chunkSize "+curChunk.chunkSize);
@@ -111,13 +111,14 @@ public class InBufferHeapImpl {
 	    	curChunk = rbuf.peek();
 	    	
 	    	// inordered data not there
-	    	if(dataReadSeq < curChunk.startSeqNum )
+	    	if(dataReadSeq - curChunk.startSeqNum < 0)
 	    	{
 	    		break;
 	    	}
 	    	// inordered data there
-	    	if ( (dataReadSeq >= curChunk.startSeqNum) && ( dataReadSeq < (curChunk.startSeqNum + curChunk.chunkSize) ) )
+	    	if ( (dataReadSeq - curChunk.startSeqNum >= 0) && ( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) < 0) )
 			{
+				MSocketLogger.getLogger().info("check this line for max value. Its in inbufferheapimplementation line 121");
 				int srcPos = (int) Math.max(0, dataReadSeq - curChunk.startSeqNum);
 				// FIXME: check for long to int conversion
 				int cpylen = curChunk.chunkSize - srcPos;
@@ -133,10 +134,10 @@ public class InBufferHeapImpl {
 				System.arraycopy(curChunk.chunkData, srcPos, b, offset+numread, actlen);
 				numread += actlen;
 				dataReadSeq += actlen;
-				if (numread >= length)
+				if (numread - length >= 0)
 					{
 						// completely read the current chunk, free it
-			    		if( dataReadSeq >= (curChunk.startSeqNum + curChunk.chunkSize) ) 
+			    		if( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) >= 0 )
 			    		{
 			    			InBufferStorageChunk removed = rbuf.poll();
 					    	removed.chunkData = null;
@@ -147,7 +148,7 @@ public class InBufferHeapImpl {
 			}
 	    	
 	    	// completely read the current chunk, free it
-	    	if( dataReadSeq >= (curChunk.startSeqNum + curChunk.chunkSize) ) 
+	    	if( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) >= 0)
 	    	{
 	    		InBufferStorageChunk removed = rbuf.poll();
 		    	removed.chunkData = null;
@@ -170,7 +171,7 @@ public class InBufferHeapImpl {
 	public synchronized boolean isDataInOrder(int chunckStartSeq, int chunkLength) {
 		
 		// if dataReadSeq is in between this chunk data, then it is in-order
-		if( ( dataReadSeq >= chunckStartSeq ) && ( dataReadSeq < (chunckStartSeq + chunkLength) ) )
+		if( ( dataReadSeq - chunckStartSeq >= 0) && ( dataReadSeq - (chunckStartSeq + chunkLength) < 0) )
 		{
 			return true;
 		}
@@ -181,7 +182,7 @@ public class InBufferHeapImpl {
 	 * Copy data read from stream to the app buffer. Also updates the dataReadSeqNum 
 	 * It bypasses the storing of data in input buffer
 	 * @param readFromStream
-	 * @param srcLen
+	 * @param startSeqNum
 	 * @param appBuffer
 	 * @param offset
 	 * @param appLen
@@ -195,8 +196,9 @@ public class InBufferHeapImpl {
 				" offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
 		}
 		int actualCopied =0;
-		if( (dataReadSeq >= startSeqNum) && (dataReadSeq < (startSeqNum+chunkLen) ) ) 
+		if( (dataReadSeq - startSeqNum >= 0) && (dataReadSeq - (startSeqNum+chunkLen) < 0) )
 		{
+			MSocketLogger.getLogger().info("lookout for the source pos here as well. line number: 201, file: inbufferHeapImpl");
 			int srcPos = (int)Math.max(0,dataReadSeq-startSeqNum);
 			//FIXME: check for long to int conversion
 			int cpylen=chunkLen-srcPos;

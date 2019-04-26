@@ -356,7 +356,7 @@ public class MServerSocketController implements Runnable
 
     // modified here from != to > as if ACK got lost, then sender will
     // resend that message. but here just ACK needs to be sent
-    if (msg.sendseq > cinfo.getCtrlAckSeq())
+    if (msg.sendseq - cinfo.getCtrlAckSeq() > 0)
     {
       MSocketLogger.getLogger().fine("Received out-of-order message " + msg + "; expecting ackseq=" + cinfo.getCtrlAckSeq());
       return;
@@ -370,7 +370,7 @@ public class MServerSocketController implements Runnable
     {
       MSocketLogger.getLogger().fine("ACK recv " + msg.getAckseq());
       // changed added this condition
-      if (msg.getAckseq() > cinfo.getCtrlBaseSeq())
+      if (msg.getAckseq() - cinfo.getCtrlBaseSeq() > 0)
       {
         cinfo.setCtrlBaseSeq(msg.getAckseq());
       }

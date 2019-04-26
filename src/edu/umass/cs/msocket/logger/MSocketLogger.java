@@ -14,9 +14,9 @@ public class MSocketLogger
 		LOGGER = Logger.getLogger(
 				MSocketLogger.class.getName());
 		ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(Level.OFF);
+        ch.setLevel(Level.INFO);
         LOGGER.addHandler(ch);
-        LOGGER.setLevel(Level.OFF);
+        LOGGER.setLevel(Level.INFO);
         
         Logger l0 = Logger.getLogger("");
         l0.removeHandler(l0.getHandlers()[0]);

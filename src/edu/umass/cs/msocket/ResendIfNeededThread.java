@@ -66,7 +66,7 @@ public class ResendIfNeededThread implements Runnable
   private void resendIfNeeded(ConnectionInfo cinfo) throws IOException
   {
     MSocketLogger.getLogger().fine("resendIfNeeded called");
-    if (cinfo.getDataBaseSeq() < cinfo.getDataSendSeq())
+    if (cinfo.getDataBaseSeq() - cinfo.getDataSendSeq() < 0)
     {
       // need to resend
       MSocketLogger.getLogger().fine("fetching resend data from  out buffer");
@@ -108,7 +108,7 @@ public class ResendIfNeededThread implements Runnable
     int dataAck = (int) cinfo.getDataBaseSeq();
     MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
 
-    if (tempDataSendSeqNum > dataAck)
+    if (tempDataSendSeqNum - dataAck > 0)
     {
       byte[] buf = cinfo.getDataFromOutBuffer(dataAck, tempDataSendSeqNum);
 

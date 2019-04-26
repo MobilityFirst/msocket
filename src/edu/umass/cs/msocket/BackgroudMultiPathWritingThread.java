@@ -95,7 +95,7 @@ public class BackgroudMultiPathWritingThread
       e.printStackTrace();
     }
 
-    while (cinfo.getDataBaseSeq() < currRetransmitEndSeqNum)
+    while (cinfo.getDataBaseSeq() - currRetransmitEndSeqNum < 0)
     {
       try
       {
@@ -130,7 +130,7 @@ public class BackgroudMultiPathWritingThread
 
       ByteRangeInfo byteObj = returnNextChunkToRetransmit();
       if (byteObj != null)
-        if (byteObj.getStartSeqNum() >= cinfo.getDataBaseSeq()) // re-transmit
+        if (byteObj.getStartSeqNum() - cinfo.getDataBaseSeq() >= 0) // re-transmit
                                                                 // only if it
                                                                 // greater than
                                                                 // acknowlded
@@ -151,7 +151,7 @@ public class BackgroudMultiPathWritingThread
 
           MultipathPolicy writePolicy = MultipathPolicy.MULTIPATH_POLICY_ROUNDROBIN;
 
-          while ((currpos < length) && (cinfo.getDataBaseSeq() < currRetransmitEndSeqNum))
+          while ((currpos - length < 0) && (cinfo.getDataBaseSeq() - currRetransmitEndSeqNum < 0))
           {
             try
             {
@@ -282,7 +282,6 @@ public class BackgroudMultiPathWritingThread
   }
 
   /**
-   * @param tempDataSendSeqNum
    * @param Obj
    * @throws IOException
    */
@@ -323,13 +322,13 @@ public class BackgroudMultiPathWritingThread
       dataAck = (int) cinfo.getDataBaseSeq();
 
       // already acknowledged, no need to send again
-      if (dataAck > (currByteR.getStartSeqNum() + currByteR.getLength()))
+      if (dataAck - (currByteR.getStartSeqNum() + currByteR.getLength()) > 0)
       {
         continue;
       }
 
       // if already sent
-      if ((currByteR.getStartSeqNum() + currByteR.getLength()) < Obj.getHandleMigSeqNum())
+      if ((currByteR.getStartSeqNum() + currByteR.getLength()) - Obj.getHandleMigSeqNum() < 0)
       {
         continue;
       }
@@ -413,14 +412,14 @@ public class BackgroudMultiPathWritingThread
       for (j = getVect.size(); j > 0; j--)
       {
         ByteRangeInfo byter = getVect.get(j - 1);
-        if (((byter.getStartSeqNum() < currRetransmitEndSeqNum) && (retByteRange == null)))
+        if (((byter.getStartSeqNum() - currRetransmitEndSeqNum < 0) && (retByteRange == null)))
         {
           retByteRange = byter;
           break;
         }
         else if (retByteRange != null)
         {
-          if (retByteRange.getStartSeqNum() < byter.getStartSeqNum())
+          if (retByteRange.getStartSeqNum() - byter.getStartSeqNum() < 0)
           {
             retByteRange = byter;
             break;

@@ -78,18 +78,17 @@ public class MSocketClient {
             }
 
             int rd = 0;
-            System.out.println("Hi this is for VC");
             for (int i = 0; i < ms.getActiveFlowPaths().size(); i++) {
                 FlowPath currfp = ms.getActiveFlowPaths().get(i);
 
                 System.out.println("Flowpath id=" + currfp.getFlowPathId() + " local ip=" + currfp.getLocalEndpoint().toString());
             }
-            System.out.println("this is the second commit");
+
             while (rd < numRound) {
                 System.out.println(rd);
                 int numSent=0;
                 if(rd==1){
-                    numSent=1000000;
+                    numSent=1000001;
                     System.out.println("[Client:] To read " + numSent + " bytes data from input stream...");
                 }else{
                     numSent = numOfBytes;

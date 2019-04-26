@@ -1120,7 +1120,7 @@ public class ConnectionInfo
         int insertIndex = 0;
         for (insertIndex = 0; insertIndex < ordered.size(); insertIndex++)
         {
-          if (socketVect.get(i).getChunkReadOffsetSeqNum() < ordered.get(insertIndex).getChunkReadOffsetSeqNum())
+          if (socketVect.get(i).getChunkReadOffsetSeqNum() - ordered.get(insertIndex).getChunkReadOffsetSeqNum() < 0)
           {
             break;
           }
@@ -1495,7 +1495,7 @@ public class ConnectionInfo
     int DataAck = (int) getDataBaseSeq();
     MSocketLogger.getLogger().fine("DataAck from other side " + DataAck);
 
-    if (dataSendSeqNum > DataAck)
+    if (dataSendSeqNum - DataAck > 0)
     {
       byte[] buf = getDataFromOutBuffer(DataAck, dataSendSeqNum);
 
@@ -1602,7 +1602,7 @@ public class ConnectionInfo
         }
         else if (dmheader.Type == DataMessage.DATA_ACK_REP)
         {
-          if (dmheader.ackSeq <= getObuffer().getDataBaseSeq())
+          if (dmheader.ackSeq - getObuffer().getDataBaseSeq() <= 0)
           {
             numDupAckRecv++;
           }
@@ -1864,7 +1864,7 @@ public class ConnectionInfo
 	        }
 	        else if (dmheader.Type == DataMessage.DATA_ACK_REP)
 	        {
-	          if (dmheader.ackSeq <= getObuffer().getDataBaseSeq())
+	          if (dmheader.ackSeq - getObuffer().getDataBaseSeq() <= 0)
 	          {
 	            numDupAckRecv++;
 	          }

@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
+import sun.jvm.hotspot.utilities.soql.MapScriptObject;
 
 /**
  * This class implements the Output buffer of MSocket. Data is stored in the
@@ -132,6 +133,7 @@ public class OutBuffer
 
   public synchronized boolean ack(long ack)
   {
+    MSocketLogger.getLogger().info("this is the comparison that's done correct by default. line: 136 file: Outbuffer");
     if (ack - dataBaseSeq <= 0 || ack - dataSendSeq > 0)
       return false;
     dataBaseSeq = ack;

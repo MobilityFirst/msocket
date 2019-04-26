@@ -95,7 +95,7 @@ public class BackgroundWritingThread implements Runnable
         // currRetransmitEndSeqNum = cinfo.getDataSendSeq(); // starting
         // re-transmission from the
         // back
-      while ((cinfo.getDataBaseSeq() < cinfo.getDataSendSeq()) && 
+      while ((cinfo.getDataBaseSeq() - cinfo.getDataSendSeq() < 0) &&
     		  (cinfo.getMSocketState() != MSocketConstants.CLOSED))
       {
         // ByteRangeInfo byteObj = returnNextChunkToRetransmit();
@@ -118,7 +118,7 @@ public class BackgroundWritingThread implements Runnable
         	  
         	  continousAckReads();
 	          
-	          if ((byteObj.getStartSeqNum() + byteObj.getLength()) >= cinfo.getDataBaseSeq()) // re-transmit
+	          if ((byteObj.getStartSeqNum() + byteObj.getLength()) - cinfo.getDataBaseSeq() >= 0) // re-transmit
 	          // only if it
 	          // greater than
 	          // acknowlded
@@ -167,7 +167,7 @@ public class BackgroundWritingThread implements Runnable
     //int remaining = length;
     long tempDataSendSeqNum = byteObj.getStartSeqNum();
 
-    if ( /*(currpos < length) &&*/ (cinfo.getDataBaseSeq() < cinfo.getDataSendSeq())
+    if ( /*(currpos < length) &&*/ (cinfo.getDataBaseSeq() - cinfo.getDataSendSeq() < 0)
         && (cinfo.getMSocketState() != MSocketConstants.CLOSED))
     {
 
@@ -243,7 +243,6 @@ public class BackgroundWritingThread implements Runnable
   }
 
   /**
-   * @param tempDataSendSeqNum
    * @param Obj
    * @throws IOException
    */
@@ -285,13 +284,13 @@ public class BackgroundWritingThread implements Runnable
       dataAck = (int) cinfo.getDataBaseSeq();
 
       // already acknowledged, no need to send again
-      if (dataAck > (currByteR.getStartSeqNum() + currByteR.getLength()))
+      if (dataAck - (currByteR.getStartSeqNum() + currByteR.getLength()) > 0)
       {
         continue;
       }
 
       // if already sent
-      if ((currByteR.getStartSeqNum() + currByteR.getLength()) < Obj.getHandleMigSeqNum())
+      if ((currByteR.getStartSeqNum() + currByteR.getLength()) -  Obj.getHandleMigSeqNum() < 0)
       {
         continue;
       }
@@ -324,7 +323,7 @@ public class BackgroundWritingThread implements Runnable
 
     // if more chunks gets acknowledged the update the
     // chunk sending
-    if (currRetransmitStartSeqNum < cinfo.getDataBaseSeq())
+    if (currRetransmitStartSeqNum - cinfo.getDataBaseSeq() < 0)
     {
       currRetransmitStartSeqNum = cinfo.getDataBaseSeq();
     }
@@ -341,20 +340,20 @@ public class BackgroundWritingThread implements Runnable
       {
         ByteRangeInfo byter = getVect.get(j);
         // TODO: store the index, this continue might run many times
-        if ((byter.getStartSeqNum() + byter.getLength()) <= currRetransmitStartSeqNum)
+        if ((byter.getStartSeqNum() + byter.getLength()) - currRetransmitStartSeqNum <= 0)
         {
           continue;
         }
 
-        if (((byter.getStartSeqNum() + byter.getLength()) > currRetransmitStartSeqNum) && (retByteRange == null))
+        if (((byter.getStartSeqNum() + byter.getLength()) - currRetransmitStartSeqNum > 0) && (retByteRange == null))
         {
           retByteRange = byter;
           break;
         }
         // for sorted chunk across multiple unfinished paths
-        else if (((byter.getStartSeqNum() + byter.getLength()) > currRetransmitStartSeqNum) && (retByteRange != null))
+        else if (((byter.getStartSeqNum() + byter.getLength()) - currRetransmitStartSeqNum > 0) && (retByteRange != null))
         {
-          if (retByteRange.getStartSeqNum() > byter.getStartSeqNum())
+          if (retByteRange.getStartSeqNum() - byter.getStartSeqNum() > 0)
           {
             retByteRange = byter;
             break;
@@ -444,7 +443,7 @@ public class BackgroundWritingThread implements Runnable
 
   private void waitForOnePathToFinish()
   {
-    while (cinfo.getDataBaseSeq() < cinfo.getDataSendSeq())
+    while (cinfo.getDataBaseSeq() - cinfo.getDataSendSeq() < 0)
     {
       MSocketLogger.getLogger().fine("waitForOnePathToFinish");
       Vector<SocketInfo> socketList = new Vector<SocketInfo>();
@@ -559,7 +558,7 @@ public class BackgroundWritingThread implements Runnable
     long newDataBaseSeqNum = cinfo.getDataBaseSeq();
 
     // if an ack was read, read it again
-    if (newDataBaseSeqNum > oldDataBaseSeqNum)
+    if (newDataBaseSeqNum - oldDataBaseSeqNum > 0)
     {
       runAgain = true;
     }

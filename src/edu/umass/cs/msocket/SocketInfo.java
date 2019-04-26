@@ -536,8 +536,8 @@ public class SocketInfo
 		  ByteRangeInfo curObj = byteInfoVector.get(i);
 		  // required for considering holes ,
 		  // FIXME: may not have checked for repeated data
-		  if( ( dataBaseSeqNum > curObj.getStartSeqNum() ) && 
-				  ( dataBaseSeqNum <= (curObj.getStartSeqNum()+curObj.getLength()) ) ) 
+		  if( ( dataBaseSeqNum - curObj.getStartSeqNum() > 0) &&
+				  ( dataBaseSeqNum - (curObj.getStartSeqNum()+curObj.getLength()) <= 0) )
 		  {
 			  freeIndex=i;
 			  break;

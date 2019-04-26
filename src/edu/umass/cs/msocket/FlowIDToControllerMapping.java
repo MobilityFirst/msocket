@@ -124,7 +124,6 @@ public class FlowIDToControllerMapping implements Runnable
 
   /**
    * @param flowID
-   * @param cinfo
    */
   public ConnectionInfo removeControllerMapping(Long flowID)
   {
@@ -330,7 +329,7 @@ public class FlowIDToControllerMapping implements Runnable
       return;
     }
 
-    if (msg.sendseq > cinfo.getCtrlAckSeq())
+    if (msg.sendseq - cinfo.getCtrlAckSeq() > 0)
     {
       MSocketLogger.getLogger().fine("Received out-of-order message " + msg + "; expecting ackseq=" + cinfo.getCtrlAckSeq());
       return;
@@ -381,7 +380,7 @@ public class FlowIDToControllerMapping implements Runnable
     else if (msg.type == ControlMessage.ACK_ONLY)
     {
       MSocketLogger.getLogger().fine("ACK recv " + msg.getAckseq());
-      if (msg.getAckseq() > cinfo.getCtrlBaseSeq())
+      if (msg.getAckseq() - cinfo.getCtrlBaseSeq() > 0)
       {
         cinfo.setCtrlBaseSeq(msg.getAckseq());
       }

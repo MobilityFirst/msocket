@@ -96,13 +96,13 @@ public abstract class MultipathWritingPolicy {
 	      dataAck = (int) cinfo.getDataBaseSeq();
 
 	      // already acknowledged, no need to send again
-	      if (dataAck > (currByteR.getStartSeqNum() + currByteR.getLength()))
+	      if (dataAck - (currByteR.getStartSeqNum() + currByteR.getLength()) > 0)
 	      {
 	        continue;
 	      }
 
 	      // if already sent
-	      if ((currByteR.getStartSeqNum() + currByteR.getLength()) < Obj.getHandleMigSeqNum())
+	      if ((currByteR.getStartSeqNum() + currByteR.getLength()) - Obj.getHandleMigSeqNum() < 0)
 	      {
 	        continue;
 	      }

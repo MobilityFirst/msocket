@@ -65,7 +65,7 @@ public class InBufferOutOrder
                                          // retransmissions due to migration or
                                          // otherwise
     
-    if( dataReadSeq >= (Obj.startSeqNum+Obj.chunkSize) )
+    if( dataReadSeq - (Obj.startSeqNum+Obj.chunkSize) >= 0)
 	{
 		return false;
 	}
@@ -85,7 +85,7 @@ public class InBufferOutOrder
     {
       InBufferStorageChunk CurChunk = rbuf.get(i);
 
-      if ((dataReadSeq >= CurChunk.startSeqNum) && (dataReadSeq < (CurChunk.startSeqNum + CurChunk.chunkSize))) // required
+      if ((dataReadSeq - CurChunk.startSeqNum >= 0) && (dataReadSeq - (CurChunk.startSeqNum + CurChunk.chunkSize) < 0)) // required
                                                                                                                 // for
                                                                                                                 // considering
                                                                                                                 // holes
@@ -115,7 +115,7 @@ public class InBufferOutOrder
     for (int i = 0; i < rbuf.size(); i++)
     {
       InBufferStorageChunk CurChunk = rbuf.get(i);
-      if ((dataReadSeq >= CurChunk.startSeqNum) && (dataReadSeq < (CurChunk.startSeqNum + CurChunk.chunkSize))) // required
+      if ((dataReadSeq - CurChunk.startSeqNum >= 0) && (dataReadSeq - (CurChunk.startSeqNum + CurChunk.chunkSize) < 0)) // required
                                                                                                                 // for
                                                                                                                 // considering
                                                                                                                 // holes
@@ -161,7 +161,7 @@ public class InBufferOutOrder
 	public synchronized boolean isDataInOrder(int chunckStartSeq, int chunkLength) {
 		
 		// if dataReadSeq is in between this chunk data, then it is in-order
-		if( ( dataReadSeq >= chunckStartSeq ) && ( dataReadSeq < (chunckStartSeq + chunkLength) ) )
+		if( ( dataReadSeq - chunckStartSeq >= 0) && ( dataReadSeq - (chunckStartSeq + chunkLength) < 0 ) )
 		{
 			return true;
 		}
@@ -172,7 +172,7 @@ public class InBufferOutOrder
 	 * Copy data read from stream to the app buffer. Also updates the dataReadSeqNum 
 	 * It bypasses the storing of data in input buffer
 	 * @param readFromStream
-	 * @param srcLen
+	 * @param startSeqNum
 	 * @param appBuffer
 	 * @param offset
 	 * @param appLen
@@ -186,7 +186,7 @@ public class InBufferOutOrder
 				" offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
 		}
 		int actualCopied =0;
-		if( (dataReadSeq >= startSeqNum) && (dataReadSeq < (startSeqNum+chunkLen) ) ) 
+		if( (dataReadSeq - startSeqNum >= 0) && (dataReadSeq - (startSeqNum+chunkLen) < 0) )
 		{
 			int srcPos = (int)Math.max(0,dataReadSeq-startSeqNum);
 			//FIXME: check for long to int conversion
@@ -220,7 +220,7 @@ public class InBufferOutOrder
 		// inserting from reverse, as it might require less iterations. 
 		// may eventually need to be replaces with heap
 		for(i=rbuf.size()-1; i>=0; i--) {
-			if( rbuf.get(i).startSeqNum < Obj.startSeqNum ) // may need to do overlap check also
+			if( rbuf.get(i).startSeqNum - Obj.startSeqNum < 0) // may need to do overlap check also
 			{
 				break;
 			}
@@ -235,7 +235,7 @@ public class InBufferOutOrder
 			InBufferStorageChunk CurChunk = rbuf.get(0);
 			
 			// required for considering holes ,FIXME: may not have checked for repeated data
-			if( (dataReadSeq >= (CurChunk.startSeqNum+CurChunk.chunkSize) ) ) 
+			if( (dataReadSeq - (CurChunk.startSeqNum+CurChunk.chunkSize)>= 0 ) )
 			{
 				//remove the first element, as element slides left 
 				InBufferStorageChunk removed = rbuf.remove(0);
