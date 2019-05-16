@@ -1,5 +1,4 @@
-import edu.umass.cs.msocket.MServerSocket;
-import edu.umass.cs.msocket.MSocket;
+package edu.umass.cs.msocket;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,10 +9,11 @@ import java.nio.ByteBuffer;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
+import java.util.Scanner;
 
 public class MSocketServer {
 
-    private static final int    LOCAL_PORT = 5556;
+    private static final int    LOCAL_PORT = 5555;
     private static final String LOCALHOST  = "127.0.0.1";
 
     private static MServerSocket mss = null;
@@ -59,7 +59,7 @@ public class MSocketServer {
         public void run()
         {
             int numRead = 0;
-
+            Scanner reader = new Scanner(System.in);
             InputStream is = null;
             OutputStream os = null;
             try {
@@ -72,25 +72,26 @@ public class MSocketServer {
                 // client sends 0 to close the socket
 
                 while(numRead >= 0) {
-
                     long start = System.currentTimeMillis();
 
                     // get number of bytes to send
-                    byte[] numByteArr = new byte[4];
+                    byte[] numByteArr = new byte[8];
                     try {
+                        System.out.println("waiting before read ");
                         is.read(numByteArr);
                         ByteBuffer wrapped = ByteBuffer.wrap(numByteArr);
                         numRead = wrapped.getInt();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
+                    System.out.println("received number of bytes");
                     // send random bytes
                     if (numRead > 0) {
                         System.out.println("Ready to send "+numRead+" bytes.");
 
                         byte[] b = new byte[numRead];
                         new Random().nextBytes(b);
+                        System.out.println("array initialized");
                         try {
                             os.write(b);
                             os.flush();
@@ -98,6 +99,7 @@ public class MSocketServer {
                             e.printStackTrace();
                         }
                         // reset
+                        b = null;
                         numRead = 0;
                         long elapsed = System.currentTimeMillis() - start;
                         LocalDateTime now = LocalDateTime.now();

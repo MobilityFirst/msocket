@@ -1,3 +1,5 @@
+package edu.umass.cs.msocket;
+
 import edu.umass.cs.msocket.FlowPath;
 import edu.umass.cs.msocket.MSocket;
 import edu.umass.cs.msocket.mobility.MobilityManagerClient;
@@ -11,14 +13,13 @@ import java.text.DecimalFormat;
 public class MSocketClient {
 
 
-    private static final int    LOCAL_PORT = 5556;
+    private static final int    LOCAL_PORT = 5555;
     private static final String LOCALHOST  = "127.0.0.1";
 
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
-    private static final int TOTAL_ROUND = 20;
-
-    private static int numBytes = 500000000;
+    private static final int TOTAL_ROUND = 2;
+    private static int numBytes = Integer.MAX_VALUE - 2;
 
     public static void main(String[] args) {
         String serverIPOrName = null;
@@ -27,44 +28,13 @@ public class MSocketClient {
         int is_mb=1;
 
         if (args.length == 0){
-                serverIPOrName = LOCALHOST;
-                numOfBytes = numBytes;
-        }
-        else{
-            serverIPOrName = args[0];
+            serverIPOrName = LOCALHOST;
             numOfBytes = numBytes;
         }
-
-        if(args.length == 2){
-            serverIPOrName = args[0];
-            numOfBytes = Integer.parseInt(args[1]);
-        }
-
-        if (args.length ==3){
-        	serverIPOrName = args[0];
-            numOfBytes = Integer.parseInt(args[1]);
-            is_mb = Integer.parseInt(args[2]);
-        }
-
-        // if(is_mb == 1){
-        // 	numOfBytes = numOfBytes * 1000000;
-        // }else{
-        // 	numOfBytes = numOfBytes * 1000;
-        // }
-        
-
         int serverPort = LOCAL_PORT;
 
-        if (System.getProperty("total") != null) {
-            numOfBytes = Integer.parseInt(System.getProperty("total"));
-        }
-
-        if (System.getProperty("round") != null) {
-            numRound = Integer.parseInt(System.getProperty("round"));
-        }
-
         try {
-        	MSocket ms = new MSocket(InetAddress.getByName(serverIPOrName), serverPort);
+            MSocket ms = new MSocket(InetAddress.getByName(serverIPOrName), serverPort);
             OutputStream os = ms.getOutputStream();
             InputStream is = ms.getInputStream();
 
@@ -76,7 +46,6 @@ public class MSocketClient {
             }
 
             int rd = 0;
-
             for (int i = 0; i < ms.getActiveFlowPaths().size(); i++) {
                 FlowPath currfp = ms.getActiveFlowPaths().get(i);
 
@@ -84,16 +53,18 @@ public class MSocketClient {
             }
 
             while (rd < numRound) {
+                System.out.println(rd);
+                if(rd==1) {
+                    numOfBytes = 1000001;
+                }
+                System.out.println("[Client:] To read " + numOfBytes + " bytes data from input stream...");
 
-                int numSent = numOfBytes;
-
-                System.out.println("[Client:] To read " + numSent + " bytes data from input stream...");
 
 
-                byte[] b = new byte[numSent];
+                byte[] b = new byte[numOfBytes];
 
-                ByteBuffer dbuf = ByteBuffer.allocate(4);
-                dbuf.putInt(numSent);
+                ByteBuffer dbuf = ByteBuffer.allocate(8);
+                dbuf.putInt(numOfBytes);
                 byte[] bytes = dbuf.array();
 
                 int numRead;
@@ -102,19 +73,20 @@ public class MSocketClient {
                 long start = System.currentTimeMillis();
 
                 os.write(bytes);
+                System.out.println("wrote the Number of bytes");
                 do {
                     numRead = is.read(b);
                     if (numRead >= 0)
                         totalRead += numRead;
 
-                } while (totalRead < numSent);
-
+                } while (totalRead < numOfBytes);
+                b = null;
                 long elapsed = System.currentTimeMillis() - start;
                 System.out.println("[Latency:] " + elapsed  + " ms");
                 System.out.println("[Thruput:] " + df.format(numOfBytes/1000.0/elapsed ) + " MB/s");
 
                 rd++;
-               
+
             }
 
             os.write(-1);
