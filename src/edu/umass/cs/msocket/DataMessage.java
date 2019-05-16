@@ -158,7 +158,7 @@ public class DataMessage
   public String toString()
   {
     String s = "";
-    s += Type + ", " + sendSeq + ", " + ackSeq + ", " + length + ", " + (msg != null ? new String(msg) : "");
+    s += "Type: "+ Type + ",sendSeq: " + sendSeq + ",ackSeq: " + ackSeq + ",length: " + length + ",msg: " + (msg != null ? new String(msg) : "");
     return s;
   }
 

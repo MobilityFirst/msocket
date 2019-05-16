@@ -23,7 +23,7 @@
 package edu.umass.cs.msocket;
 
 import java.util.ArrayList;
-
+import java.lang.Math;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 
@@ -111,9 +111,11 @@ public class InBufferOutOrder
 
     if (rbuf.size() > 0)
     {
+		MSocketLogger.getLogger().info("Inside the getinbuffer");
     }
     for (int i = 0; i < rbuf.size(); i++)
     {
+
       InBufferStorageChunk CurChunk = rbuf.get(i);
       if ((dataReadSeq - CurChunk.startSeqNum >= 0) && (dataReadSeq - (CurChunk.startSeqNum + CurChunk.chunkSize) < 0)) // required
                                                                                                                 // for
@@ -140,6 +142,7 @@ public class InBufferOutOrder
         {
           actlen = cpylen;
         }
+        MSocketLogger.getLogger().info("this is the actlen"+ actlen);
         System.arraycopy(CurChunk.chunkData, srcPos, b, offset+numread, actlen);
         numread += actlen;
         dataReadSeq += actlen;

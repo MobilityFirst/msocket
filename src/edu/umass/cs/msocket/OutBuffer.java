@@ -99,7 +99,7 @@ public class OutBuffer
     if (src.length < offset + length)
       return false;
     // FIXME: may need to improve here
-    if ((getOutbufferSize() + length) > (java.lang.Runtime.getRuntime().maxMemory() / 2))
+    if ((getOutbufferSize() + length) - (java.lang.Runtime.getRuntime().maxMemory() / 2) > 0)
     {
       MSocketLogger.getLogger().fine("Local write fail JVM Heap memeory threshold exceeded");
       return false;

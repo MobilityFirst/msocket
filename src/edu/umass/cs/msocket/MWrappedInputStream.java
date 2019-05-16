@@ -234,6 +234,7 @@ public class MWrappedInputStream extends InputStream
 		           cinfo.updateDataAckSeq(bytesReadInAppBuffer);
 		       }
 	       }
+	      MSocketLogger.getLogger().info("this many bytes were read: " + bytesReadInAppBuffer);
 	     return bytesReadInAppBuffer;
   }
 

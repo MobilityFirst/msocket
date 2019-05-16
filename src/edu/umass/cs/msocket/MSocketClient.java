@@ -19,8 +19,9 @@ public class MSocketClient {
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
     private static final int TOTAL_ROUND = 2;
-    private static int numBytes = 2147483645;
+//    private static int numBytes = 2147483645;
     // private static int numBytes = 2147000000;
+private static int numBytes = Integer.MAX_VALUE - 2;
 
     public static void main(String[] args) {
         String serverIPOrName = null;
@@ -90,7 +91,10 @@ public class MSocketClient {
                 if(rd==1){
                     numSent=1000001;
                     System.out.println("[Client:] To read " + numSent + " bytes data from input stream...");
-                }else{
+                }else if(rd == 2){
+                    numSent = 10000;
+                }
+                else{
                     numSent = numOfBytes;
                     System.out.println("[Client:] To read " + numSent + " Mega bytes data from input stream...");
 

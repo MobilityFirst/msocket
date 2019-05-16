@@ -1177,6 +1177,8 @@ public class ConnectionInfo
             {
               long ssrStart = System.currentTimeMillis();
               retObject = singleSocketRead(value, b, offset, length);
+              MSocketLogger.getLogger().info("This is the type of read "  +Integer.toString(retObject.typeOfRead));
+
               long ssrEnd = System.currentTimeMillis();
               MSocketInstrumenter.addSingleSocketReadSample((ssrEnd - ssrStart));
 
@@ -1916,6 +1918,7 @@ public class ConnectionInfo
 	        {
 	        	sendDataAckOnly(getConnID(), socketObj, dmheader.sendSeq);
 	        }
+	        MSocketLogger.getLogger().info("this is the dmheader "+ dmheader.toString());
 	        nread = -2; // indicates that a header was successfully read
 	      }
 	    }
