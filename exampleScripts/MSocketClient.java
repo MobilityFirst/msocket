@@ -23,21 +23,36 @@ public class MSocketClient {
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
     private static final int TOTAL_ROUND = 2;
-    // private static int numBytes = Integer.MAX_VALUE - 2;
-    private static int numBytes = 2;
+    private static int numBytes = Integer.MAX_VALUE - 2;
+    // private static int numBytes = 2;
 
     public static void main(String[] args) {
         String serverIPOrName = null;
         int numRound = TOTAL_ROUND;
-        int numOfBytes= 0;
-        int is_mb=1;
+        int numOfBytes_rd1 = 0;
+        int numOfBytes_rd2 = 0;
+
 
         if (args.length == 0){
-            serverIPOrName = LOCALHOST;
-            numOfBytes = numBytes;
+                serverIPOrName = LOCALHOST;
+                numOfBytes_rd1 = numBytes;
         }
-        int serverPort = LOCAL_PORT;
+        else if (args.length == 1){
+            serverIPOrName = args[0];
+            numOfBytes_rd1 = numBytes;
+        }else if(args.length == 2){
+            serverIPOrName = args[0];
+            numOfBytes_rd1 = Integer.parseInt(args[1]);
+            numOfBytes_rd2 = 1000001;
+        }else if(args.length == 3){
+            serverIPOrName = args[0];
+            numOfBytes_rd1 = Integer.parseInt(args[1]);
+            numOfBytes_rd2 = Integer.parseInt(args[2]);
+        }
 
+
+        int serverPort = LOCAL_PORT;
+        int numOfBytes = numOfBytes_rd1;
         try {
             MSocket ms = new MSocket(InetAddress.getByName(serverIPOrName), serverPort);
             OutputStream os = ms.getOutputStream();
@@ -60,7 +75,7 @@ public class MSocketClient {
             while (rd < numRound) {
                 System.out.println(rd);
                 if(rd==1) {
-                    numOfBytes = 1000001;
+                    numOfBytes = numOfBytes_rd2;
                 }
                 System.out.println("[Client:] To read " + numOfBytes + " bytes data from input stream...");
 
