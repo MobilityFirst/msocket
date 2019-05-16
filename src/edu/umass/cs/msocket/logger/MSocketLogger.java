@@ -10,16 +10,16 @@ public class MSocketLogger
 	private static Logger LOGGER = null;
 	static
 	{
-		
+		 System.setProperty("java.util.logging.config.file",System.getProperty("user.dir") + "/logging.properties");
 		LOGGER = Logger.getLogger(
 				MSocketLogger.class.getName());
-		ConsoleHandler ch = new ConsoleHandler();
-        ch.setLevel(Level.INFO);
-        LOGGER.addHandler(ch);
-        LOGGER.setLevel(Level.INFO);
+		// ConsoleHandler ch = new ConsoleHandler();
+  //       ch.setLevel(Level.INFO);
+  //       LOGGER.addHandler(ch);
+  //       LOGGER.setLevel(Level.INFO);
         
-        Logger l0 = Logger.getLogger("");
-        l0.removeHandler(l0.getHandlers()[0]);
+  //       Logger l0 = Logger.getLogger("");
+  //       l0.removeHandler(l0.getHandlers()[0]);
 	}
 	
 	public static Logger getLogger()
