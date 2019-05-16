@@ -12,7 +12,7 @@ import java.text.DecimalFormat;
 import edu.umass.cs.msocket.FlowPath;
 import edu.umass.cs.msocket.MSocket;
 import edu.umass.cs.msocket.mobility.MobilityManagerClient;
-
+import edu.umass.cs.msocket.logger.MSocketLogger;
 
 public class MSocketClient {
 
@@ -57,7 +57,7 @@ public class MSocketClient {
             MSocket ms = new MSocket(InetAddress.getByName(serverIPOrName), serverPort);
             OutputStream os = ms.getOutputStream();
             InputStream is = ms.getInputStream();
-
+            MSocketLogger.getLogger().info("this is the numOfBytes_rd1"+ numOfBytes_rd1);
             // wait for 2 seconds for all connections
             try {
                 Thread.sleep(2000);
