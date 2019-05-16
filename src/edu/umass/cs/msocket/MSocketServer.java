@@ -72,8 +72,6 @@ public class MSocketServer {
                 // client sends 0 to close the socket
 
                 while(numRead >= 0) {
-                    // System.out.println("please inout");
-                    // String line = reader.nextLine();
                     long start = System.currentTimeMillis();
 
                     // get number of bytes to send

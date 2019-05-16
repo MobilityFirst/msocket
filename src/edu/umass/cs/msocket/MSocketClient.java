@@ -19,9 +19,7 @@ public class MSocketClient {
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
     private static final int TOTAL_ROUND = 2;
-//    private static int numBytes = 2147483645;
-    // private static int numBytes = 2147000000;
-private static int numBytes = Integer.MAX_VALUE - 2;
+    private static int numBytes = Integer.MAX_VALUE - 2;
 
     public static void main(String[] args) {
         String serverIPOrName = null;
@@ -33,38 +31,7 @@ private static int numBytes = Integer.MAX_VALUE - 2;
             serverIPOrName = LOCALHOST;
             numOfBytes = numBytes;
         }
-        else{
-            serverIPOrName = args[0];
-            numOfBytes = numBytes;
-        }
-
-        if(args.length == 2){
-            serverIPOrName = args[0];
-            numOfBytes = Integer.parseInt(args[1]);
-        }
-
-        if (args.length ==3){
-            serverIPOrName = args[0];
-            numOfBytes = Integer.parseInt(args[1]);
-            is_mb = Integer.parseInt(args[2]);
-        }
-
-        // if(is_mb == 1){
-        // 	numOfBytes = numOfBytes * 1000000;
-        // }else{
-        // 	numOfBytes = numOfBytes * 1000;
-        // }
-
-
         int serverPort = LOCAL_PORT;
-
-        if (System.getProperty("total") != null) {
-            numOfBytes = Integer.parseInt(System.getProperty("total"));
-        }
-
-        if (System.getProperty("round") != null) {
-            numRound = Integer.parseInt(System.getProperty("round"));
-        }
 
         try {
             MSocket ms = new MSocket(InetAddress.getByName(serverIPOrName), serverPort);
@@ -87,24 +54,17 @@ private static int numBytes = Integer.MAX_VALUE - 2;
 
             while (rd < numRound) {
                 System.out.println(rd);
-                int numSent=0;
-                if(rd==1){
-                    numSent=1000001;
-                    System.out.println("[Client:] To read " + numSent + " bytes data from input stream...");
-                }else if(rd == 2){
-                    numSent = 10000;
+                if(rd==1) {
+                    numOfBytes = 1000001;
                 }
-                else{
-                    numSent = numOfBytes;
-                    System.out.println("[Client:] To read " + numSent + " Mega bytes data from input stream...");
-
-                }
+                System.out.println("[Client:] To read " + numOfBytes + " bytes data from input stream...");
 
 
-                byte[] b = new byte[numSent];
+
+                byte[] b = new byte[numOfBytes];
 
                 ByteBuffer dbuf = ByteBuffer.allocate(8);
-                dbuf.putInt(numSent);
+                dbuf.putInt(numOfBytes);
                 byte[] bytes = dbuf.array();
 
                 int numRead;
@@ -119,7 +79,7 @@ private static int numBytes = Integer.MAX_VALUE - 2;
                     if (numRead >= 0)
                         totalRead += numRead;
 
-                } while (totalRead < numSent);
+                } while (totalRead < numOfBytes);
                 b = null;
                 long elapsed = System.currentTimeMillis() - start;
                 System.out.println("[Latency:] " + elapsed  + " ms");
