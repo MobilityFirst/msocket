@@ -1,4 +1,3 @@
-package edu.umass.cs.msocket;
 
 import edu.umass.cs.msocket.FlowPath;
 import edu.umass.cs.msocket.MSocket;
@@ -10,6 +9,11 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 
+import edu.umass.cs.msocket.FlowPath;
+import edu.umass.cs.msocket.MSocket;
+import edu.umass.cs.msocket.mobility.MobilityManagerClient;
+
+
 public class MSocketClient {
 
 
@@ -19,7 +23,8 @@ public class MSocketClient {
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
     private static final int TOTAL_ROUND = 2;
-    private static int numBytes = Integer.MAX_VALUE - 2;
+    // private static int numBytes = Integer.MAX_VALUE - 2;
+    private static int numBytes = 2;
 
     public static void main(String[] args) {
         String serverIPOrName = null;

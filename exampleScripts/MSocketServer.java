@@ -1,5 +1,3 @@
-package edu.umass.cs.msocket;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -10,6 +8,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
 import java.util.Scanner;
+
+
+import edu.umass.cs.msocket.MServerSocket;
+import edu.umass.cs.msocket.MSocket;
 
 public class MSocketServer {
 
