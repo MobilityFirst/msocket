@@ -158,7 +158,6 @@ public class MWrappedOutputStream extends OutputStream
     {
       MSocketLogger.getLogger().fine("message here length " + length + " dataAckSeq " + cinfo.getDataAckSeq() + "send seq num "
           + cinfo.getDataSendSeq());
-      System.out.println(" this is the write chunk size " + Integer.toString(WRITE_CHUNK_SIZE));
       writeInternal(b, offset, length, MesgType);
       cinfo.setState(ConnectionInfo.ALL_READY, true);
       cinfo.setblockingFlag(false);

@@ -142,7 +142,6 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
 	        }
           
           Obj.updateSentBytes(tobesent);
-          System.out.println("this many bytes were written in the rtx policy" + Integer.toString(MWrappedOutputStream.WRITE_CHUNK_SIZE));
           currpos += tobesent;
           remaining -= tobesent;
           tempDataSendSeqNum += tobesent;
