@@ -27,6 +27,7 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
@@ -93,13 +94,15 @@ public class RetransmitTask extends TimerTask
 
       if (cmsg.getType() == ControlMessage.ACK_ONLY)
       {
-        MSocketLogger.getLogger().fine("Sending ack " + cmsg);
+        // MSocketLogger.getLogger().fine("Sending ack " + cmsg);
+        MSocketLogger.getLogger().log(Level.FINE, "Sending ACK {0}", cmsg);
         retransmit();
       }
       else if (cinfo.getCtrlBaseSeq() - cmsg.getSendseq() <= 0)
       {
         if (txCount > 0)
-          MSocketLogger.getLogger().fine("Retransmitting message " + cmsg + " coz baseseq=" + cinfo.getCtrlBaseSeq());
+          // MSocketLogger.getLogger().fine("Retransmitting message " + cmsg + " coz baseseq=" + cinfo.getCtrlBaseSeq());
+        MSocketLogger.getLogger().log(Level.FINE, "Retransmitting message {0} coz BaseSeq = {1}", new Object[]{cmsg, cinfo.getCtrlBaseSeq()});
         retransmit();
         txCount++;
         if (txCount > MAX_RETRANSMIT)
@@ -109,13 +112,15 @@ public class RetransmitTask extends TimerTask
       }
       else
       {
-        MSocketLogger.getLogger().fine("Completed delivery of message " + cmsg);
+        // MSocketLogger.getLogger().fine("Completed delivery of message " + cmsg);
+        MSocketLogger.getLogger().log(Level.FINE,"Completed delivery of message {0}.", cmsg);
         timer.cancel();
       }
     }
     catch (IOException e)
     {
-      MSocketLogger.getLogger().fine("IOException while retransmitting packet " + cmsg + "; canceling retransmission attempts");
+      // MSocketLogger.getLogger().fine("IOException while retransmitting packet " + cmsg + "; canceling retransmission attempts");
+      MSocketLogger.getLogger().log(Level.FINE,"IOException while retransmitting packet {0}; canceling retransmission attempts.", cmsg);
       timer.cancel();
       e.printStackTrace();
     }

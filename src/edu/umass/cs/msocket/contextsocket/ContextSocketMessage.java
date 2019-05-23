@@ -23,6 +23,7 @@ package edu.umass.cs.msocket.contextsocket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.MSocket;
 import edu.umass.cs.msocket.logger.MSocketLogger;
@@ -78,7 +79,8 @@ public class ContextSocketMessage
 	    	buf.put(msg, arrayCopyOffset, length);
 	    	if(length>0)
 	    	{
-	    		MSocketLogger.getLogger().fine("DataMessage: msg[0] "+msg[0]);
+	    		// MSocketLogger.getLogger().fine("DataMessage: msg[0] "+msg[0]);
+	    		MSocketLogger.getLogger().log(Level.FINE,"DataMessage msg[0]: {0}.", msg[0]);
 	    	}
 	      }
 	    buf.flip();
@@ -153,6 +155,7 @@ public class ContextSocketMessage
 	
 	    ContextSocketMessage dec = ContextSocketMessage.getDataMessage(enc);
 	    enc[11] = 98;
-	    MSocketLogger.getLogger().fine(dec.toString());
+	    // MSocketLogger.getLogger().fine(dec.toString());
+	    MSocketLogger.getLogger().log(Level.FINE,dec.toString());
 	  }
 }

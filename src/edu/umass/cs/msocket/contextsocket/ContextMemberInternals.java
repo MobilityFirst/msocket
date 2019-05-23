@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 
 import edu.umass.cs.msocket.MServerSocket;
@@ -111,8 +112,9 @@ public class ContextMemberInternals
 			case PUT:
 			{
 				accptMSockets.put(aliasMember, toPut);
-				MSocketLogger.getLogger().fine("MSocketGroupMemberInternals new socket accepted "+aliasMember+
-						" num sockets "+accptMSockets.size());
+				// MSocketLogger.getLogger().fine("MSocketGroupMemberInternals new socket accepted "+aliasMember+
+						// " num sockets "+accptMSockets.size());
+				MSocketLogger.getLogger().log(Level.FINE, "MSocketGroupMemberInternals new socket accepted {0}, num sockets {1}.", new Object[]{aliasMember,accptMSockets.size()});
 				break;
 			}
 			case GET_ALL:
@@ -131,8 +133,8 @@ public class ContextMemberInternals
 			numAccptSocket++;
 			String key = numAccptSocket +"";
 			
-			MSocketLogger.getLogger().fine("MSocketGroupMemberInternals new socket accepted "+key);
-			ContextSocket readMSocketInf = new ContextSocket(newJoining);
+			// MSocketLogger.getLogger().fine("MSocketGroupMemberInternals new socket accepted "+key);
+			MSocketLogger.getLogger().log(Level.FINE,"MSocketGroupMemberInternals new socket accepted {0}.", key);			ContextSocket readMSocketInf = new ContextSocket(newJoining);
 			memberConnectionMapOperations(PUT, key, readMSocketInf);
 			
 			/*synchronized(accptMonitor) 

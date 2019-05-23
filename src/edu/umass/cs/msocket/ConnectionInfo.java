@@ -40,6 +40,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.common.policies.BlackBoxWritingPolicy;
@@ -655,8 +656,8 @@ public class ConnectionInfo
       {
         if (!ret)
         {
-          MSocketLogger.getLogger().fine("Failed to change state to " + msgStr[s] + " from " + msgStr[state]);
-
+          // MSocketLogger.getLogger().fine("Failed to change state to " + msgStr[s] + " from " + msgStr[state]);
+          MSocketLogger.getLogger().log(Level.FINE, " failed to change the state");
           while (state != ALL_READY)
           {
             try

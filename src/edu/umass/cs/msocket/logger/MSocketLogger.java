@@ -10,19 +10,21 @@ public class MSocketLogger
 	private static Logger LOGGER = null;
 	static
 	{
-		String config_file_path = System.getProperty("user.dir") + "/logging.properties";
 		// System.out.println("I am in the logger file and this is the path of the logger config file " + config_file_path );
+		
 
+		String config_file_path = System.getProperty("user.dir") + "/logging.properties";
 		System.setProperty("java.util.logging.config.file",config_file_path);
-		LOGGER = Logger.getLogger(
-				MSocketLogger.class.getName());
+		LOGGER = Logger.getLogger(MSocketLogger.class.getName());
+
+
+
 		// ConsoleHandler ch = new ConsoleHandler();
-  //       ch.setLevel(Level.INFO);
-  //       LOGGER.addHandler(ch);
-  //       LOGGER.setLevel(Level.INFO);
-        
-  //       Logger l0 = Logger.getLogger("");
-  //       l0.removeHandler(l0.getHandlers()[0]);
+  		// ch.setLevel(Level.INFO);
+  		// LOGGER.addHandler(ch);
+  		// LOGGER.setLevel(Level.INFO);
+        // Logger l0 = Logger.getLogger("");
+  		// l0.removeHandler(l0.getHandlers()[0]);
 	}
 	
 	public static Logger getLogger()
