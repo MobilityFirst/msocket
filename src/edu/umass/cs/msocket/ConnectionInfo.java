@@ -2353,23 +2353,26 @@ public class ConnectionInfo
 	              }
 	              catch (Exception ex)
 	              {
-	                MSocketLogger.getLogger().fine("UDP controller not properly set");
+	                // MSocketLogger.getLogger().fine("UDP controller not properly set");
+                  MSocketLogger.getLogger().log(Level.FINE, "UDP controller not properly set");
 	                ex.printStackTrace();
 	                UDPControllerPort = -1;
 	              }
 	            }
 	            if (UDPControllerPort == -1)
 	            {
-	              MSocketLogger.getLogger().fine("MIGRATE_SOCKET UDPControllerPort " 
-	            		  					+ UDPControllerPort);
+	              // MSocketLogger.getLogger().fine("MIGRATE_SOCKET UDPControllerPort " 
+	            		  					// + UDPControllerPort);
+                MSocketLogger.getLogger().log(Level.FINE, "MIGRATE_SOCKET UDPControllerPort {0}", UDPControllerPort);
 	            }
 
 	            byte[] GUID = new byte[SetupControlMessage.SIZE_OF_GUID];
 	            if (serverGUID.length() > 0)
 	            {
 	              GUID = CommonMethods.hexStringToByteArray(serverGUID);
-	              MSocketLogger.getLogger().fine("serverGuid " + serverGUID + " GUID to be sent " + GUID + " length "
-	                  + CommonMethods.hexStringToByteArray(serverGUID).length);
+	              // MSocketLogger.getLogger().fine("serverGuid " + serverGUID + " GUID to be sent " + GUID + " length "
+	                  // + CommonMethods.hexStringToByteArray(serverGUID).length);
+                MSocketLogger.getLogger().log(Level.FINE,"serverGUID {0}, GUID to be sent {1} and the lenght of that GUID {2}. ", new Object[]{serverGUID,GUID,CommonMethods.hexStringToByteArray(serverGUID).length});
 	            }
 
 	            setupControlWrite(getControllerIP(), flowID, Operation, UDPControllerPort, newChannel,
@@ -2379,7 +2382,8 @@ public class ConnectionInfo
 
 	            if (scm.mesgType == SetupControlMessage.MIGRATE_SOCKET_RESET)
 	            {
-	              MSocketLogger.getLogger().fine("MIGRATE_SOCKET_RESET recvd");
+	              // MSocketLogger.getLogger().fine("MIGRATE_SOCKET_RESET recvd");
+                MSocketLogger.getLogger().log(Level.FINE, "MIGRATE_SOCKET_RESET recvd");
 	              internalClose();
 	              throw new Exception("Reset received");
 	            }
@@ -2402,7 +2406,8 @@ public class ConnectionInfo
 	            inputQueuePutSocketInfo(sockObj);
 	            outputQueuePutSocketInfo(sockObj);
 	            
-	            MSocketLogger.getLogger().fine("set the new socket");
+	            // MSocketLogger.getLogger().fine("set the new socket");
+              MSocketLogger.getLogger().log(Level.FINE, "Set the new socket");
 	            
 	            synchronized (getSocketMonitor())
 	            {
@@ -2420,7 +2425,8 @@ public class ConnectionInfo
 	      catch (Exception ex)
 	      {
 	        success = false;
-	        MSocketLogger.getLogger().fine("exception in addFlow " + ex.getMessage());
+	        // MSocketLogger.getLogger().fine("exception in addFlow " + ex.getMessage());
+          MSocketLogger.getLogger().log(Level.FINE,"Exception in addflow() method: {0}", ex.getMessage());
 	      }
 	      // -1 because it is incremented by 1;
 	      FlowPathResult Obj = new FlowPathResult(nextSocketIdentifier - 1, success);
@@ -2447,7 +2453,8 @@ public class ConnectionInfo
 
   public void setupClientController(SetupControlMessage scm)
   {
-    MSocketLogger.getLogger().fine("Received IP:port " + scm.port + ":" + scm.iaddr + "; ackSeq = " + scm.ackSeq);
+    // MSocketLogger.getLogger().fine("Received IP:port " + scm.port + ":" + scm.iaddr + "; ackSeq = " + scm.ackSeq);
+    MSocketLogger.getLogger().log(Level.FINE, "Received IP:Port {0}:{1}; ackSeq = {2}", new Object[]{scm.iaddr,scm.port,scm.ackSeq});
     setRemoteControlAddress(scm.iaddr);
     setRemoteControlPort(scm.port);
   }
@@ -2457,7 +2464,8 @@ public class ConnectionInfo
   {
     if (serverOrClient == MSocketConstants.CLIENT)
     {
-      MSocketLogger.getLogger().fine("unregistering with mobility manager and udp controller");
+      // MSocketLogger.getLogger().fine("unregistering with mobility manager and udp controller");
+      MSocketLogger.getLogger().log(Level.FINE, "Unregistering with mobility manager and udp controller");
       MobilityManagerClient.unregisterWithManager(this);
       UDPControllerHashMap.unregisterWithController(getControllerIP(), this);
     }
@@ -2471,7 +2479,8 @@ public class ConnectionInfo
       {
 
       }
-      MSocketLogger.getLogger().fine("MSocket in CLOSED state");
+      // MSocketLogger.getLogger().fine("MSocket in CLOSED state");
+      MSocketLogger.getLogger().log(Level.FINE, "MSocket in CLOSED state");
       releaseOutBuffer();
       timerRunning = false;
       
@@ -2576,15 +2585,19 @@ public class ConnectionInfo
     int ret = 0;
     while (buf.position() < SetupControlMessage.SIZE)
     {
-      MSocketLogger.getLogger().fine("setup control read happening");
+      // MSocketLogger.getLogger().fine("setup control read happening");
+      MSocketLogger.getLogger().log(Level.FINE, "Setup control read happening");
       ret = SCToUse.read(buf);
-      MSocketLogger.getLogger().fine("setup control read returned");
+      // MSocketLogger.getLogger().fine("setup control read returned");
+      MSocketLogger.getLogger().log(Level.FINE, "Setup control read returned");
       if (ret == -1)
       {
-        MSocketLogger.getLogger().fine("setup control read -1 returned");
+        // MSocketLogger.getLogger().fine("setup control read returned -1.");
+        MSocketLogger.getLogger().log(Level.FINE, "Setup control read returned -1.");
         if (buf.position() < SetupControlMessage.SIZE)
         {
-          MSocketLogger.getLogger().fine("setup control read throwing exception");
+          // MSocketLogger.getLogger().fine("setup control read throwing exception");
+          MSocketLogger.getLogger().log(Level.FINE, "Setup control read throwing exception");
           throw new IOException("setupControlRead failed");
         }
       }
@@ -2866,7 +2879,8 @@ public class ConnectionInfo
 
   public void blockOnInputStreamSelector()
   {
-    MSocketLogger.getLogger().fine(this.getServerOrClient() + " blockOnInputStreamSelector called");
+    // MSocketLogger.getLogger().fine(this.getServerOrClient() + " blockOnInputStreamSelector called");
+    MSocketLogger.getLogger().log(Level.FINE, "{0} called blockOnInputStreamSelector", this.getServerOrClient());
     while (true)
     {
       // check for the queue, if there are any channels to register
@@ -2876,7 +2890,8 @@ public class ConnectionInfo
         SelectionKey SelecKey;
         try
         {
-          MSocketLogger.getLogger().fine(this.getServerOrClient() + "registering keys in the selector");
+          // MSocketLogger.getLogger().fine(this.getServerOrClient() + "registering keys in the selector");
+          MSocketLogger.getLogger().log(Level.FINE, "{0}, registering keys in the selector", this.getServerOrClient());
           regSocket.getDataChannel().configureBlocking(false);
           SelecKey = regSocket.getDataChannel().register(getInputStreamSelector(), SelectionKey.OP_READ);
           SelecKey.attach(regSocket);
@@ -2890,7 +2905,8 @@ public class ConnectionInfo
       int readyChannels = 0;
       try
       {
-        MSocketLogger.getLogger().fine(this.getServerOrClient() + "blocked on the selector");
+        // MSocketLogger.getLogger().fine(this.getServerOrClient() + "blocked on the selector");
+        MSocketLogger.getLogger().log(Level.FINE, "{0} Blocked on the selector.", this.getServerOrClient());
         readyChannels = getInputStreamSelector().select();
       }
       catch (Exception e)
@@ -2910,7 +2926,8 @@ public class ConnectionInfo
       }
       else
       {
-        MSocketLogger.getLogger().fine(this.getServerOrClient() + "unblocked on the selector");
+        // MSocketLogger.getLogger().fine(this.getServerOrClient() + "unblocked on the selector");
+        MSocketLogger.getLogger().log(Level.FINE, "{0} unblocked on the selector.", this.getServerOrClient());
         Set<SelectionKey> selectedKeys = getInputStreamSelector().selectedKeys();
         selectedKeys.clear();
         break;
@@ -2920,7 +2937,9 @@ public class ConnectionInfo
 
   public void blockOnOutputStreamSelector()
   {
-    MSocketLogger.getLogger().fine(this.getServerOrClient() + " blockOnOutputStreamSelector called");
+    // MSocketLogger.getLogger().fine(this.getServerOrClient() + " blockOnOutputStreamSelector called");
+    MSocketLogger.getLogger().log(Level.FINE, "{0} called blockOnOutputStreamSelector.", this.getServerOrClient());
+
     while (true)
     {
       // check for the queue, if there are any channels to register
@@ -2930,7 +2949,8 @@ public class ConnectionInfo
         SelectionKey SelecKey;
         try
         {
-          MSocketLogger.getLogger().fine(this.getServerOrClient() + "registering keys in the selector");
+          // MSocketLogger.getLogger().fine(this.getServerOrClient() + "registering keys in the selector");
+          MSocketLogger.getLogger().log(Level.FINE, "{0} is registering keys in the selector.", this.getServerOrClient());
           regSocket.getDataChannel().configureBlocking(false);
           SelecKey = regSocket.getDataChannel().register(getOutputStreamSelector(), SelectionKey.OP_WRITE);
           SelecKey.attach(regSocket);
@@ -2944,7 +2964,8 @@ public class ConnectionInfo
       int readyChannels = 0;
       try
       {
-        MSocketLogger.getLogger().fine(this.getServerOrClient() + "blocked on the selector");
+        // MSocketLogger.getLogger().fine(this.getServerOrClient() + "blocked on the selector");
+        MSocketLogger.getLogger().log(Level.FINE, "{0} blocked on the selector", this.getServerOrClient());
         readyChannels = getOutputStreamSelector().select(); // changing it
                                                             // to select(),
                                                             // makes it
@@ -2973,6 +2994,7 @@ public class ConnectionInfo
       else
       {
         MSocketLogger.getLogger().fine(this.getServerOrClient() + "unblocked on the selector");
+        MSocketLogger.getLogger().log(Level.FINE, "{0} unblocked on the selector", this.getServerOrClient());
         Set<SelectionKey> selectedKeys = getOutputStreamSelector().selectedKeys();
         selectedKeys.clear();
         break;
@@ -2982,7 +3004,8 @@ public class ConnectionInfo
 
   private void checkToStartDataAckThread(SocketInfo Obj)
   {
-    MSocketLogger.getLogger().fine("checkToStartDataAckThread called ");
+    // MSocketLogger.getLogger().fine("checkToStartDataAckThread called ");
+    MSocketLogger.getLogger().log(Level.FINE, "checkToStartDataAckThread called ");
     if ((Integer) Obj.queueOperations(SocketInfo.QUEUE_SIZE, null) > 0)
     {
       //attemptSocketWrite(Obj);
@@ -2992,7 +3015,8 @@ public class ConnectionInfo
     if (!notAckedInAWhile(Obj)) // not flooding ACKs to sender
       return;
 
-    MSocketLogger.getLogger().fine("checkToStartDataAckThread starting the thread ");
+    // MSocketLogger.getLogger().fine("checkToStartDataAckThread starting the thread ");
+    MSocketLogger.getLogger().log(Level.FINE, "checkToStartDataAckThread starting the thread");
     SendDataAckThread tsd = new SendDataAckThread(this, Obj);
     new Thread(tsd).start();
   }
@@ -3185,7 +3209,8 @@ public class ConnectionInfo
           e.printStackTrace();
         }
       }
-      MSocketLogger.getLogger().fine("MigrationTimeOutThread exits");
+      // MSocketLogger.getLogger().fine("MigrationTimeOutThread exits");
+      MSocketLogger.getLogger().log(Level.FINE, "MigrationTimeOutThread exits");
     }
 
     public void stopThread()
@@ -3217,7 +3242,8 @@ public class ConnectionInfo
     @Override
     public void run()
     {
-      MSocketLogger.getLogger().fine("SendDataAckThread acquiring READ_WRITE");
+      // MSocketLogger.getLogger().fine("SendDataAckThread acquiring READ_WRITE");
+      MSocketLogger.getLogger().log(Level.FINE, "SendDataAckThread acquiring READ_WRITE");
       boolean ret = cinfo.setState(ConnectionInfo.READ_WRITE, true); // blocking
                                                                      // acquire
       if (ret)
@@ -3225,12 +3251,14 @@ public class ConnectionInfo
 
         try
         {
-          MSocketLogger.getLogger().fine("SendDataAckThread sending data ack");
+          // MSocketLogger.getLogger().fine("SendDataAckThread sending data ack");
+          MSocketLogger.getLogger().log(Level.FINE, "SendDataAckThread sending data ack");
           sendDataAckOnly(cinfo.getConnID(), Obj, 0);
         }
         catch (Exception ex)
         {
-          MSocketLogger.getLogger().fine("exception in SendDataAckThread ");
+          // MSocketLogger.getLogger().fine("exception in SendDataAckThread ");
+          MSocketLogger.getLogger().log(Level.FINE, "exception in SendDataAckThread ");
         }
         cinfo.setState(ConnectionInfo.ALL_READY, true);
       }
