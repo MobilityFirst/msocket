@@ -23,7 +23,7 @@ package edu.umass.cs.msocket;
 
 import java.util.Comparator;
 import java.util.PriorityQueue;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -63,7 +63,8 @@ public class InBufferHeapImpl {
 
 	  public synchronized boolean putInBuffer(InBufferStorageChunk Obj)
 	  {
-		MSocketLogger.getLogger().fine("putInBuffer "+rbuf.size());
+		// MSocketLogger.getLogger().fine("putInBuffer "+rbuf.size());
+		MSocketLogger.getLogger().log(Level.FINE, "PutInBuffer {0}", rbuf.size());
 	    byteRecvInInbuffer += Obj.chunkSize; // may not be accurate if there are
 	                                         // retransmissions due to migration or
 	                                         // otherwise
@@ -73,7 +74,8 @@ public class InBufferHeapImpl {
 			return false;
 		}
 	    rbuf.add(Obj);
-	    MSocketLogger.getLogger().fine("putInBuffer returned "+rbuf.size());
+	    // MSocketLogger.getLogger().fine("putInBuffer returned "+rbuf.size());
+	    MSocketLogger.getLogger().log(Level.FINE, "putInBuffer returned {0}", rbuf.size());
 	    return true;
 	  }
 	
@@ -84,7 +86,8 @@ public class InBufferHeapImpl {
 	
 	  public synchronized int getInBuffer(byte[] b, int offset, int length)
 	  {
-		MSocketLogger.getLogger().fine("getInBuffer called  "+ " size "+ rbuf.size());
+		// MSocketLogger.getLogger().fine("getInBuffer called  "+ " size "+ rbuf.size());
+		MSocketLogger.getLogger().log(Level.FINE, "getInBuffer called, size {0}", rbuf.size());
 	    int numread = 0;
 	    InBufferStorageChunk curChunk = rbuf.peek();
 	    
@@ -92,8 +95,9 @@ public class InBufferHeapImpl {
 	    {
 		    while( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) >= 0)
 		    {
-		    	MSocketLogger.getLogger().fine("data delete loop "+ rbuf.size() + " dataReadSeq "+ dataReadSeq+
-		    			" curChunk.startSeqNum "+ curChunk.startSeqNum+" curChunk.chunkSize "+curChunk.chunkSize);
+		    	// MSocketLogger.getLogger().fine("data delete loop "+ rbuf.size() + " dataReadSeq "+ dataReadSeq+
+		    	// 		" curChunk.startSeqNum "+ curChunk.startSeqNum+" curChunk.chunkSize "+curChunk.chunkSize);
+		    	MSocketLogger.getLogger().log(Level.FINE,"Data delete loop {0}, dataReadSeq {1}, curChunk.startSeqNum {2}, curChunk.chunkSize {3}.",new Object[]{rbuf.size(),dataReadSeq,curChunk.startSeqNum,curChunk.chunkSize});
 		    	InBufferStorageChunk removed = rbuf.poll();
 		    	removed.chunkData = null;
 		    	removed = null;
@@ -106,8 +110,10 @@ public class InBufferHeapImpl {
 	    
 	    while( rbuf.size()>0 )
 	    {
-	    	MSocketLogger.getLogger().fine("data read loop "+ rbuf.size() + " dataReadSeq "+ dataReadSeq+
-	    			" curChunk.startSeqNum "+ curChunk.startSeqNum+" curChunk.chunkSize "+curChunk.chunkSize);
+	    	// MSocketLogger.getLogger().fine("data read loop "+ rbuf.size() + " dataReadSeq "+ dataReadSeq+
+	    	// 		" curChunk.startSeqNum "+ curChunk.startSeqNum+" curChunk.chunkSize "+curChunk.chunkSize);
+	    	MSocketLogger.getLogger().log(Level.FINE,"Data read loop {0}, dataReadSeq {1}, curChunk.startSeqNum {2}, curChunk.chunkSize {3}.",new Object[]{rbuf.size(),dataReadSeq,curChunk.startSeqNum,curChunk.chunkSize});
+		    	
 	    	curChunk = rbuf.peek();
 	    	
 	    	// inordered data not there
@@ -118,7 +124,8 @@ public class InBufferHeapImpl {
 	    	// inordered data there
 	    	if ( (dataReadSeq - curChunk.startSeqNum >= 0) && ( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) < 0) )
 			{
-				MSocketLogger.getLogger().info("check this line for max value. Its in inbufferheapimplementation line 121");
+				// MSocketLogger.getLogger().info("check this line for max value. Its in inbufferheapimplementation line 121");
+				
 				int srcPos = (int) Math.max(0, dataReadSeq - curChunk.startSeqNum);
 				// FIXME: check for long to int conversion
 				int cpylen = curChunk.chunkSize - srcPos;
@@ -156,7 +163,7 @@ public class InBufferHeapImpl {
 	    	}
 	    }
 	    
-	    MSocketLogger.getLogger().fine("getInBuffer called returned "+numread + " size "+ rbuf.size());
+	    // MSocketLogger.getLogger().fine("getInBuffer called returned "+numread + " size "+ rbuf.size());
 	    
 	    return numread;
 	  }
@@ -192,13 +199,14 @@ public class InBufferHeapImpl {
 	{
 		if(chunkLen > 0)
 		{
-			MSocketLogger.getLogger().fine("copyOrderedDataToAppBuffer: "+" startSeqNum "+startSeqNum+" chunkLen "+chunkLen+
-				" offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
+			// MSocketLogger.getLogger().fine("copyOrderedDataToAppBuffer: "+" startSeqNum "+startSeqNum+" chunkLen "+chunkLen+
+			// 	" offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
+			MSocketLogger.getLogger().log(Level.FINE,"copyOrderedDataToAppBuffer, startSeqNum {0}, chunkLen {1}, offset {2}, appLen {3}, readFromStream[0] {4}", new Object[]{startSeqNum,chunkLen,offset,appLen,readFromStream[0]});
 		}
 		int actualCopied =0;
 		if( (dataReadSeq - startSeqNum >= 0) && (dataReadSeq - (startSeqNum+chunkLen) < 0) )
 		{
-			MSocketLogger.getLogger().info("lookout for the source pos here as well. line number: 201, file: inbufferHeapImpl");
+			// MSocketLogger.getLogger().info("lookout for the source pos here as well. line number: 201, file: inbufferHeapImpl");
 			int srcPos = (int)Math.max(0,dataReadSeq-startSeqNum);
 			//FIXME: check for long to int conversion
 			int cpylen=chunkLen-srcPos;

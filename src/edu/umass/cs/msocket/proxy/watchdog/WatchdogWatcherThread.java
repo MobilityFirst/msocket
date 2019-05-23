@@ -119,7 +119,8 @@ public class WatchdogWatcherThread extends Thread
     {
       refreshFrequencyInMs = gnsClient.fieldReadArray(targetGuid, Constants.TIME_REFRESH_INTERVAL, watchdogGuid).getLong(
           0);
-      logger.info("GUID " + targetGuid + " refreshes every " + refreshFrequencyInMs + " ms");
+      // logger.info("GUID " + targetGuid + " refreshes every " + refreshFrequencyInMs + " ms");
+      logger.log(Level.INFO, " GUID {0}, refreshes every {1} ms", new Object[]{targetGuid, refreshFrequencyInMs});
     }
     catch (Exception e)
     {

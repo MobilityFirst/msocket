@@ -85,20 +85,23 @@ public class ProxyPublisher extends Thread
    */
   public void registerProxyInGns() throws Exception
   {
-    logger.info("Looking for proxy " + proxyName + " GUID and certificates...");
+    // logger.info("Looking for proxy " + proxyName + " GUID and certificates...");
+    logger.log(Level.INFO, "Looking for proxy {0} GUID and certificates...", proxyName);
     GuidEntry myGuid = KeyPairUtils.getGuidEntry(
     		DefaultGNSClient.getDefaultGNSName(), proxyName);
 
     if (myGuid == null)
     {
-      logger.info("No keys found for proxy " + proxyName + ". Generating new GUID and keys");
+      // logger.info("No keys found for proxy " + proxyName + ". Generating new GUID and keys");
+      logger.log(Level.INFO, "No keys found for proxy {0}. Generating new GUID and keys", proxyName);
       GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
     		  (DefaultGNSClient.getGnsClient().getGNSProvider(), 
     				  DefaultGNSClient.getMyGuidEntry(), proxyName));
       
       myGuid = (GuidEntry) commandRes.getResult();
     }
-    logger.info("Proxy has guid " + myGuid.getGuid());
+    // logger.info("Proxy has guid " + myGuid.getGuid());
+    logger.log(Level.INFO," Proxy has guid {0}.", myGuid.getGuid());
 
     // Determine our IP
     String sIp = null;
@@ -117,10 +120,12 @@ public class ProxyPublisher extends Thread
 
     if (sIp == null)
     {
-      logger.warning("Local proxy address (" + proxySocketAddres + ") does not seem to be a public address");
+      // logger.warning("Local proxy address (" + proxySocketAddres + ") does not seem to be a public address");
+      logger.log(Level.WARNING, "Local proxy address ({0}) does not seem to be a public address.", proxySocketAddres);
       try
       {
-        logger.info("Determining local IP");
+        // logger.info("Determining local IP");
+        logger.log(Level.INFO, " Determining local IP");
         // Determine our external IP address by contacting http://icanhazip.com
         URL whatismyip = new URL("http://icanhazip.com");
         in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));

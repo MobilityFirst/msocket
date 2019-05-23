@@ -58,7 +58,8 @@ public class TimerKeepalive extends Thread
   {
     this.guid = myGuid;
     this.publishFrequency = publishFrequency;
-    logger.fine("Publishing start time");
+    // logger.fine("Publishing start time");
+    logger.log(Level.FINE, " Publishing start time.");
     final long now = System.currentTimeMillis();
     
     DefaultGNSClient.getGnsClient().execute
@@ -117,7 +118,8 @@ public class TimerKeepalive extends Thread
     			  ( guid.getGuid(), Constants.CURRENT_TIME,
     	            new JSONArray().put(last), guid) );
     	  
-        logger.fine("Updated current time to " + last);
+        // logger.fine("Updated current time to " + last);
+        logger.log(Level.FINE,"Updated current time to {0}.", last);
       }
       catch (Exception e)
       {

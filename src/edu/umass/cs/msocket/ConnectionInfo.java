@@ -658,6 +658,7 @@ public class ConnectionInfo
         {
           // MSocketLogger.getLogger().fine("Failed to change state to " + msgStr[s] + " from " + msgStr[state]);
           MSocketLogger.getLogger().log(Level.FINE, " failed to change the state");
+
           while (state != ALL_READY)
           {
             try
@@ -833,8 +834,9 @@ public class ConnectionInfo
 
             if (value.getStatus()) // true means active
             {
-              MSocketLogger.getLogger().fine("Socket ID " + value.getSocketIdentifer() + " outstanding bytes "
-                  + value.getOutStandingBytesRatio());
+              // MSocketLogger.getLogger().fine("Socket ID " + value.getSocketIdentifer() + " outstanding bytes "
+                  // + value.getOutStandingBytesRatio());
+              MSocketLogger.getLogger().log(Level.FINE,"Socket ID {0}, outstanding bytes {1}", new Object[]{value.getSocketIdentifer(),value.getOutStandingBytesRatio()});
               if ((minRatio == -1) || (value.getOutStandingBytesRatio() < minRatio))
               {
                 minRatio = value.getOutStandingBytesRatio();
@@ -925,8 +927,8 @@ public class ConnectionInfo
     if (Obj == null) // means no active channels, return;
       return;
 
-    MSocketLogger.getLogger().fine("sendDataAckOnly entered socket ID " + Obj.getSocketIdentifer());
-
+    // MSocketLogger.getLogger().fine("sendDataAckOnly entered socket ID " + Obj.getSocketIdentifer());
+    MSocketLogger.getLogger().log(Level.FINE,"sendDataAckOnly entered socket ID ", Obj.getSocketIdentifer());
     if ((Integer) Obj.queueOperations(SocketInfo.QUEUE_SIZE, null) > 0)
     {
       return;
@@ -969,12 +971,14 @@ public class ConnectionInfo
       {
         Obj.setLastNumBytesRecv();
       }
-      MSocketLogger.getLogger().fine("DATA ACK sent DataAckSeq " + DataAckSeq + " Obj.getRecvdBytes() " + Obj.getRecvdBytes()
-          + " socket ID " + Obj.getSocketIdentifer());
+      // MSocketLogger.getLogger().fine("DATA ACK sent DataAckSeq " + DataAckSeq + " Obj.getRecvdBytes() " + Obj.getRecvdBytes()
+          // + " socket ID " + Obj.getSocketIdentifer());
+      MSocketLogger.getLogger().log(Level.FINE,"DATA ACK sent DataAckSeq {0}, Obj.getRecvdBytes() {1}", new Object[]{DataAckSeq,Obj.getRecvdBytes()});
     }
     catch (IOException ex)
     {
-      MSocketLogger.getLogger().fine("IO exception while sending ACK");
+      // MSocketLogger.getLogger().fine("IO exception while sending ACK");
+      MSocketLogger.getLogger().log(Level.INFO,"IO exception while sending ACK");
     }
   }
 
@@ -1038,7 +1042,8 @@ public class ConnectionInfo
       }
       catch (IOException ex)
       {
-        MSocketLogger.getLogger().fine("read exception caused IOException for socket with Id " + value.getSocketIdentifer());
+        // MSocketLogger.getLogger().fine("read exception caused IOException for socket with Id " + value.getSocketIdentifer());
+        MSocketLogger.getLogger().log(Level.FINE,"Read exception caused IOException for socket with Id ", value.getSocketIdentifer());
         while (!value.acquireLock())
           ;
         value.setStatus(false);
@@ -1060,9 +1065,9 @@ public class ConnectionInfo
             catch (IOException e)
             {
               e.printStackTrace();
-              MSocketLogger.getLogger().fine("HandleMigrationInMultiPath  read exception caused IOException for socket with Id "
-                  + value.getSocketIdentifer());
-
+              // MSocketLogger.getLogger().fine("HandleMigrationInMultiPath  read exception caused IOException for socket with Id "
+                  // + value.getSocketIdentifer());
+              MSocketLogger.getLogger().log(Level.FINE, "HandleMigrationInMultiPath  read exception caused IOException for socket with Id {0}",value.getSocketIdentifer());
               Obj.setStatus(false);
               Obj.setneedToReqeustACK(true);
             }
@@ -1097,7 +1102,8 @@ public class ConnectionInfo
       
       if (getMSocketState() == MSocketConstants.CLOSED)
       {
-        MSocketLogger.getLogger().fine("close message recvd");
+        // MSocketLogger.getLogger().fine("close message recvd");
+        MSocketLogger.getLogger().log(Level.FINE,"Close message received.");
         break;
       }
     }
@@ -1148,7 +1154,8 @@ public class ConnectionInfo
 
     if(this.getServerOrClient() == MSocketConstants.SERVER)
     {
-    	MSocketLogger.getLogger().fine("multiSocketRead happening");
+    	// MSocketLogger.getLogger().fine("multiSocketRead happening");
+      MSocketLogger.getLogger().log(Level.FINE,"multiSocketRead happening");
     }
     Vector<SocketInfo> vect = new Vector<SocketInfo>();
     vect.addAll(getAllSocketInfo());
@@ -1178,7 +1185,7 @@ public class ConnectionInfo
             {
               long ssrStart = System.currentTimeMillis();
               retObject = singleSocketRead(value, b, offset, length);
-              MSocketLogger.getLogger().info("This is the type of read "  +Integer.toString(retObject.typeOfRead));
+              // MSocketLogger.getLogger().info("This is the type of read "  +Integer.toString(retObject.typeOfRead));
 
               long ssrEnd = System.currentTimeMillis();
               MSocketInstrumenter.addSingleSocketReadSample((ssrEnd - ssrStart));
@@ -1186,8 +1193,8 @@ public class ConnectionInfo
               if (retObject.numBytesRead > 0)
               {
             	  if(this.getServerOrClient() == MSocketConstants.SERVER)
-            		  MSocketLogger.getLogger().fine("data read from socket id " + value.getSocketIdentifer() + " read " + retObject.numBytesRead);
-                
+            		  // MSocketLogger.getLogger().fine("data read from socket id " + value.getSocketIdentifer() + " read " + retObject.numBytesRead);
+                  MSocketLogger.getLogger().log(Level.FINE,"Data read from socket id {0}, bytes read {1}.", new Object[]{value.getSocketIdentifer(),retObject.numBytesRead});
             	MSocketInstrumenter.updateSocketReads(retObject.numBytesRead, value.getSocketIdentifer());
                 acksend = true;
                 value.updateRecvdBytes(retObject.numBytesRead);
@@ -1225,8 +1232,8 @@ public class ConnectionInfo
           else
           {
         	if(this.getServerOrClient() == MSocketConstants.SERVER)
-        		MSocketLogger.getLogger().fine("multisocket read in else case.");
-        	
+        		// MSocketLogger.getLogger().fine("multisocket read in else case.");
+        	 MSocketLogger.getLogger().log(Level.FINE,"Multisocket read in the case where bytes were not read to the appbuffer");
             int ret = 0;
             boolean acksend = false;
             do
@@ -1261,7 +1268,8 @@ public class ConnectionInfo
       }
       catch (IOException ex)
       {
-        MSocketLogger.getLogger().fine("read exception caused IOException for socket with Id " + value.getSocketIdentifer());
+        // MSocketLogger.getLogger().fine("read exception caused IOException for socket with Id " + value.getSocketIdentifer());
+        MSocketLogger.getLogger().log(Level.FINE,"Read exception caused IOException for sockett with ID {0}", value.getSocketIdentifer());
         while (!value.acquireLock())
           ;
         value.setStatus(false);

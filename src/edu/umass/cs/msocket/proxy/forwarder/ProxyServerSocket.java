@@ -34,6 +34,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -215,8 +216,8 @@ public class ProxyServerSocket extends ServerSocket
     {
       // read and service request on socket
       // FIXME: check for how to handle exceptions here
-      MSocketLogger.getLogger().fine("new connection accepted by socket channel");
-
+      // MSocketLogger.getLogger().fine("new connection accepted by socket channel");
+      MSocketLogger.getLogger().log(Level.FINE, "New connection accepted by socket channel.");
       ProxyMSocket ms = null;
       try
       {
@@ -231,8 +232,8 @@ public class ProxyServerSocket extends ServerSocket
         // transitoion into all ready state as well
       }
 
-      MSocketLogger.getLogger().fine("Accepted connection from " + ms.getInetAddress() + ":" + ms.getPort());
-
+      // MSocketLogger.getLogger().fine("Accepted connection from " + ms.getInetAddress() + ":" + ms.getPort());
+      MSocketLogger.getLogger().log(Level.FINE,"Accepted connection from {0}:{1}.", new Object[]{ms.getInetAddress(),ms.getPort()});
       AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.PUT, ms);
       synchronized (monitor)
       {
@@ -244,7 +245,8 @@ public class ProxyServerSocket extends ServerSocket
 
   private void BlockForAccept()
   {
-    MSocketLogger.getLogger().fine("accept called");
+    // MSocketLogger.getLogger().fine("accept called");
+    MSocketLogger.getLogger().log(Level.FINE, " Accept Called");
     synchronized (monitor)
     {
       while ((Integer) AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.GET_SIZE, null) == 0)
@@ -259,7 +261,8 @@ public class ProxyServerSocket extends ServerSocket
         }
       }
     }
-    MSocketLogger.getLogger().fine("new connection socket ready");
+    // MSocketLogger.getLogger().fine("new connection socket ready");
+    MSocketLogger.getLogger().log(Level.FINE, "New connection socket ready");
   }
 
   /**
@@ -329,7 +332,8 @@ public class ProxyServerSocket extends ServerSocket
             }
             else
             {
-              MSocketLogger.getLogger().fine("Interface IP " + IP);
+              // MSocketLogger.getLogger().fine("Interface IP " + IP);
+              MSocketLogger.getLogger().log(Level.FINE, "Interface IP {0}.", IP);
               CurrentInterfaceIPs.add(inetAddress);
             }
           }

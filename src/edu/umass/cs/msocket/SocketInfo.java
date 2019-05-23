@@ -27,6 +27,7 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
@@ -311,7 +312,8 @@ public class SocketInfo
   public synchronized void setStatus(boolean status)
   {
     active = status;
-    MSocketLogger.getLogger().fine("inside set status");
+    // MSocketLogger.getLogger().fine("inside set status");
+    MSocketLogger.getLogger().log(Level.FINE, "Inside set status");
     if (status == false)
     {
       try
@@ -322,7 +324,8 @@ public class SocketInfo
       catch (Exception ex)
       {
         ex.printStackTrace();
-        MSocketLogger.getLogger().fine("exceptio in closing during status set");
+        // MSocketLogger.getLogger().fine("exceptio in closing during status set");
+        MSocketLogger.getLogger().log(Level.FINE, "Exception in closing during status set");
       }
     }
   }
@@ -384,7 +387,8 @@ public class SocketInfo
   public synchronized void updateSentBytes(long toBeAdded)
   {
     numBytesSent += toBeAdded;
-    MSocketLogger.getLogger().fine("SentBytes Updated " + numBytesSent + " SocketID " + SocketIdentifier);
+    // MSocketLogger.getLogger().fine("SentBytes Updated " + numBytesSent + " SocketID " + SocketIdentifier);
+    MSocketLogger.getLogger().log(Level.FINE, "SentBytes Updated {0} SocketID {1}.", new Object[]{numBytesSent, SocketIdentifier});
   }
 
   public synchronized void updateRecvdBytes(long toBeAdded)

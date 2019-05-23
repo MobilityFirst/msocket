@@ -79,30 +79,32 @@ public class LocationService extends Thread
    */
   public void registerLocationServiceInGns() throws Exception
   {
-    logger.info("Looking for location service " + locationServiceName + " GUID and certificates...");
+    // logger.info("Looking for location service " + locationServiceName + " GUID and certificates...");
+    logger.log(Level.INFO," Looking for location service {0} GUID and certificates...", locationServiceName);
     GuidEntry locationServiceGuid = KeyPairUtils.getGuidEntry(
     		DefaultGNSClient.getDefaultGNSName(), locationServiceName);
 
     if (locationServiceGuid == null)
     {
-      logger.info("No keys found for location service " + locationServiceName 
-    		  + ". Generating new GUID and keys");
-      
+      // logger.info("No keys found for location service " + locationServiceName 
+    		//   + ". Generating new GUID and keys");
+      logger.log(Level.INFO, "No keys found for location service {0}. Generating new GUID and keys.", locationServiceName);
       GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
     		  (DefaultGNSClient.getGnsClient().getGNSProvider(), 
     				  DefaultGNSClient.getMyGuidEntry(), locationServiceName));
       
       locationServiceGuid = (GuidEntry) commandRes.getResult();
     }
-    logger.info("We are guid " + locationServiceGuid.getGuid());
-    
+    // logger.info("We are guid " + locationServiceGuid.getGuid());
+    logger.log(Level.INFO, " We are guid {0}.", locationServiceGuid.getGuid());
 
     // Determine our IP
     String sIp = null;
     BufferedReader in;
     try
     {
-      logger.info("Determining public IP");
+      // logger.info("Determining public IP");
+      logger.log(Level.INFO, " Determining public IP");
       // Determine our external IP address by contacting http://icanhazip.com
       URL whatismyip = new URL("http://icanhazip.com");
       in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
@@ -164,6 +166,7 @@ public class LocationService extends Thread
     catch (Exception e)
     {
       logger.log(Level.WARNING, "Failed to locate IP address " + e);
+
     }
     
     GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(
@@ -247,7 +250,8 @@ public class LocationService extends Thread
 
         // Publish location service IP in the GNS
         final String ipPort = locationServiceInfo.getIpAddress() + ":" + ss.getLocalPort();
-        logger.info("Publishing Location service IP (" + ipPort + ") in GNS.");
+        // logger.info("Publishing Location service IP (" + ipPort + ") in GNS.");
+        logger.log(Level.INFO, " Publishing Location service IP ({0}) in GNS.", ipPort);
         //final GuidEntry guidEntry = gnsCredentials.getGuidEntry();
         
         

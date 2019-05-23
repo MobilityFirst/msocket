@@ -124,7 +124,8 @@ public class WatchdogListScanner extends Thread
       last = System.currentTimeMillis();
       try
       {
-        logger.fine("Fetching " + listName);
+        // logger.fine("Fetching " + listName);
+        logger.log(Level.FINE, " Fetching {0}", listName);
         JSONArray guids = gnsClient.fieldReadArray(targetGuid, listName, watchdogGuid);
         // Duplicate the list in a friendly format
         List<String> newList = new LinkedList<String>();
@@ -139,7 +140,8 @@ public class WatchdogListScanner extends Thread
         {
           if (!guidList.contains(guid))
           {
-            logger.fine("Found new guid " + guid + " in list " + listName);
+            // logger.fine("Found new guid " + guid + " in list " + listName);
+            logger.log(Level.FINE, "Found new guid {0} in list {1}", new Object[]{guid, listName});
             guidList.add(guid);
             // Notify callbacks
             for (MembershipChangeCallback callback : callbacks)
@@ -153,7 +155,8 @@ public class WatchdogListScanner extends Thread
         {
           if (!newList.contains(guid))
           {
-            logger.fine(guid + " is no more in list " + listName);
+            // logger.fine(guid + " is no more in list " + listName);
+            logger.log(Level.FINE, "{0} is no longer in the list {1}.", new Object[]{guid, listName});
             // Notify callbacks
             for (MembershipChangeCallback callback : callbacks)
             {

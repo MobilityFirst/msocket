@@ -138,7 +138,8 @@ public class Watchdog extends Thread implements MembershipChangeCallback, Status
   @Override
   public void statusChanged(String guid, ServiceStatus oldStatus, ServiceStatus newStatus)
   {
-    logger.info("GUID " + guid + ": Status changed from " + oldStatus + " to " + newStatus);
+    // logger.info("GUID " + guid + ": Status changed from " + oldStatus + " to " + newStatus);
+    logger.log(Level.INFO, " GUID {0}: Status changed from {1} to {2}.", new Object[]{guid,oldStatus,newStatus});
     try
     {
       // Remove from the old list
