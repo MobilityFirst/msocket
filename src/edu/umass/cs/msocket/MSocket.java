@@ -38,7 +38,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.gns.Integration;
 import edu.umass.cs.msocket.logger.MSocketLogger;
@@ -214,7 +214,8 @@ public class MSocket extends Socket implements MultipathInterface
 		  }
 		  catch (Exception ex)
 		  {
-			  MSocketLogger.getLogger().fine(ex.getMessage());
+			  // MSocketLogger.getLogger().fine(ex.getMessage());
+        MSocketLogger.getLogger().log(Level.FINE,"{0}", ex.getMessage());
 		    //ex.printStackTrace();
 		    connectSucc = false;
 		  }
@@ -264,10 +265,12 @@ public class MSocket extends Socket implements MultipathInterface
 		
 		if(fp == null)
 		{
-			MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+			// MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+      MSocketLogger.getLogger().log(Level.FINE,"addFlowPath failed {0}", localBindAdd);
 		} else
 		{
-			MSocketLogger.getLogger().fine("addFlowPath succeded"+localBindAdd);
+			// MSocketLogger.getLogger().fine("addFlowPath succeeded"+localBindAdd);
+      MSocketLogger.getLogger().log(Level.FINE,"addFlowPath succeeded {0}", localBindAdd);
 		}
 	}
   }
@@ -298,10 +301,12 @@ public class MSocket extends Socket implements MultipathInterface
 		
 		if(fp == null)
 		{
-			MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+			// MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+      MSocketLogger.getLogger().log(Level.FINE,"addFlowPath failed {0}", localBindAdd);
 		} else
 		{
-			MSocketLogger.getLogger().fine("addFlowPath succeded"+localBindAdd);
+			// MSocketLogger.getLogger().fine("addFlowPath succeded"+localBindAdd);
+      MSocketLogger.getLogger().log(Level.FINE,"addFlowPath succeded {0}", localBindAdd);
 		}
 	}
   }
@@ -351,6 +356,7 @@ public class MSocket extends Socket implements MultipathInterface
   public MSocket(Proxy proxy)
   {
 	  throw new UnsupportedOperationException("Constructor not supported by MSocket");
+
   }
   
   /**
@@ -425,10 +431,12 @@ public class MSocket extends Socket implements MultipathInterface
     	  connectionInfo.setMSocketState(MSocketConstants.LAST_ACK);
       }
 
-      MSocketLogger.getLogger().fine("close() called");
+      // MSocketLogger.getLogger().fine("close() called");
+      MSocketLogger.getLogger().log(Level.FINE,"close() called");
       sendCloseControlmesg();
-      MSocketLogger.getLogger().fine("sendCloseControlmesg() done MSocket state " 
-    		  		+ connectionInfo.getMSocketState());
+      // MSocketLogger.getLogger().fine("sendCloseControlmesg() done MSocket state " 
+    		  		// + connectionInfo.getMSocketState());
+      MSocketLogger.getLogger().log(Level.FINE,"sendCloseControlmesg() done MSocket state {0}.",connectionInfo.getMSocketState());
 
       while (connectionInfo.getMSocketState() != MSocketConstants.CLOSED)
       {
@@ -454,10 +462,11 @@ public class MSocket extends Socket implements MultipathInterface
         	connectionInfo.setState(ConnectionInfo.ALL_READY, true);
           if (connectionInfo.getMSocketState() != MSocketConstants.CLOSED)
           {
-            MSocketLogger.getLogger().fine("Exception during recv ACV, "
-            		+ "trying again, state changed to "
-                + "ALL_READY for migration to happen. cinfo.getMSocketState() " 
-            		+ connectionInfo.getMSocketState());
+            // MSocketLogger.getLogger().fine("Exception during recv ACV, "
+            		// + "trying again, state changed to "
+                // + "ALL_READY for migration to happen. cinfo.getMSocketState() " 
+            		// + connectionInfo.getMSocketState());
+            MSocketLogger.getLogger().log(Level.FINE,"Exception during recv ACV,trying again, state changed to ALL_READY for migration to happen. cinfo.getMSocketState(): {0}",connectionInfo.getMSocketState());
             ex.printStackTrace();
           }
 
@@ -497,10 +506,11 @@ public class MSocket extends Socket implements MultipathInterface
 	    int typeOfCon = MSocketConstants.CON_TO_IP;
 	    
 	
-	    MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
-	    	+ ":" + socket.getPort() + " - local port "
-	        + socket.getLocalPort() + " - local IP " 
-	    	+ socket.getLocalAddress());
+	    // MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
+	    	// + ":" + socket.getPort() + " - local port "
+	        // + socket.getLocalPort() + " - local IP " 
+	    	// + socket.getLocalAddress());
+      MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} - LocalPort: {2} -LocalIP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
 	    setupControlClient("", serverIP, serverPort, typeOfCon, "", 
 	    		legacyChannel, socket, connectTime);
 	
@@ -1155,9 +1165,9 @@ public class MSocket extends Socket implements MultipathInterface
     //bind(new InetSocketAddress(Interfaces.get(1 % Interfaces.size()), 0));
     bind(new InetSocketAddress(localIP, localPort));
 
-    MSocketLogger.getLogger().fine("connecting to server " 
-    				+ new InetSocketAddress(serverIP, serverPort));
-
+    // MSocketLogger.getLogger().fine("connecting to server " 
+    				// + new InetSocketAddress(serverIP, serverPort));
+    MSocketLogger.getLogger().log(Level.FINE,"connecting to server {0}", new InetSocketAddress(serverIP, serverPort));
     long connectStart = System.currentTimeMillis();
     legacyChannel.connect(new InetSocketAddress(serverIP, serverPort));
     while (!legacyChannel.finishConnect())
@@ -1167,9 +1177,10 @@ public class MSocket extends Socket implements MultipathInterface
 
     Socket socket = legacyChannel.socket();
 
-    MSocketLogger.getLogger().fine("Connected to server at " 
-    			+ socket.getInetAddress() + ":" + socket.getPort() + "local port "
-        + socket.getLocalPort() + "local IP " + socket.getLocalAddress());
+    // MSocketLogger.getLogger().fine("Connected to server at " 
+    			// + socket.getInetAddress() + ":" + socket.getPort() + "local port "
+        // + socket.getLocalPort() + "local IP " + socket.getLocalAddress());
+    MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} -Local Port: {2} -Local IP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
     setupControlClient(serverAlias, serverIP, serverPort, typeOfCon, stringGUID, legacyChannel, socket,
         connectTime);
 
@@ -1218,7 +1229,8 @@ public class MSocket extends Socket implements MultipathInterface
 
     if (UDPControllerPort == -1)
     {
-      MSocketLogger.getLogger().fine("New connection UDPControllerPort " + UDPControllerPort);
+      // MSocketLogger.getLogger().fine("New connection UDPControllerPort " + UDPControllerPort);
+      MSocketLogger.getLogger().log(Level.FINE,"New connection UDPControllerPort {0}.",UDPControllerPort);
     }
 
     SetupControlMessage scm = null;
@@ -1226,9 +1238,11 @@ public class MSocket extends Socket implements MultipathInterface
 
     if (stringGUID.length() > 0)
     {
-      MSocketLogger.getLogger().fine("serverGuid: " + stringGUID);
+      // MSocketLogger.getLogger().fine("serverGuid: " + stringGUID);
+      MSocketLogger.getLogger().log(Level.FINE,"serverGuid: {0}", stringGUID);
       GUID = CommonMethods.hexStringToByteArray(stringGUID);
-      MSocketLogger.getLogger().fine("GUID to be sent: " + GUID + " length " + GUID.length);
+      // MSocketLogger.getLogger().fine("GUID to be sent: " + GUID + " length " + GUID.length);
+      MSocketLogger.getLogger().log(Level.FINE,"GUID to be sent {0}, length {1}.",new Object[]{GUID,GUID.length});
     }
 
     SetupControlMessage.setupControlWrite(controllerIP, localConnID, 
@@ -1242,7 +1256,8 @@ public class MSocket extends Socket implements MultipathInterface
     {
       // flowID is computed as average of both proposals for new connections
       long connID = (localConnID + scm.connID) / 2;
-      MSocketLogger.getLogger().fine("Created new flow ID " + connID);
+      // MSocketLogger.getLogger().fine("Created new flow ID " + connID);
+      MSocketLogger.getLogger().log(Level.FINE,"Created new flow ID {0}.", connID);
 
       connectionInfo = new ConnectionInfo(connID, null);
 
@@ -1382,9 +1397,11 @@ public class MSocket extends Socket implements MultipathInterface
     int typeOfCon = MSocketConstants.CON_TO_IP;
     int numberOfSockets = numSockets;
 
-    MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
-    	+ ":" + socket.getPort() + " - local port "
-        + socket.getLocalPort() + " - local IP " + socket.getLocalAddress());
+    // MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
+    	// + ":" + socket.getPort() + " - local port "
+        // + socket.getLocalPort() + " - local IP " + socket.getLocalAddress());
+    MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} -Local Port: {2} -Local IP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
+    
     setupControlClient("", serverIP, serverPort, typeOfCon, "", legacyChannel, 
     		socket, connectTime);
 
