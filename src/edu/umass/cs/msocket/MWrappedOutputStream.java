@@ -32,7 +32,7 @@ import edu.umass.cs.msocket.common.policies.MultipathWritingPolicy;
 import edu.umass.cs.msocket.common.policies.RTTBasedWritingPolicy;
 import edu.umass.cs.msocket.common.policies.RoundRobinWritingPolicy;
 import edu.umass.cs.msocket.logger.MSocketLogger;
-
+import java.util.logging.Level;
 /**
  * This class implements the Output stream of the MSocket
  * 
@@ -141,7 +141,8 @@ public class MWrappedOutputStream extends OutputStream
     {
       {
         cinfo.addOutBuffer(b, offset, length); // first write to outbuffer
-        MSocketLogger.getLogger().fine("write " + b[0]);
+        // MSocketLogger.getLogger().fine("write " + b[0]);
+        MSocketLogger.getLogger().log(Level.FINE, "Write buff[0]: {0}", b[0]);
       }
     }
     else
@@ -156,8 +157,9 @@ public class MWrappedOutputStream extends OutputStream
 
     try
     {
-      MSocketLogger.getLogger().fine("message here length " + length + " dataAckSeq " + cinfo.getDataAckSeq() + "send seq num "
-          + cinfo.getDataSendSeq());
+      // MSocketLogger.getLogger().fine("message here length " + length + " dataAckSeq " + cinfo.getDataAckSeq() + "send seq num "
+          // + cinfo.getDataSendSeq());
+      MSocketLogger.getLogger().log(Level.FINE, "length of the message: {0}, dataAckSeq: {1}, SendSeqNum: {2}", new Object[]{length,cinfo.getDataAckSeq(), cinfo.getDataSendSeq()});
       writeInternal(b, offset, length, MesgType);
       cinfo.setState(ConnectionInfo.ALL_READY, true);
       cinfo.setblockingFlag(false);
@@ -165,8 +167,8 @@ public class MWrappedOutputStream extends OutputStream
     catch (IOException e)
     {
       cinfo.setState(ConnectionInfo.ALL_READY, true);
-      MSocketLogger.getLogger().fine("IOException blocking starts");
-
+      // MSocketLogger.getLogger().fine("IOException blocking starts");
+      MSocketLogger.getLogger().log(Level.FINE, "IOException blocking starts");
       synchronized (cinfo.getBlockingFlagMonitor())
       {
         while (cinfo.getblockingFlag() && (cinfo.getMSocketState() == MSocketConstants.ACTIVE))
@@ -189,7 +191,8 @@ public class MWrappedOutputStream extends OutputStream
         throw new IOException(" socket already closed");
       }
 
-      MSocketLogger.getLogger().fine("IOException blocking ends");
+      // MSocketLogger.getLogger().fine("IOException blocking ends");
+      MSocketLogger.getLogger().log(Level.FINE,"IOException blocking ends");
       // assuming rensendIfNeeded sends the data missed here
     }
     // FIXME; need to check with migration scenario
@@ -269,7 +272,8 @@ public class MWrappedOutputStream extends OutputStream
               // at receiving side, recevier will take care of redundantly
               // received data
 
-              MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + " for writing FIN");
+              // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + " for writing FIN");
+              MSocketLogger.getLogger().log(Level.FINE, "Using socketID {0} for writing FIN.", Obj.getSocketIdentifer());
               ByteBuffer writeByBuff = ByteBuffer.wrap(writebuf);
 
               while (writeByBuff.hasRemaining())
@@ -283,7 +287,8 @@ public class MWrappedOutputStream extends OutputStream
             }
             catch (IOException ex)
             {
-              MSocketLogger.getLogger().fine("Write exception caused on writing FIN");
+              // MSocketLogger.getLogger().fine("Write exception caused on writing FIN");
+              MSocketLogger.getLogger().log(Level.FINE, "Write exception caused on writing FIN");
               Obj.setStatus(false);
               FINSuccessful = false;
               Obj.releaseLock();
