@@ -24,7 +24,7 @@ package edu.umass.cs.msocket.common.policies;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Vector;
-
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.DataMessage;
@@ -143,7 +143,8 @@ public class FullDuplicationWritingPolicy extends MultipathWritingPolicy
 		        }
 		        catch (IOException ex)
 		        {
-		          MSocketLogger.getLogger().fine("Write exception caused");
+		          // MSocketLogger.getLogger().fine("Write exception caused");
+		          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
 		          sockObj1.setStatus(false);
 		          sockObj1.setneedToReqeustACK(true);
 
@@ -205,7 +206,8 @@ public class FullDuplicationWritingPolicy extends MultipathWritingPolicy
 		        }
 		        catch (IOException ex)
 		        {
-		          MSocketLogger.getLogger().fine("Write exception caused");
+		          // MSocketLogger.getLogger().fine("Write exception caused");
+		          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
 		          sockObj2.setStatus(false);
 		          sockObj2.setneedToReqeustACK(true);
 

@@ -24,7 +24,7 @@ package edu.umass.cs.msocket.common.policies;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.MWrappedOutputStream;
 import edu.umass.cs.msocket.logger.MSocketLogger;
@@ -49,8 +49,9 @@ public class RoundRobinMultipathScheduler extends MultipathSchedulerInterface
 	public void initializeScheduler(int startSeqNum, int numChunks,
 			List<Integer> activePathIDs)
 	{
-		MSocketLogger.getLogger().fine("initializeScheduler(): result startSeqNum " + startSeqNum +
-				" numChunks "+numChunks);
+		// MSocketLogger.getLogger().fine("initializeScheduler(): result startSeqNum " + startSeqNum +
+				// " numChunks "+numChunks);
+		MSocketLogger.getLogger().log(Level.FINE,"InitializeScheduler() result: startSeqNum: {0}, numChunks: {1}", new Object[]{startSeqNum,numChunks});
 		this.startSeqNum = startSeqNum;
 		this.numChunks = numChunks;
 		this.activePathIDs = activePathIDs;
@@ -69,8 +70,9 @@ public class RoundRobinMultipathScheduler extends MultipathSchedulerInterface
 			
 			ChunkInformation chunkInfo = new ChunkInformation(tempStartSeqNum, nextPathId, 0);
 			//chunkInfoMap.put(tempStartSeqNum, chunkInfo);
-			MSocketLogger.getLogger().fine("getSchedulingScheme(): result tempStartSeqNum "+tempStartSeqNum+
-					" favoritePathId "+nextPathId);
+			// MSocketLogger.getLogger().fine("getSchedulingScheme(): result tempStartSeqNum "+tempStartSeqNum+
+					// " favoritePathId "+nextPathId);
+			MSocketLogger.getLogger().log(Level.FINE,"getSchedulingScheme(): result tempStartSeqNum {0}, favoritePathId {1}.", new Object[]{tempStartSeqNum,nextPathId});
 			tempStartSeqNum  += MWrappedOutputStream.WRITE_CHUNK_SIZE;
 			result.add(chunkInfo);
 		}

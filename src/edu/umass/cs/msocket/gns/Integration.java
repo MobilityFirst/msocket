@@ -29,7 +29,7 @@ import java.security.KeyPair;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -72,13 +72,13 @@ public class Integration
   {
 	try
 	{
-	    MSocketLogger.getLogger().fine("Looking for entity " + name + " GUID and certificates...");
-	
+	    // MSocketLogger.getLogger().fine("Looking for entity " + name + " GUID and certificates...");
+		MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", name);
 	    GuidEntry myGuid = KeyPairUtils.getGuidEntry(DefaultGNSClient.getDefaultGNSName(), name);
 	    
 	    if (myGuid == null)
 	    {
-	        System.out.println("No keys found for service " + name + ". Generating new GUID and keys");
+	        // System.out.println("No keys found for service " + name + ". Generating new GUID and keys");
 	        // Create a new GUID
 	        
 	        GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
@@ -103,7 +103,8 @@ public class Integration
 	
 	     // Put the IP address in the GNS
 	     String ipPort = saddr.getAddress().getHostAddress() + ":" + saddr.getPort();
-	     MSocketLogger.getLogger().fine("Updating " + Constants.SERVER_REG_ADDR + " GNSValue " + ipPort);
+	     // MSocketLogger.getLogger().fine("Updating " + Constants.SERVER_REG_ADDR + " GNSValue " + ipPort);
+	     MSocketLogger.getLogger().log(Level.FINE,"Updating {0}, GNSValue: {1}", new Object[]{Constants.SERVER_REG_ADDR,ipPort});
 	     
 	     
 	     DefaultGNSClient.getGnsClient().execute(GNSCommand.fieldReplaceOrCreateList
@@ -137,13 +138,15 @@ public class Integration
   {
 	 try
 	 {
-	    MSocketLogger.getLogger().fine("Retrieving IP of " + name);
+	    // MSocketLogger.getLogger().fine("Retrieving IP of " + name);
+	    MSocketLogger.getLogger().log(Level.FINE,"Retrieving IP of {0}", name);
 	    
 	    JSONArray resultArray;
 	    
 	    GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.lookupGUID(name));
 		String guidString = commandRes.getResultString();
-		MSocketLogger.getLogger().fine("GUID lookup " + guidString);
+		// MSocketLogger.getLogger().fine("GUID lookup " + guidString);
+		MSocketLogger.getLogger().log(Level.FINE,"GUID lookup {0}", guidString);
 		    
 		// Read from the GNS
 		commandRes = DefaultGNSClient.getGnsClient().execute
@@ -169,7 +172,8 @@ public class Integration
 	    for (int i = 0; i < resultArray.length(); i++)
 	    {
 	      String str = resultArray.getString(i);
-	      MSocketLogger.getLogger().fine("Value returned from GNS " + str);
+	      // MSocketLogger.getLogger().fine("Value returned from GNS " + str);
+	      MSocketLogger.getLogger().log(Level.FINE,"Value returned from GNS {0}", str);
 	      String[] Parsed = str.split(":");
 	      InetSocketAddress socketAddress = new InetSocketAddress(Parsed[0], Integer.parseInt(Parsed[1]));
 	      resultVector.add(socketAddress);
@@ -212,7 +216,8 @@ public class Integration
 	    	}
 	    }
 	    
-	    MSocketLogger.getLogger().fine("All fields cleared from GNS for MServerSocket " + name);
+	    // MSocketLogger.getLogger().fine("All fields cleared from GNS for MServerSocket " + name);
+	    MSocketLogger.getLogger().log(Level.FINE,"All fields cleared from GNS for MServerSocket {0}", name);
 	} catch(Exception ex)
 	{
 		ex.printStackTrace();

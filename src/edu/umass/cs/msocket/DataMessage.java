@@ -24,7 +24,7 @@ package edu.umass.cs.msocket;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -125,7 +125,8 @@ public class DataMessage
     	buf.put(msg, arrayCopyOffset, length);
     	if(length>0)
     	{
-    		MSocketLogger.getLogger().fine("DataMessage: msg[0] "+msg[0]);
+    		// MSocketLogger.getLogger().fine("DataMessage: msg[0] "+msg[0]);
+        MSocketLogger.getLogger().log(Level.FINE,"DataMessage msg[0]: {1}", msg[0]);
     	}
       }
     buf.flip();
@@ -170,6 +171,6 @@ public class DataMessage
 
     DataMessage dec = DataMessage.getDataMessage(enc);
     enc[11] = 98;
-    MSocketLogger.getLogger().fine(dec.toString());
+    // MSocketLogger.getLogger().fine(dec.toString());
   }
 }

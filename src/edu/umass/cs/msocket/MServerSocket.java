@@ -34,13 +34,14 @@ import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.common.proxy.policies.NoProxyPolicy;
 import edu.umass.cs.msocket.common.proxy.policies.ProxySelectionPolicy;
@@ -241,8 +242,9 @@ public class MServerSocket extends ServerSocket
         }
         catch (final TimeoutException e)
         {
-          SocketTimeoutException ste = new SocketTimeoutException("socket time out exception");
-          throw ste;
+          // SocketTimeoutException ste = new SocketTimeoutException("socket time out exception");
+          MSocketLogger.getLogger().log(Level.FINE, "socket time out exception");
+          e.printStackTrace();
           // Took too long!
         }
         catch (final ExecutionException e)
@@ -283,8 +285,9 @@ public class MServerSocket extends ServerSocket
 	    }
 	    catch (Exception e)
 	    {
-	    	MSocketLogger.getLogger().fine("Failed to unregister server socket " + getServerName() + " from GNS"+ e.getMessage());
-	    }
+	    	// MSocketLogger.getLogger().fine("Failed to unregister server socket " + getServerName() + " from GNS"+ e.getMessage());
+	       MSocketLogger.getLogger().log(Level.FINE,"Failed to unregister server socket {0} from GNS {1}.", new Object[]{getServerName(),e.getMessage()});
+      }
     }
 
     isClosed = true;
@@ -308,6 +311,7 @@ public class MServerSocket extends ServerSocket
   {
     if (isBound)
       throw new IOException("MServerSocket already bound");
+
     
     initializeServerSocket(serverName, new NoProxyPolicy(), endpoint, backlog);
   }
@@ -358,7 +362,8 @@ public class MServerSocket extends ServerSocket
 	    	}
 	    	catch (Exception ex)
 	    	{
-	    		MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+	    		// MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+          MSocketLogger.getLogger().log(Level.FINE, "registration with GNS failed {0}.", ex);
 	    		//ex.printStackTrace();
 	    	}
 	    }
@@ -566,7 +571,8 @@ public class MServerSocket extends ServerSocket
         for (int i = 0; i < vect.size(); i++)
         {
           ProxyInfo Obj = vect.get(i);
-          MSocketLogger.getLogger().fine("removing proxy " + Obj.getProxyInfo());
+          // MSocketLogger.getLogger().fine("removing proxy " + Obj.getProxyInfo());
+          MSocketLogger.getLogger().log(Level.FINE,"Removing proxy {0}.", Obj.getProxyInfo());
           try
           {
         	  controller.getProxyConnObj().removeProxy(Obj.getProxyInfo(), Obj);
@@ -624,7 +630,8 @@ public class MServerSocket extends ServerSocket
 		      }
 		      catch (Exception ex)
 		      {
-		        MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+		        // MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+            MSocketLogger.getLogger().log(Level.FINE,"registration with GNS failed {0}.", ex);
 		        ex.printStackTrace();
 		      }
 	      }
@@ -632,7 +639,8 @@ public class MServerSocket extends ServerSocket
         controller.initMigrateChildren(localAddress, serverListeningPort, UDPPort);
       }
 
-      MSocketLogger.getLogger().fine("MServerSocket new UDP port of server " + UDPPort);
+      // MSocketLogger.getLogger().fine("MServerSocket new UDP port of server " + UDPPort);
+      MSocketLogger.getLogger().log(Level.FINE,"MServerSocket new UDP port of server {0}",UDPPort );
     }
   }
   
@@ -683,7 +691,8 @@ public class MServerSocket extends ServerSocket
 	    	}
 	    	catch(IOException ex)
 	    	{
-	    			MSocketLogger.getLogger().fine("Unregister failed, contuining to register");
+	    			// MSocketLogger.getLogger().fine("Unregister failed, contuining to register");
+            MSocketLogger.getLogger().log(Level.FINE,"Unregister failed, contuining to register");
 	    			ex.printStackTrace();
 	    	}
 	      boolean firstTime = true;
@@ -706,7 +715,8 @@ public class MServerSocket extends ServerSocket
 	        }
 	        
 	        ProxyInfo proxyInfo = new ProxyInfo(retProxy.getHostName(), retProxy.getPort());
-	        MSocketLogger.getLogger().fine("proxy host name "+retProxy.getHostName() +" port "+retProxy.getPort());
+	        // MSocketLogger.getLogger().fine("proxy host name "+retProxy.getHostName() +" port "+retProxy.getPort());
+          MSocketLogger.getLogger().log(Level.FINE,"Proxy host name {0}, port: {1}", new Object[]{retProxy.getHostName(),retProxy.getPort()});
 	        proxyInfo.setActive(true);
 	        controller.getProxyConnObj().addProxy(proxyInfo.getProxyInfo(), proxyInfo);
 	      }
@@ -723,7 +733,8 @@ public class MServerSocket extends ServerSocket
 		      }
 		      catch (Exception ex)
 		      {
-		        System.err.println("registration with GNS failed "+ex);
+		        // System.err.println("registration with GNS failed "+ex);
+            MSocketLogger.getLogger().log(Level.FINE,"Registration with GNS failed {0}.", ex);
 		        //ex.printStackTrace();
 		      }
 	      }
@@ -740,7 +751,8 @@ public class MServerSocket extends ServerSocket
 
   private void BlockForAccept()
   {
-    MSocketLogger.getLogger().fine("accept called");
+    // MSocketLogger.getLogger().fine("accept called");
+    MSocketLogger.getLogger().log(Level.FINE,"accept called");
     synchronized (monitor)
     {
       while ((Integer) AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.GET_SIZE, null) == 0)
@@ -755,7 +767,8 @@ public class MServerSocket extends ServerSocket
         }
       }
     }
-    MSocketLogger.getLogger().fine("new connection socket ready");
+    // MSocketLogger.getLogger().fine("new connection socket ready");
+    MSocketLogger.getLogger().log(Level.FINE,"new connection socket ready");
   }
 
   private void TimeOutWaitForaccept() throws InterruptedException, TimeoutException, ExecutionException
@@ -805,8 +818,8 @@ public class MServerSocket extends ServerSocket
 		  {
 			  	// read and service request on socket
 			  	// FIXME: check for how to handle exceptions here
-			  	MSocketLogger.getLogger().fine("new connection accepted by socket channel");
-
+			  	// MSocketLogger.getLogger().fine("new connection accepted by socket channel");
+          MSocketLogger.getLogger().log(Level.FINE,"New connection accepted by socket channel");
 				ServerMSocket ms = null;
 				try
 				{
@@ -819,13 +832,15 @@ public class MServerSocket extends ServerSocket
 					// close and reject socket so that client reconnects again
 					// do not put in active queue as currently done
 					// transition into all ready state as well
-					MSocketLogger.getLogger().fine("Failed to accept new connection"
-									+ e.getMessage());
+					// MSocketLogger.getLogger().fine("Failed to accept new connection"
+									// + e.getMessage());
+          MSocketLogger.getLogger().log(Level.FINE,"Failed to accept new connection {0}.", e.getMessage());
 					return;
 				}
 			
-				MSocketLogger.getLogger().fine("Accepted connection from " 
-							+ ms.getInetAddress() + ":" + ms.getPort());
+				// MSocketLogger.getLogger().fine("Accepted connection from " 
+							// + ms.getInetAddress() + ":" + ms.getPort());
+        MSocketLogger.getLogger().log(Level.FINE,"Accepted connection from {0}:{1}", new Object[]{ms.getInetAddress(),ms.getPort()});
 			      if (ms.isNew())
 			      {
 			
@@ -838,7 +853,8 @@ public class MServerSocket extends ServerSocket
 			          monitor.notifyAll();
 			        }
 			      }
-			      MSocketLogger.getLogger().fine("MServerSocket Handler thread exits");
+			      // MSocketLogger.getLogger().fine("MServerSocket Handler thread exits");
+            MSocketLogger.getLogger().log(Level.FINE,"MServerSocket Handler thread exits");
 		  } 
 		  else
 		  {
@@ -898,7 +914,8 @@ public class MServerSocket extends ServerSocket
           continue;
         }
       }
-      MSocketLogger.getLogger().fine("AcceptThreadPool exits");
+      // MSocketLogger.getLogger().fine("AcceptThreadPool exits");
+      MSocketLogger.getLogger().log(Level.FINE,"AcceptThreadPool exits");
     }
 
     public void StopAcceptPool()

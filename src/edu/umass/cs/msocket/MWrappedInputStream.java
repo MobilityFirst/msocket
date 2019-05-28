@@ -24,7 +24,7 @@ package edu.umass.cs.msocket;
 
 import java.io.IOException;
 import java.io.InputStream;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -48,7 +48,8 @@ public class MWrappedInputStream extends InputStream
     int numread = read(b, 0, b.length);
     if (numread > 0)
     {
-      MSocketLogger.getLogger().fine("msocket read " + numread);
+      // MSocketLogger.getLogger().fine("msocket read " + numread);
+      MSocketLogger.getLogger().log(Level.FINE,"msocket read {0}.", numread);
     }
     return numread;
   }
@@ -104,7 +105,8 @@ public class MWrappedInputStream extends InputStream
 	    	{
 	    		return -1;
 	    	} else {
-	    		MSocketLogger.getLogger().fine(cinfo.getServerOrClient()+" nread == 0, need to check for blocking");
+	    		// MSocketLogger.getLogger().fine(cinfo.getServerOrClient()+" nread == 0, need to check for blocking");
+          MSocketLogger.getLogger().log(Level.FINE,"cinfo.getServerOrClient(): {0} - nread == 0, need to check for blocking");
 			      
 			      // if state is not active, then it means other side
 			      // has issued a close, and all the data should be there
@@ -129,7 +131,8 @@ public class MWrappedInputStream extends InputStream
     if (cinfo.getMSocketState() == MSocketConstants.CLOSED)
       throw new IOException(" socket already closed");
     
-    MSocketLogger.getLogger().fine(cinfo.getServerOrClient()+" app read called");
+    // MSocketLogger.getLogger().fine(cinfo.getServerOrClient()+" app read called");
+    MSocketLogger.getLogger().log(Level.FINE," cinfo.getServerOrClient():{0}, app read called.");
     int nread = 0;
     
   
@@ -147,6 +150,7 @@ public class MWrappedInputStream extends InputStream
       if (cinfo.getMSocketState() == MSocketConstants.CLOSED)
       {
         throw new IOException("socket already closed");
+        
       }
     }
 
@@ -234,7 +238,7 @@ public class MWrappedInputStream extends InputStream
 		           cinfo.updateDataAckSeq(bytesReadInAppBuffer);
 		       }
 	       }
-	      MSocketLogger.getLogger().info("this many bytes were read: " + bytesReadInAppBuffer);
+	      // MSocketLogger.getLogger().info("this many bytes were read: " + bytesReadInAppBuffer);
 	     return bytesReadInAppBuffer;
   }
 

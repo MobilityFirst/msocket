@@ -24,7 +24,7 @@ package edu.umass.cs.msocket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -47,29 +47,34 @@ public class ResendIfNeededThread implements Runnable
   {
     try
     {
-      MSocketLogger.getLogger().fine("ResendIfNeededThread trying to get READ_WRITE");
+      // MSocketLogger.getLogger().fine("ResendIfNeededThread trying to get READ_WRITE");
+      MSocketLogger.getLogger().log(Level.FINE,"ResendIfNeededThread trying to get READ_WRITE");
       cinfo.setState(ConnectionInfo.READ_WRITE, true);
       resendIfNeeded(cinfo);
       // FIXME: may be better method
       cinfo.setblockingFlag(false);
 
       cinfo.setState(ConnectionInfo.ALL_READY, true);
-      MSocketLogger.getLogger().fine("Set server state to ALL_READY");
+      // MSocketLogger.getLogger().fine("Set server state to ALL_READY");
+      MSocketLogger.getLogger().log(Level.FINE,"Set server state to ALL_READY");
     }
     catch (IOException ex)
     {
-      MSocketLogger.getLogger().fine("Succesive migration: exception during migration");
+      // MSocketLogger.getLogger().fine("Succesive migration: exception during migration");
+      MSocketLogger.getLogger().log(Level.FINE,"Succesive migration: exception during migration");
       cinfo.setState(ConnectionInfo.ALL_READY, true);
     }
   }
 
   private void resendIfNeeded(ConnectionInfo cinfo) throws IOException
   {
-    MSocketLogger.getLogger().fine("resendIfNeeded called");
+    // MSocketLogger.getLogger().fine("resendIfNeeded called");
+    MSocketLogger.getLogger().log(Level.FINE,"resendIfNeeded called");
     if (cinfo.getDataBaseSeq() - cinfo.getDataSendSeq() < 0)
     {
       // need to resend
-      MSocketLogger.getLogger().fine("fetching resend data from  out buffer");
+      // MSocketLogger.getLogger().fine("fetching resend data from  out buffer");
+      MSocketLogger.getLogger().log(Level.FINE,"Fetching resend data from  out buffer");
       handleMigrationInMultiPath(cinfo.getDataSendSeq(), cinfo.getActiveSocket(cinfo.getMultipathPolicy()));
     }
 
@@ -81,14 +86,16 @@ public class ResendIfNeededThread implements Runnable
       if( cinfo.getCloseInOutbuffer()) 
     	  // close resent again on migration as no ACK has been recevied till now 
     	  { 
-    	  	  MSocketLogger.getLogger().fine("sending FIN again");
+    	  	  // MSocketLogger.getLogger().fine("sending FIN again");
+            MSocketLogger.getLogger().log(Level.FINE,"sending FIN again");
 	    	  sendMesgAgain(DataMessage.FIN);
     	  }
       
       if( cinfo.getACKInOutbuffer()) 
     	  // close resent again on migration as no ACK has been recevied till now 
     	  { 
-    	  MSocketLogger.getLogger().fine("sending close ACK again");
+    	  // MSocketLogger.getLogger().fine("sending close ACK again");
+        MSocketLogger.getLogger().log(Level.FINE,"Sending close ACK again");
     	  	sendMesgAgain(DataMessage.ACK);
     	  } 
   }
@@ -103,10 +110,12 @@ public class ResendIfNeededThread implements Runnable
   private void handleMigrationInMultiPath(int tempDataSendSeqNum, SocketInfo Obj) throws IOException
   {
 	  cinfo.emptyTheWriteQueues();
-    MSocketLogger.getLogger().fine("HandleMigrationInMultiPath End Seq Num" + tempDataSendSeqNum + " SocektId " + Obj.getSocketIdentifer());
+    // MSocketLogger.getLogger().fine("HandleMigrationInMultiPath End Seq Num" + tempDataSendSeqNum + " SocektId " + Obj.getSocketIdentifer());
+    MSocketLogger.getLogger().log(Level.FINE,"HandleMigrationInMultiPath EndSeqNum: {0}, SocektID: {1}.", new Object[]{tempDataSendSeqNum,Obj.getSocketIdentifer()});
     cinfo.multiSocketRead();
     int dataAck = (int) cinfo.getDataBaseSeq();
-    MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
+    // MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
+    MSocketLogger.getLogger().log(Level.FINE,"DataAck from other side {0}", dataAck);
 
     if (tempDataSendSeqNum - dataAck > 0)
     {
@@ -144,7 +153,8 @@ public class ResendIfNeededThread implements Runnable
           DataMessage dm = new DataMessage(mesgType, cinfo.getDataSendSeq(), cinfo.getDataAckSeq(), 0, 0, null, -1);
           byte[] writebuf = dm.getBytes();
 
-          MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + " for writing FIN");
+          // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + " for writing FIN");
+          MSocketLogger.getLogger().log(Level.FINE,"Using socketID {0} for writing FIN.",Obj.getSocketIdentifer());
           ByteBuffer writeByBuff = ByteBuffer.wrap(writebuf);
 
           while (writeByBuff.hasRemaining())
@@ -155,7 +165,8 @@ public class ResendIfNeededThread implements Runnable
         }
         catch (IOException ex)
         {
-          MSocketLogger.getLogger().fine("Write exception caused on writing FIN");
+          // MSocketLogger.getLogger().fine("Write exception caused on writing FIN");
+          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused on writing FIN");
           Obj.setStatus(false);
           Obj.releaseLock();
         }

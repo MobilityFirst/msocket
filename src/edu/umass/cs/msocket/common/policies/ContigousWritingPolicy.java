@@ -24,7 +24,7 @@ package edu.umass.cs.msocket.common.policies;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.DataMessage;
 import edu.umass.cs.msocket.MSocketConstants;
@@ -126,8 +126,10 @@ public class ContigousWritingPolicy extends MultipathWritingPolicy {
 		        cinfo.attemptSocketWrite(Obj);
 		        if (cinfo.getServerOrClient() == MSocketConstants.CLIENT)
 		        {
-		          MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
-		              + "for writing " + "" + "tempDataSendSeqNum " + tempDataSendSeqNum);
+		          // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
+		              // + "for writing " + "" + "tempDataSendSeqNum " + tempDataSendSeqNum);
+		       	MSocketLogger.getLogger().log(Level.FINE,"Using socketID: {0}, Remote IP: {1}, for writing tempDataSendSeqNum {2}.", new Object[]{Obj.getSocketIdentifer(),Obj.getSocket().getInetAddress(),tempDataSendSeqNum});
+		        
 		        }
 	          
 	          Obj.updateSentBytes(tobesent);
@@ -139,7 +141,8 @@ public class ContigousWritingPolicy extends MultipathWritingPolicy {
 	        }
 	        catch (IOException ex)
 	        {
-	          MSocketLogger.getLogger().fine("Write exception caused");
+	          // MSocketLogger.getLogger().fine("Write exception caused");
+	          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
 	          Obj.setStatus(false);
 	          Obj.setneedToReqeustACK(true);
 
@@ -173,6 +176,7 @@ public class ContigousWritingPolicy extends MultipathWritingPolicy {
 	        if (cinfo.getMSocketState() == MSocketConstants.CLOSED)
 	        {
 	          throw new IOException(" socket already closed");
+	          
 	        }
 	      }
 	      
@@ -198,7 +202,7 @@ public class ContigousWritingPolicy extends MultipathWritingPolicy {
 		  long emptyQueueStartTime = System.currentTimeMillis();
 		  cinfo.emptyTheWriteQueues();
 		  long emptyQueueEndTime = System.currentTimeMillis();
-		  System.out.println( "Write empty queue time "+(emptyQueueEndTime-emptyQueueStartTime) );
+		  // System.out.println( "Write empty queue time "+(emptyQueueEndTime-emptyQueueStartTime) );
 		  
 	}
 

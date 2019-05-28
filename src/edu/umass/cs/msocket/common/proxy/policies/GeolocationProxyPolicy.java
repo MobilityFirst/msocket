@@ -116,8 +116,8 @@ public class GeolocationProxyPolicy extends ProxySelectionPolicy
       
       String locationIP = commandRes.getResultJSONArray().getString(0);
       
-      logger.fine("Contacting location service " + locationIP + " to request " + numProxies + " proxies");
-
+      // logger.fine("Contacting location service " + locationIP + " to request " + numProxies + " proxies");
+      logger.log(Level.FINE,"Contacting location service {0} to request {1} proxies.", new Object[]{locationIP, numProxies});
       // Location IP is stored as host:port
       StringTokenizer st = new StringTokenizer(locationIP, ":");
       try
@@ -143,7 +143,8 @@ public class GeolocationProxyPolicy extends ProxySelectionPolicy
       }
       catch (Exception e)
       {
-        logger.info("Failed to obtain proxy from location service" + locationIP + " (" + e + ")");
+        // logger.info("Failed to obtain proxy from location service" + locationIP + " (" + e + ")");
+        logger.log(Level.INFO,"Failed to obtain proxy from location service {0} ({1}).", new Object[]{locationIP,e});
       }
     }
 
@@ -198,6 +199,7 @@ public class GeolocationProxyPolicy extends ProxySelectionPolicy
     catch (Exception e)
     {
       logger.log(Level.WARNING, "Failed to geolocate IP address " + remoteIp, e);
+      
     }
 
     // Compute the distance with each proxy

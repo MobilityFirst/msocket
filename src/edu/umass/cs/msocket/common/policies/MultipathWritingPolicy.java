@@ -24,7 +24,7 @@ package edu.umass.cs.msocket.common.policies;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ByteRangeInfo;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.DataMessage;
@@ -70,11 +70,12 @@ public abstract class MultipathWritingPolicy {
 	      return;
 	    }
 
-	    MSocketLogger.getLogger().fine("HandleMigrationInMultiPath SocektId " + Obj.getSocketIdentifer());
-
+	    // MSocketLogger.getLogger().fine("HandleMigrationInMultiPath SocektId " + Obj.getSocketIdentifer());
+	    MSocketLogger.getLogger().log(Level.FINE,"HandleMigrationInMultiPath SocektId {0}",Obj.getSocketIdentifer() );
 	    cinfo.multiSocketRead();
 	    int dataAck = (int) cinfo.getDataBaseSeq();
-	    MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
+	    // MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
+	    MSocketLogger.getLogger().log(Level.FINE,"DataAck from other side {0}", dataAck);
 	    Obj.byteInfoVectorOperations(SocketInfo.QUEUE_REMOVE, dataAck, -1);
 
 	    @SuppressWarnings("unchecked")
@@ -121,7 +122,8 @@ public abstract class MultipathWritingPolicy {
 	    }
 
 	    Obj.setneedToReqeustACK(false);
-	    MSocketLogger.getLogger().fine("HandleMigrationInMultiPath Complete");
+	    // MSocketLogger.getLogger().fine("HandleMigrationInMultiPath Complete");
+	    MSocketLogger.getLogger().log(Level.FINE,"HandleMigrationInMultiPath Complete");
 	  }
 	  
 	  
@@ -141,7 +143,8 @@ public abstract class MultipathWritingPolicy {
 
 	    if (gotWritten > 0)
 	    {
-	      MSocketLogger.getLogger().fine("gotWritten " + gotWritten + " buf length " + writebuf.length + " SocketID " + Obj.getSocketIdentifer());
+	      // MSocketLogger.getLogger().fine("gotWritten " + gotWritten + " buf length " + writebuf.length + " SocketID " + Obj.getSocketIdentifer());
+	      MSocketLogger.getLogger().log(Level.FINE,"Wrote {0} bytes, buffer length is {1}, SocketID {2}", new Object[]{gotWritten,writebuf.length,Obj.getSocketIdentifer()});
 	      Obj.currentChunkWriteOffsetOper(gotWritten, SocketInfo.VARIABLE_UPDATE);
 	    }
 
@@ -158,7 +161,8 @@ public abstract class MultipathWritingPolicy {
 	                                                                                         // reset
 	                                                                                         // it
 	    {
-	      MSocketLogger.getLogger().fine("currentChunkWriteOffset " + writebuf.length);
+	      // MSocketLogger.getLogger().fine("currentChunkWriteOffset " + writebuf.length);
+	      MSocketLogger.getLogger().log(Level.FINE,"currentChunkWriteOffset: {0}", writebuf.length);
 	      Obj.currentChunkWriteOffsetOper(0, SocketInfo.VARIABLE_SET);
 	      Obj.queueOperations(SocketInfo.QUEUE_REMOVE, null);
 	    }
@@ -166,8 +170,9 @@ public abstract class MultipathWritingPolicy {
 	    long endTime = System.currentTimeMillis();
 
 	    Obj.getDataChannel().configureBlocking(false);
-	    if (gotWritten > 0)
-	      MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
-	          + "for writing " + " time taken " + (endTime - startTime));
+	    if (gotWritten > 0){
+	      // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
+	          // + "for writing " + " time taken " + (endTime - startTime));
+	    }
 	  }
 }

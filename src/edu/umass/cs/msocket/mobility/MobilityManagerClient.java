@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.KeepAliveStaticThread;
 import edu.umass.cs.msocket.MSocketConstants;
@@ -99,11 +99,13 @@ public class MobilityManagerClient implements Runnable
     {
       createSingleton();
       removeConnID(cInfo.getConnID());
-      MSocketLogger.getLogger().fine("number of socket reg " + getConnectionStateSize());
+      // MSocketLogger.getLogger().fine("number of socket reg " + getConnectionStateSize());
+      MSocketLogger.getLogger().log(Level.FINE,"number of socket reg {0}", getConnectionStateSize());
     }
     catch (Exception ex)
     {
-      MSocketLogger.getLogger().fine("unregisterWithManager excp " + ex.getMessage());
+      // MSocketLogger.getLogger().fine("unregisterWithManager excp " + ex.getMessage());
+      MSocketLogger.getLogger().log(Level.FINE,"unregisterWithManager exception: {0}", ex.getMessage());
     }
   }
 
@@ -147,7 +149,8 @@ public class MobilityManagerClient implements Runnable
           if (!active)
           {
             notWorkingIPs.add(activeInterfaceAddress.get(i));
-            MSocketLogger.getLogger().fine("not working IPs " + activeInterfaceAddress.get(i));
+            // MSocketLogger.getLogger().fine("not working IPs " + activeInterfaceAddress.get(i));
+            MSocketLogger.getLogger().log(Level.FINE,"IPs not working {0}",activeInterfaceAddress.get(i) );
           }
         }
 
@@ -173,7 +176,8 @@ public class MobilityManagerClient implements Runnable
     {
       e.printStackTrace();
     }
-    MSocketLogger.getLogger().fine("Mobility manager client thread exit");
+    // MSocketLogger.getLogger().fine("Mobility manager client thread exit");
+    MSocketLogger.getLogger().log(Level.FINE,"Mobility manager client thread exit");
   }
 
   private synchronized static Vector<ConnectionState> getConnectionState(String key)
@@ -231,7 +235,8 @@ public class MobilityManagerClient implements Runnable
   {
     // FIXME: need to check if this ip address is still valid , before inserting
     String localIpAddress = socketInfo.getSocket().getLocalAddress().getHostAddress();
-    MSocketLogger.getLogger().fine("insertIntoConnectionStateMap " + localIpAddress);
+    // MSocketLogger.getLogger().fine("insertIntoConnectionStateMap " + localIpAddress);
+    MSocketLogger.getLogger().log(Level.FINE,"insertIntoConnectionStateMap {0}", localIpAddress);
     if (managerConnectionStateMap.containsKey(localIpAddress))
     {
       ConnectionState cstate = new ConnectionState(connecInfo, socketInfo);
@@ -292,8 +297,8 @@ public class MobilityManagerClient implements Runnable
       try
       {
         String newInterface = getNewInterface(POLICY_RANDOM);
-        MSocketLogger.getLogger().fine("performMigration newInterface " + newInterface);
-
+        // MSocketLogger.getLogger().fine("performMigration newInterface " + newInterface);
+        MSocketLogger.getLogger().log(Level.FINE,"performMigration newInterface {0}", newInterface);
         if (newInterface == "") // no active interface to migrate to
         {
           Vector<ConnectionState> vect = getConnectionState(newInterface);
@@ -327,9 +332,9 @@ public class MobilityManagerClient implements Runnable
         {
           throw new Exception("migrateSocketwithId falied");
         }
-        MSocketLogger.getLogger().fine("Completed client migration of socket Id " + cstate.socketObj.getSocketIdentifer() + "to interface "
-            + newInterface);
-
+        // MSocketLogger.getLogger().fine("Completed client migration of socket Id " + cstate.socketObj.getSocketIdentifer() + "to interface "
+            // + newInterface);
+        MSocketLogger.getLogger().log(Level.FINE,"Completed client migration of socket Id {0} to interface {1}.", new Object[]{cstate.socketObj.getSocketIdentifer(),newInterface});
         Vector<ConnectionState> vect = getConnectionState(newInterface);
         if (vect == null)
         {
@@ -341,7 +346,8 @@ public class MobilityManagerClient implements Runnable
       catch (Exception ex)
       {
         // migration failed for some reason, put it in "" IP vector of manager.
-        MSocketLogger.getLogger().fine("migratio of socketId " + csvector.get(i).socketObj.getSocketIdentifer() + " failed");
+        // MSocketLogger.getLogger().fine("migratio of socketId " + csvector.get(i).socketObj.getSocketIdentifer() + " failed");
+        MSocketLogger.getLogger().log(Level.FINE,"Migration of socketId {0} failed", csvector.get(i).socketObj.getSocketIdentifer());
         String failedIP = "";
         Vector<ConnectionState> vect = getConnectionState(failedIP);
         if (vect == null)

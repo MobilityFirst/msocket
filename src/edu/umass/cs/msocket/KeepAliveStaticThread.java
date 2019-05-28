@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -62,8 +62,9 @@ public class KeepAliveStaticThread implements Runnable
 		createSingleton();
 		TimerTaskClass timertask = new TimerTaskClass(cinfo);
 		StoreInfo storeinfo = new StoreInfo( timertask);
-		MSocketLogger.getLogger().fine("cinfo registered to registerForKeepAlive "
-					+cinfo.getConnID());
+		// MSocketLogger.getLogger().fine("cinfo registered to registerForKeepAlive "
+					// +cinfo.getConnID());
+		MSocketLogger.getLogger().log(Level.FINE,"cinfo registered to registerForKeepAlive {0}",cinfo.getConnID());
 		
 		if( cinfo.getServerOrClient() == MSocketConstants.SERVER )
 		{
@@ -180,7 +181,8 @@ public class KeepAliveStaticThread implements Runnable
 		registeredClientMSockets.clear();
 		registeredServerMSockets.clear();
 		keepAliveObj = null;
-		MSocketLogger.getLogger().fine("Keep alive static thread exits");
+		// MSocketLogger.getLogger().fine("Keep alive static thread exits");
+		MSocketLogger.getLogger().log(Level.FINE,"Keep alive static thread exits");
 	}
 	
 	private static class StoreInfo

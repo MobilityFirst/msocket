@@ -27,7 +27,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.gns.Integration;
 import edu.umass.cs.msocket.logger.MSocketLogger;
@@ -54,16 +54,19 @@ class TimerTaskClass
 
   private void proxyFailureCheck() throws Exception
   {
-    MSocketLogger.getLogger().fine("inside proxyFailureCheck");
+    // MSocketLogger.getLogger().fine("inside proxyFailureCheck");
+    MSocketLogger.getLogger().log(Level.FINE,"inside proxyFailureCheck");
     Vector<SocketInfo> vect = new Vector<SocketInfo>();
     vect.addAll(cinfo.getAllSocketInfo());
-    MSocketLogger.getLogger().fine("vect size " + vect.size());
+    // MSocketLogger.getLogger().fine("vect size " + vect.size());
+    MSocketLogger.getLogger().log(Level.FINE,"Vector Size: {0}", vect.size());
     int i = 0;
     while ( i < vect.size() )
     {
       SocketInfo value = vect.get(i);
 
-      MSocketLogger.getLogger().fine("proxyFailureCheck running " + value.getLastKeepAlive() + " " + KeepAliveStaticThread.getLocalClock());
+      // MSocketLogger.getLogger().fine("proxyFailureCheck running " + value.getLastKeepAlive() + " " + KeepAliveStaticThread.getLocalClock());
+      MSocketLogger.getLogger().log(Level.FINE,"proxyFailureCheck running.LastKeepAlive: {0}, Local Clock: {1}", new Object[]{value.getLastKeepAlive(),KeepAliveStaticThread.getLocalClock()});
       {
         if (((KeepAliveStaticThread.getLocalClock() - value.getLastKeepAlive()) > proxyFailureTimeout))
         /*
@@ -73,8 +76,8 @@ class TimerTaskClass
          * if GNS has same proxy address, then do not migrate
          */
         {
-          System.out.println(cinfo.getServerOrClient()+" Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
-        		  " getLastKeepAlive " + value.getLastKeepAlive() + "Socket Id " + value.getSocketIdentifer());
+          // System.out.println(cinfo.getServerOrClient()+" Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
+        		  // " getLastKeepAlive " + value.getLastKeepAlive() + "Socket Id " + value.getSocketIdentifer());
           if (CommonMethods.getActiveInterfaceInetAddresses().size() > 0)
             handleProxyFailure(value);
         }
@@ -90,8 +93,8 @@ class TimerTaskClass
    */
   private void handleProxyFailure(SocketInfo SocketObj) throws Exception
   {
-      System.out.println(cinfo.getServerOrClient()+ " Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
-    		  " getLastKeepAlive " + SocketObj.getLastKeepAlive());
+      // System.out.println(cinfo.getServerOrClient()+ " Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
+    		  // " getLastKeepAlive " + SocketObj.getLastKeepAlive());
 
       InetSocketAddress proxyAddress = getActiveProxyAddress();
       if (proxyAddress == null)
@@ -103,11 +106,12 @@ class TimerTaskClass
       {
         if (proxyAddress != null)
         {
-          MSocketLogger.getLogger().fine(" migrateSocketwithId called with proxy address " + proxyAddress.getAddress() + ":"
-              + proxyAddress.getPort() + " socketId " + SocketObj.getSocketIdentifer() );
-
+          // MSocketLogger.getLogger().fine(" migrateSocketwithId called with proxy address " + proxyAddress.getAddress() + ":"
+              // + proxyAddress.getPort() + " socketId " + SocketObj.getSocketIdentifer() );
+          MSocketLogger.getLogger().log(Level.FINE,"migrateSocketwithId called with proxy address {0}:{1}, socketId {2}.", new Object[]{proxyAddress.getAddress(),proxyAddress.getPort(),SocketObj.getSocketIdentifer()});
           cinfo.closeAll(SocketObj.getSocketIdentifer());
-          MSocketLogger.getLogger().fine("close done");
+          // MSocketLogger.getLogger().fine("close done");
+          MSocketLogger.getLogger().log(Level.FINE,"Close done.");
           cinfo.migrateSocketwithId(proxyAddress.getAddress(), proxyAddress.getPort(),
               SocketObj.getSocketIdentifer(), MSocketConstants.SERVER_MIG);
         }
@@ -133,7 +137,8 @@ class TimerTaskClass
     }
     catch (Exception ex)
     {
-      MSocketLogger.getLogger().fine("GnsIntegration.getSocketAddressFromGNS exception");
+      // MSocketLogger.getLogger().fine("GnsIntegration.getSocketAddressFromGNS exception");
+      MSocketLogger.getLogger().log(Level.FINE,"GnsIntegration.getSocketAddressFromGNS exception");
     }
     return sockAdd;
   }
@@ -177,8 +182,8 @@ class TimerTaskClass
 			  
 			  cinfo.setState(ConnectionInfo.ALL_READY, false);
 			}
-			MSocketLogger.getLogger().fine("client reading keep alive complete");
-            
+			// MSocketLogger.getLogger().fine("client reading keep alive complete");
+      MSocketLogger.getLogger().log(Level.FINE,"Client reading keep alive complete");    
 			try
 			{
 				proxyFailureCheck();
@@ -193,7 +198,8 @@ class TimerTaskClass
 			}
 			catch (Exception e)
 			{
-				MSocketLogger.getLogger().fine("Mostly GNS connectivity failure, or migration failure");
+				// MSocketLogger.getLogger().fine("Mostly GNS connectivity failure, or migration failure");
+        MSocketLogger.getLogger().log(Level.FINE,"Mostly GNS connectivity failure, or migration failure");
 				e.printStackTrace();
 			}		
 			break;

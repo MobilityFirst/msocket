@@ -29,7 +29,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -281,12 +281,14 @@ public class SetupControlMessage
     int ret = 0;
     while (ret < SetupControlMessage.SIZE)
     {
-      MSocketLogger.getLogger().fine("setup control read happening");
+      // MSocketLogger.getLogger().fine("setup control read happening");
+      MSocketLogger.getLogger().log(Level.FINE,"Setup control read happening");
       InputStream is = scToUse.socket().getInputStream();
       try
       {
         int currRead = is.read(buf.array(), ret, SetupControlMessage.SIZE - ret);
-        MSocketLogger.getLogger().fine("read " + ret + " bytes");
+        // MSocketLogger.getLogger().fine("read " + ret + " bytes");
+        MSocketLogger.getLogger().log(Level.FINE,"Read {0} bytes", ret);
         if (currRead == -1)
         {
           if (ret < SetupControlMessage.SIZE)
@@ -302,7 +304,8 @@ public class SetupControlMessage
         throw new SocketTimeoutException("Timeout while establishing connection with MServerSocket.");
       }
     }
-    MSocketLogger.getLogger().fine("setup control read complete");
+    // MSocketLogger.getLogger().fine("setup control read complete");
+    MSocketLogger.getLogger().log(Level.FINE,"Setup control read complete");
 
     SetupControlMessage scm = SetupControlMessage.getSetupControlMessage(buf.array());
     return scm;
@@ -340,7 +343,8 @@ public class SetupControlMessage
 			  mstype == SetupControlMessage.ADD_SOCKET)
 	  {
 		  DataAckSeq = (int) connectTime;
-		  MSocketLogger.getLogger().fine("Connect time " + DataAckSeq);
+		  // MSocketLogger.getLogger().fine("Connect time " + DataAckSeq);
+      MSocketLogger.getLogger().log(Level.FINE,"Connect time {0}",DataAckSeq);
 	  }
 
 	    SetupControlMessage scm = new SetupControlMessage(ControllerAddress, ControllerPort, lfid, DataAckSeq, mstype,
@@ -352,7 +356,8 @@ public class SetupControlMessage
 	      SCToUse.write(buf);
 	    }
 
-	    MSocketLogger.getLogger().fine("Sent IP:port " + ControllerPort + "; ackSeq = " + (cinfo != null ? DataAckSeq : 0));
+	    // MSocketLogger.getLogger().fine("Sent IP:port " + ControllerPort + "; ackSeq = " + (cinfo != null ? DataAckSeq : 0));
+      MSocketLogger.getLogger().log(Level.FINE,"Controller Port: {0}; ackSeq = {1}",new Object[]{ControllerPort,(cinfo != null ? DataAckSeq : 0)});
 	  }
 
   public static void main(String[] args)

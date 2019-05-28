@@ -5,7 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
+import java.util.logging.Level;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,9 +34,9 @@ public class GNSCalls
 	{
 		try
 		{
-			MSocketLogger.getLogger().fine
-				("Looking for entity " + localAlias + " GUID and certificates...");
-			
+			// MSocketLogger.getLogger().fine
+				// ("Looking for entity " + localAlias + " GUID and certificates...");
+			MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", localAlias);
 			GuidEntry myGuid = KeyPairUtils.getGuidEntry
 					(DefaultGNSClient.getDefaultGNSName(), localAlias);
 		    /*
@@ -44,9 +44,9 @@ public class GNSCalls
 		     * the GNS on the same connection as the library is not thread-safe from
 		     * that standpoint.
 		     */
-		     MSocketLogger.getLogger().fine
-		     	("Updating location for " + localAlias + " to " + Longi+" " + Lat);
-		     
+		     // MSocketLogger.getLogger().fine
+		     	// ("Updating location for " + localAlias + " to " + Longi+" " + Lat);
+		     MSocketLogger.getLogger().log(Level.FINE,"Updating location for {0} to {1}:{2}", new Object[]{localAlias,Longi,Lat});
 		     
 		     DefaultGNSClient.getGnsClient().execute(GNSCommand.setLocation(myGuid, Longi, Lat));
 		}
@@ -99,8 +99,8 @@ public class GNSCalls
 		    
 		    try
 		    {
-				MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
-				
+				// MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
+				MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", localName);
 				GuidEntry myGuid = KeyPairUtils.getGuidEntry(DefaultGNSClient.getDefaultGNSName(), localName);
 				
 			    /*
@@ -110,8 +110,8 @@ public class GNSCalls
 			     */
 			      if (myGuid == null)
 			      {
-			        MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
-			        
+			        // MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
+			        MSocketLogger.getLogger().log(Level.FINE,"No keys found for service {0}. Generating new GUID and keys.",localName);
 			        
 			        GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
 			        		(GNSCommand.createGUID(
@@ -137,8 +137,8 @@ public class GNSCalls
 			      }
 			      else
 			      {
-			    	  System.out.println("GUID already registered, just replacing the field value "
-			            + localName + " values " + GNSValue);
+			    	  // System.out.println("GUID already registered, just replacing the field value "
+			            // + localName + " values " + GNSValue);
 			    	  
 			    	  JSONArray valJSONArray = new JSONArray();
 				      valJSONArray.put(GNSValue);
@@ -153,7 +153,7 @@ public class GNSCalls
 			    	  
 			        long end = System.currentTimeMillis();
 			        
-			        System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
+			        // System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
 			        
 			        // JSONArray arr= gnsClient.fieldRead(myGuid.getGuid(), GNSKey, myGuid);
 			        //System.out.println("read result "+gnsClient.lookupGuidRecord(myGuid.getGuid()));
@@ -172,8 +172,8 @@ public class GNSCalls
 		    
 		    try
 		    {
-				MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
-				
+				// MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
+				MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", localName);
 				GuidEntry myGuid = KeyPairUtils.getGuidEntry(DefaultGNSClient.getDefaultGNSName(), localName);
 				
 			    /*
@@ -183,9 +183,9 @@ public class GNSCalls
 			     */
 			      if (myGuid == null)
 			      {
-			        MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
+			        // MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
 			        // Create a new GUID
-			        
+			        MSocketLogger.getLogger().log(Level.FINE,"No keys found for service {0}. Generating new GUID and keys", localName);
 			        GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
 			        		(DefaultGNSClient.getGnsClient().getGNSProvider(), 
 			        				DefaultGNSClient.getMyGuidEntry(), localName));
@@ -204,8 +204,8 @@ public class GNSCalls
 			      }
 			      else
 			      {
-			    	  System.out.println("GUID already registered, just replacing the field value "
-			            + localName + " values " + GNSValue);
+			    	  // System.out.println("GUID already registered, just replacing the field value "
+			            // + localName + " values " + GNSValue);
 			    	  
 			    	  long start = System.currentTimeMillis();
 			        
@@ -215,7 +215,7 @@ public class GNSCalls
 			    	  
 			        long end = System.currentTimeMillis();
 			        
-			        System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
+			        // System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
 			        
 			        // JSONArray arr= gnsClient.fieldRead(myGuid.getGuid(), GNSKey, myGuid);
 			        //System.out.println("read result "+gnsClient.lookupGuidRecord(myGuid.getGuid()));
@@ -310,7 +310,7 @@ public class GNSCalls
 				    	  System.out.println("\n\n notSet size "+notSet.length());
 				    	  for(int i=0;i < notSet.length();i++)
 				    	  {
-				    		  System.out.println(" addStr "+addrString+" from set "+notSet.getString(i));
+				    		  // System.out.println(" addStr "+addrString+" from set "+notSet.getString(i));
 				    		  if( addrString.equals(notSet.getString(i)) )
 				    		  {
 				    			  alreadyThere = true;
@@ -319,12 +319,13 @@ public class GNSCalls
 				    	  }
 			    	  } catch(Exception ex)
 			    	  {
-			    		  MSocketLogger.getLogger().fine("exception due to filed not there. not important");
+			    		  // MSocketLogger.getLogger().fine("exception due to filed not there. not important");
+			    	  	MSocketLogger.getLogger().log(Level.FINE,"Exception due to filed not there. Not important");
 			    		  //ex.printStackTrace();
 			    	  }
 			    	  if(!alreadyThere)
 			    	  {
-			    		  System.out.println("addrString "+addrString+" added to the notification set");
+			    		  // System.out.println("addrString "+addrString+" added to the notification set");
 			    		  DefaultGNSClient.getGnsClient().execute(
 			    				  GNSCommand.fieldAppend
 					    		  (groupGUID, NOTIFICATION_SET, arr, 
@@ -354,7 +355,8 @@ public class GNSCalls
 		  JSONArray queryResult = commandRes.getResultJSONArray();
 		  
 		  
-		  MSocketLogger.getLogger().fine("size of selected GUIDs "+ queryResult.length() );
+		  // MSocketLogger.getLogger().fine("size of selected GUIDs "+ queryResult.length() );
+		  MSocketLogger.getLogger().log(Level.FINE,"Size of selected GUIDs {0}", queryResult.length());
 		        
         // returns the list of GUIDs, read whole records and return 
         /*JSONArray queryRecords = new JSONArray();

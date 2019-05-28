@@ -25,7 +25,7 @@ package edu.umass.cs.msocket;
 import java.util.ArrayList;
 import java.lang.Math;
 import edu.umass.cs.msocket.logger.MSocketLogger;
-
+import java.util.logging.Level;
 
 /**
  * This class implements the Inbuffer of the MSocket. Out of order data is read
@@ -111,7 +111,8 @@ public class InBufferOutOrder
 
     if (rbuf.size() > 0)
     {
-		MSocketLogger.getLogger().info("Inside the getinbuffer");
+		// MSocketLogger.getLogger().info("Inside the getinbuffer");
+    MSocketLogger.getLogger().log(Level.INFO,"Inside the getinbuffer");
     }
     for (int i = 0; i < rbuf.size(); i++)
     {
@@ -142,7 +143,7 @@ public class InBufferOutOrder
         {
           actlen = cpylen;
         }
-        MSocketLogger.getLogger().info("this is the actlen"+ actlen);
+        // MSocketLogger.getLogger().info("this is the actlen"+ actlen);
         System.arraycopy(CurChunk.chunkData, srcPos, b, offset+numread, actlen);
         numread += actlen;
         dataReadSeq += actlen;
@@ -185,8 +186,9 @@ public class InBufferOutOrder
 	{
 		if(chunkLen > 0)
 		{
-			MSocketLogger.getLogger().fine("copyOrderedDataToAppBuffer: "+" startSeqNum "+startSeqNum+" chunkLen "+chunkLen+
-				" offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
+			// MSocketLogger.getLogger().fine("copyOrderedDataToAppBuffer: "+" startSeqNum "+startSeqNum+" chunkLen "+chunkLen+
+				// " offset "+offset+" appLen "+appLen+" readFromStream[0] "+readFromStream[0]);
+      MSocketLogger.getLogger().log(Level.FINE,"copyOrderedDataToAppBuffer: startSeqNum: {0}, chunkLen: {1}, offset: {2}, appLen: {3}, readFromStream[0]: {4}", new Object[]{startSeqNum,chunkLen,offset,appLen,readFromStream[0]});
 		}
 		int actualCopied =0;
 		if( (dataReadSeq - startSeqNum >= 0) && (dataReadSeq - (startSeqNum+chunkLen) < 0) )

@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.DataMessage;
 import edu.umass.cs.msocket.MSocketConstants;
@@ -137,9 +137,10 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
 	        cinfo.attemptSocketWrite(Obj);
 	        if (cinfo.getServerOrClient() == MSocketConstants.CLIENT)
 	        {
-	          MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
-	              + "for writing " + "" + "tempDataSendSeqNum " + tempDataSendSeqNum);
-	        }
+	          // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
+	              // + "for writing " + "" + "tempDataSendSeqNum " + tempDataSendSeqNum);
+	        MSocketLogger.getLogger().log(Level.FINE,"Using socketID {0}, Remote IP {1}, for writing tempDataSendSeqNum: {2}.", new Object[]{Obj.getSocketIdentifer(),Obj.getSocket().getInetAddress(),tempDataSendSeqNum});
+          }
           
           Obj.updateSentBytes(tobesent);
           currpos += tobesent;
@@ -150,7 +151,8 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
         }
         catch (IOException ex)
         {
-          MSocketLogger.getLogger().fine("Write exception caused");
+          // MSocketLogger.getLogger().fine("Write exception caused");
+          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
           Obj.setStatus(false);
           Obj.setneedToReqeustACK(true);
 
@@ -401,7 +403,8 @@ private void calculateThroughputForPaths(Vector<SocketInfo> socketMapValues)
       {
         double frac = (value.getRecvdBytesOtherSide() * 1.0) / minOtherSideRecv;
         value.setNumRemChunks(Math.round(frac));
-        MSocketLogger.getLogger().fine("set by minOtherSideRecv " + Math.round(frac) + " socketID " + value.getSocketIdentifer());
+        // MSocketLogger.getLogger().fine("set by minOtherSideRecv " + Math.round(frac) + " socketID " + value.getSocketIdentifer());
+        MSocketLogger.getLogger().log(Level.FINE,"Set by minOtherSideRecv {0}, socketID {1}.", new Object[]{Math.round(frac),value.getSocketIdentifer()});
         assert Math.round(frac) != 0;
       }
       else
@@ -409,8 +412,9 @@ private void calculateThroughputForPaths(Vector<SocketInfo> socketMapValues)
       {
         double frac = (maxRTT * 1.0) / value.getEstimatedRTT();
         value.setNumRemChunks(Math.round(frac));
-        MSocketLogger.getLogger().fine("set by minRTT " + Math.round(frac) + " socketID " + value.getSocketIdentifer()
-            + " value.getEstimatedRTT() " + value.getEstimatedRTT() + " minRTT " + maxRTT);
+        // MSocketLogger.getLogger().fine("set by minRTT " + Math.round(frac) + " socketID " + value.getSocketIdentifer()
+            // + " value.getEstimatedRTT() " + value.getEstimatedRTT() + " minRTT " + maxRTT);
+        MSocketLogger.getLogger().log(Level.FINE,"Set by minRTT: {0}, socketID: {1}, EstimatedRTT: {2}, maxRTT: {3}.",new Object[]{Math.round(frac),value.getSocketIdentifer(),value.getEstimatedRTT(),maxRTT});
         assert Math.round(frac) != 0;
       }
     }

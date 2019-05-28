@@ -23,7 +23,7 @@ package edu.umass.cs.msocket;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
@@ -80,9 +80,10 @@ public class ServerMSocket extends MSocket
    */
   private void setupServerController(SetupControlMessage scm)
   {
-    MSocketLogger.getLogger().fine
-    ("Received IP:port " + scm.port + ":" + scm.iaddr + " for connID " 
-    		+ connectionInfo.getConnID() + "; ackSeq = " + scm.ackSeq);
+    // MSocketLogger.getLogger().fine
+    // ("Received IP:port " + scm.port + ":" + scm.iaddr + " for connID " 
+    		// + connectionInfo.getConnID() + "; ackSeq = " + scm.ackSeq);
+    MSocketLogger.getLogger().log(Level.FINE,"Received IP:port -> {0}:{1} for connID: {2}; ackSeq = {3}.",new Object[]{scm.port,scm.iaddr,connectionInfo.getConnID(),scm.ackSeq});
     connectionInfo.setRemoteControlAddress(scm.iaddr);
     connectionInfo.setRemoteControlPort(scm.port);
   }
@@ -115,9 +116,10 @@ public class ServerMSocket extends MSocket
       case SetupControlMessage.NEW_CON_MESG :
       case SetupControlMessage.NEW_CON_REQ :
       {
-        MSocketLogger.getLogger().fine("NEW_CON_MESG recv at server from " 
-        		+ newChannel.socket().getInetAddress() + " scm.ackSeq "
-        		+ scm.ackSeq);
+        // MSocketLogger.getLogger().fine("NEW_CON_MESG recv at server from " 
+        		// + newChannel.socket().getInetAddress() + " scm.ackSeq "
+        		// + scm.ackSeq);
+        MSocketLogger.getLogger().log(Level.FINE,"NEW_CON_MESG recv at server from {0}, scm.ackSeq: {1}", new Object[]{newChannel.socket().getInetAddress(),scm.ackSeq});
         SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
         		localConnID, SetupControlMessage.NEW_CON_MESG_REPLY,
             serverController.getLocalPort(), newChannel, scm.socketID, 
@@ -127,7 +129,8 @@ public class ServerMSocket extends MSocket
         // connections
         long connID = (localConnID + scm.connID) / 2;
         serverController.setConnectionInfo(connID);
-        MSocketLogger.getLogger().fine("Created new flow ID " + connID);
+        // MSocketLogger.getLogger().fine("Created new flow ID " + connID);
+        MSocketLogger.getLogger().log(Level.FINE,"Created new flow ID {0}.",connID);
         connectionInfo = serverController.getConnectionInfo(connID);
         setupServerController(scm);
 
@@ -148,7 +151,8 @@ public class ServerMSocket extends MSocket
         
         connectionInfo.setMSocketState(MSocketConstants.ACTIVE);
         serverController.getConnectionInfo(connID).setState(ConnectionInfo.ALL_READY, true);
-        MSocketLogger.getLogger().fine("Set server state to ALL_READY");
+        // MSocketLogger.getLogger().fine("Set server state to ALL_READY");
+        MSocketLogger.getLogger().log(Level.FINE,"Set server state to ALL_READY");
 
         //localTimer = new Timer();
         //startLocalTimer();
@@ -162,9 +166,9 @@ public class ServerMSocket extends MSocket
       case SetupControlMessage.ADD_SOCKET :
       case SetupControlMessage.ADD_SOCKET_REQ :
       {
-        MSocketLogger.getLogger().fine("ADD_SOCKET recv at server from " + newChannel.socket().getInetAddress() + " scm.ackSeq "
-            + scm.ackSeq);
-
+        // MSocketLogger.getLogger().fine("ADD_SOCKET recv at server from " + newChannel.socket().getInetAddress() + " scm.ackSeq "
+            // + scm.ackSeq);
+        MSocketLogger.getLogger().log(Level.FINE,"ADD_SOCKET recv at server from {0}, scm.ackSeq {1}", new Object[]{newChannel.socket().getInetAddress(),scm.ackSeq});
         SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
         		connectionInfo.getConnID(), 
         		SetupControlMessage.ADD_SOCKET_REPLY,
@@ -190,7 +194,8 @@ public class ServerMSocket extends MSocket
         // migrate a previous connection. send reset.
         if (connectionInfo == null)
         {
-          MSocketLogger.getLogger().fine("sending MIGRATE_SOCKET_RESET");
+          // MSocketLogger.getLogger().fine("sending MIGRATE_SOCKET_RESET");
+          MSocketLogger.getLogger().log(Level.FINE,"Sending MIGRATE_SOCKET_RESET.");
           SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
         		  scm.connID, SetupControlMessage.MIGRATE_SOCKET_RESET,
               serverController.getLocalPort(), newChannel, 
@@ -199,7 +204,8 @@ public class ServerMSocket extends MSocket
         }
         else
         {
-          System.out.println("MIGRATE_SOCKET arrvied");
+          // System.out.println("MIGRATE_SOCKET arrvied");
+          MSocketLogger.getLogger().log(Level.FINE,"MIGRATE_SOCKET arrvied");
           SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
         		  scm.connID, SetupControlMessage.MIGRATE_SOCKET_REPLY,
               serverController.getLocalPort(), newChannel, 
@@ -247,7 +253,8 @@ public class ServerMSocket extends MSocket
           ResendIfNeededThread RensendObj = new ResendIfNeededThread(connectionInfo);
           (new Thread(RensendObj)).start();
           
-          System.out.println("MIGRATE_SOCKET complete");
+          // System.out.println("MIGRATE_SOCKET complete");
+          MSocketLogger.getLogger().log(Level.FINE,"MIGRATE_SOCKET complete");
 
         }
 

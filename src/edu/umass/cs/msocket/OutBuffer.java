@@ -24,9 +24,9 @@ package edu.umass.cs.msocket;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
-import sun.jvm.hotspot.utilities.soql.MapScriptObject;
+// import sun.jvm.hotspot.utilities.soql.MapScriptObject;
 
 /**
  * This class implements the Output buffer of MSocket. Data is stored in the
@@ -101,7 +101,8 @@ public class OutBuffer
     // FIXME: may need to improve here
     if ((getOutbufferSize() + length) - (java.lang.Runtime.getRuntime().maxMemory() / 2) > 0)
     {
-      MSocketLogger.getLogger().fine("Local write fail JVM Heap memeory threshold exceeded");
+      // MSocketLogger.getLogger().fine("Local write fail JVM Heap memeory threshold exceeded");
+      MSocketLogger.getLogger().log(Level.FINE,"Local write fail JVM Heap memeory threshold exceeded");
       return false;
     }
     byte[] dst = null;
@@ -133,7 +134,7 @@ public class OutBuffer
 
   public synchronized boolean ack(long ack)
   {
-    MSocketLogger.getLogger().info("this is the comparison that's done correct by default. line: 136 file: Outbuffer");
+    // MSocketLogger.getLogger().info("this is the comparison that's done correct by default. line: 136 file: Outbuffer");
     if (ack - dataBaseSeq <= 0 || ack - dataSendSeq > 0)
       return false;
     dataBaseSeq = ack;
@@ -210,8 +211,10 @@ public class OutBuffer
       }
       curStart += b.length;
     }
-    if (buf.array().length == 0)
-      MSocketLogger.getLogger().fine("base=" + this.dataBaseSeq + "send=" + this.dataSendSeq);
+    if (buf.array().length == 0){
+      // MSocketLogger.getLogger().fine("base=" + this.dataBaseSeq + "send=" + this.dataSendSeq);
+      MSocketLogger.getLogger().log(Level.FINE,"BaseSeq = {0}, SendSeq = {1}", new Object[]{this.dataBaseSeq,this.dataSendSeq});
+    }
     return buf.array();
   }
 
@@ -243,8 +246,11 @@ public class OutBuffer
       }
       curStart += b.length;
     }
-    if (buf.array().length == 0)
-      MSocketLogger.getLogger().fine("base=" + startSeqNum + "send=" + EndSeqNum);
+    if (buf.array().length == 0){
+      // MSocketLogger.getLogger().fine("base=" + startSeqNum + "send=" + EndSeqNum);
+      MSocketLogger.getLogger().log(Level.FINE,"BaseSeq = {0}, SendSeq = {1}", new Object[]{startSeqNum,EndSeqNum });
+    }
+
     return buf.array();
   }
 
@@ -267,13 +273,13 @@ public class OutBuffer
     byte[] b1 = "Test1".getBytes();
     byte[] b2 = "Test2".getBytes();
     ob.add(b1);
-    MSocketLogger.getLogger().fine(ob.toString());
+    // MSocketLogger.getLogger().fine(ob.toString());
     ob.add(b2);
-    MSocketLogger.getLogger().fine(ob.toString());
+    // MSocketLogger.getLogger().fine(ob.toString());
     ob.ack(3);
-    MSocketLogger.getLogger().fine(ob.toString());
+    // MSocketLogger.getLogger().fine(ob.toString());
     ob.ack(4);
-    MSocketLogger.getLogger().fine(ob.toString());
-    MSocketLogger.getLogger().fine(new String(ob.getUnacked()));
+    // MSocketLogger.getLogger().fine(ob.toString());
+    // MSocketLogger.getLogger().fine(new String(ob.getUnacked()));
   }
 }

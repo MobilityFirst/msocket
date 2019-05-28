@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.ConnectionInfo;
 import edu.umass.cs.msocket.DataMessage;
 import edu.umass.cs.msocket.MSocketConstants;
@@ -200,8 +200,9 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 		        cinfo.attemptSocketWrite(sockObj);
 		        //if (cinfo.getServerOrClient() == MSocketConstants.CLIENT)
 		        {
-		          MSocketLogger.getLogger().fine("Using socketID " + sockObj.getSocketIdentifer() + "Remote IP " + sockObj.getSocket().getInetAddress()
-		              + "for writing " + "" + "tempDataSendSeqNum " + startSeqNum);
+		          // MSocketLogger.getLogger().fine("Using socketID " + sockObj.getSocketIdentifer() + "Remote IP " + sockObj.getSocket().getInetAddress()
+		              // + "for writing " + "" + "tempDataSendSeqNum " + startSeqNum);
+		        MSocketLogger.getLogger().log(Level.FINE,"Using socketID: {0}, Remote IP: {1}, for writing tempDataSendSeqNum {2}.", new Object[]{sockObj.getSocketIdentifer(),sockObj.getSocket().getInetAddress(),startSeqNum});
 		        }
 	          
 		      sockObj.updateSentBytes(tobesent);
@@ -209,7 +210,8 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	        }
 	        catch (IOException ex)
 	        {
-	          MSocketLogger.getLogger().fine("Write exception caused");
+	          // MSocketLogger.getLogger().fine("Write exception caused");
+	          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
 	          sockObj.setStatus(false);
 	          sockObj.setneedToReqeustACK(true);
 

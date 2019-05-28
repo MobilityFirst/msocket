@@ -30,7 +30,7 @@ import java.net.NetworkInterface;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 
@@ -165,7 +165,8 @@ public class CommonMethods
       }
       catch (Exception ex)
       {
-        MSocketLogger.getLogger().fine("excp in public IP determine returnPublicIP");
+        // MSocketLogger.getLogger().fine("excp in public IP determine returnPublicIP");
+        MSocketLogger.getLogger().log(Level.FINE,"Exception in public IP determine returnPublicIP");
         if (i == numTry)
         {
           throw new IOException(ex);
