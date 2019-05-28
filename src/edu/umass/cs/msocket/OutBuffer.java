@@ -26,7 +26,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
-import sun.jvm.hotspot.utilities.soql.MapScriptObject;
+// import sun.jvm.hotspot.utilities.soql.MapScriptObject;
 
 /**
  * This class implements the Output buffer of MSocket. Data is stored in the
@@ -45,20 +45,20 @@ public class OutBuffer
    * Same as ConnectionInfo.dataSendSeq, this is the sequence number of the next
    * byte to be sent.
    */
-  long                    dataSendSeq        = 0;
+  int                    dataSendSeq        = 0;
 
   /*
    * dataBaseSeq is the sequence number of the lowest byte that has not been
    * cumulatively acknowledged by the receiver.
    */
-  long                    dataBaseSeq        = 0;
+  int                    dataBaseSeq        = 0;
 
   /*
    * dataStartSeq is the sequence number of first byte in the buffer. It may be
    * less than dataBaseSeq as dataStartSeq is advanced only when dataBaseSeq
    * moves beyond the first whole buffer in the buffer list sbuf.
    */
-  long                    dataStartSeq       = 0;
+  int                    dataStartSeq       = 0;
 
   boolean                 Close_Obuffer      = false;                                      // indicates
                                                                                             // that
@@ -131,7 +131,7 @@ public class OutBuffer
     return add(b, 0, b.length);
   }
 
-  public synchronized boolean ack(long ack)
+  public synchronized boolean ack(int ack)
   {
     MSocketLogger.getLogger().info("this is the comparison that's done correct by default. line: 136 file: Outbuffer");
     if (ack - dataBaseSeq <= 0 || ack - dataSendSeq > 0)
@@ -153,7 +153,7 @@ public class OutBuffer
 
   public void freeOutBuffer()
   {
-    long curStart = dataStartSeq;
+    int curStart = dataStartSeq;
     int freeIndex = -1;
     for (int i = 0; i < sbuf.size(); i++)
     {
@@ -180,12 +180,12 @@ public class OutBuffer
     sbuf.clear();
   }
 
-  public synchronized long getDataBaseSeq()
+  public synchronized int getDataBaseSeq()
   {
     return dataBaseSeq;
   }
 
-  public synchronized void setDataBaseSeq(long bs)
+  public synchronized void setDataBaseSeq(int bs)
   {
     if ((bs - dataStartSeq >= 0) && (bs - dataSendSeq <= 0) && (bs > dataBaseSeq))
     {

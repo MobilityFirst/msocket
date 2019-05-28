@@ -577,7 +577,7 @@ public class ConnectionInfo
     getObuffer().releaseOutBuffer();
   }
 
-  public void ackOutBuffer(long ack)
+  public void ackOutBuffer(int ack)
   {
     getObuffer().ack(ack);
   }

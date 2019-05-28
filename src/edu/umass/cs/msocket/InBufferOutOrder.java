@@ -39,7 +39,7 @@ public class InBufferOutOrder
 
   ArrayList<InBufferStorageChunk> rbuf               = null;
 
-  long                            dataReadSeq        = 0;                                                 // assuming
+  int                            dataReadSeq        = 0;                                                 // assuming
                                                                                                            // that
                                                                                                            // data
                                                                                                            // starts
@@ -47,7 +47,7 @@ public class InBufferOutOrder
                                                                                                            // 0
                                                                                                            // seq
                                                                                                            // num
-  long                            byteRecvInInbuffer = 0;                                                 // mainly
+  int                            byteRecvInInbuffer = 0;                                                 // mainly
                                                                                                            // for
                                                                                                            // ideal
                                                                                                            // case
@@ -201,7 +201,7 @@ public class InBufferOutOrder
 		return actualCopied;
 	}
 	
-	public long getDataReadSeqNum() {
+	public int getDataReadSeqNum() {
 		return dataReadSeq;
 	}
 	
