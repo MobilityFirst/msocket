@@ -96,7 +96,7 @@ public class OutBuffer
 
   public synchronized boolean add(byte[] src, int offset, int length)
   {
-    if (src.length < offset + length)
+    if (src.length - (offset + length) < 0)
       return false;
     // FIXME: may need to improve here
     if ((getOutbufferSize() + length) - (java.lang.Runtime.getRuntime().maxMemory() / 2) > 0)

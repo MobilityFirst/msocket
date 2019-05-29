@@ -400,7 +400,7 @@ public class SocketInfo
 		this.handleMigSeqNum = handleMigSeqNum;
 	}
 	
-	public long getHandleMigSeqNum() {
+	public int getHandleMigSeqNum() {
 		return this.handleMigSeqNum;
 	}
 
