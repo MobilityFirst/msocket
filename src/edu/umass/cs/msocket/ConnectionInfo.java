@@ -486,7 +486,7 @@ public class ConnectionInfo
     return dataSendSeq;
   }
 
-  public byte[] getDataFromOutBuffer(long startSeqNum, long EndSeqNum)
+  public byte[] getDataFromOutBuffer(int startSeqNum, int EndSeqNum)
   {
     return getObuffer().getDataFromOutBuffer(startSeqNum, EndSeqNum);
   }
@@ -509,7 +509,7 @@ public class ConnectionInfo
       return false;
   }
 
-  public long getDataBaseSeq()
+  public int getDataBaseSeq()
   {
     // obuffer.setDataBaseSeq(bs);
     return getObuffer().getDataBaseSeq();
@@ -1494,7 +1494,7 @@ public class ConnectionInfo
 
     int dataSendSeqNum = getDataSendSeq();
     MSocketLogger.getLogger().fine("handleMigrationInMultiPath End Seq Num" + dataSendSeqNum + " SocektId " + Obj.getSocketIdentifer());
-    int DataAck = (int) getDataBaseSeq();
+    int DataAck = getDataBaseSeq();
     MSocketLogger.getLogger().fine("DataAck from other side " + DataAck);
 
     if (dataSendSeqNum - DataAck > 0)

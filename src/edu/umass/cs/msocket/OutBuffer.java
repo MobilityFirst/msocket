@@ -187,7 +187,7 @@ public class OutBuffer
 
   public synchronized void setDataBaseSeq(int bs)
   {
-    if ((bs - dataStartSeq >= 0) && (bs - dataSendSeq <= 0) && (bs > dataBaseSeq))
+    if ((bs - dataStartSeq >= 0) && (bs - dataSendSeq <= 0) && (bs - dataBaseSeq > 0))
     {
       dataBaseSeq = bs;
       freeOutBuffer();
@@ -215,12 +215,12 @@ public class OutBuffer
     return buf.array();
   }
 
-  public synchronized byte[] getDataFromOutBuffer(long startSeqNum, long EndSeqNum)
+  public synchronized byte[] getDataFromOutBuffer(int startSeqNum, int EndSeqNum)
   {
     if (EndSeqNum - startSeqNum <= 0)
       return null;
     ByteBuffer buf = ByteBuffer.wrap(new byte[(int) (EndSeqNum - startSeqNum)]);
-    long curStart = dataStartSeq;
+    int curStart = dataStartSeq;
 
     for (int i = 0; i < sbuf.size(); i++)
     {
@@ -229,7 +229,7 @@ public class OutBuffer
       {
         int srcPos = (int) Math.max(0, startSeqNum - curStart);
         int copy = 0;
-        if (buf.remaining() > (b.length - srcPos))
+        if (buf.remaining() - (b.length - srcPos) > 0)
         {
           copy = (b.length - srcPos);
           buf.put(b, srcPos, copy);

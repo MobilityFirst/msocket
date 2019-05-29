@@ -105,7 +105,7 @@ public class ResendIfNeededThread implements Runnable
 	  cinfo.emptyTheWriteQueues();
     MSocketLogger.getLogger().fine("HandleMigrationInMultiPath End Seq Num" + tempDataSendSeqNum + " SocektId " + Obj.getSocketIdentifer());
     cinfo.multiSocketRead();
-    int dataAck = (int) cinfo.getDataBaseSeq();
+    int dataAck = cinfo.getDataBaseSeq();
     MSocketLogger.getLogger().fine("DataAck from other side " + dataAck);
 
     if (tempDataSendSeqNum - dataAck > 0)
