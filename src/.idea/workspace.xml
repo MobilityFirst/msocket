@@ -3,7 +3,14 @@
   <component name="ChangeListManager">
     <list default="true" id="f76d7389-b65c-4370-b22a-49e667ff7758" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread2Path.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread2Path.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/ConnectionInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/ConnectionInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/RTTBasedWritingPolicy.java" beforeDir="false" afterPath="$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/RTTBasedWritingPolicy.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,29 +23,60 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
-              <caret line="412" column="14" selection-start-line="412" selection-start-column="14" selection-end-line="412" selection-end-column="14" />
+            <state relative-caret-position="-240">
+              <caret line="487" column="19" selection-start-line="487" selection-start-column="19" selection-end-line="487" selection-end-column="19" />
               <folding>
+                <element signature="e#10588#10589#0" expanded="true" />
+                <element signature="e#10626#10627#0" expanded="true" />
                 <element signature="e#10698#10699#0" expanded="true" />
                 <element signature="e#10743#10744#0" expanded="true" />
-                <element signature="e#11020#11021#0" expanded="true" />
-                <element signature="e#11051#11052#0" expanded="true" />
-                <element signature="e#11149#11150#0" expanded="true" />
-                <element signature="e#11178#11179#0" expanded="true" />
+                <element signature="e#11089#11090#0" expanded="true" />
+                <element signature="e#11118#11119#0" expanded="true" />
+                <element signature="e#11305#11306#0" expanded="true" />
+                <element signature="e#11360#11361#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-38">
+              <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+              <folding>
+                <element signature="n#!!doc" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="227" column="31" selection-start-line="227" selection-start-column="31" selection-end-line="227" selection-end-column="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="179">
+              <caret line="148" column="33" selection-start-line="148" selection-start-column="33" selection-end-line="148" selection-end-column="33" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/ConnectionInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="129">
-              <caret line="62" column="44" lean-forward="true" selection-start-line="62" selection-start-column="44" selection-end-line="62" selection-end-column="44" />
-              <folding>
-                <element signature="e#13077#13078#0" expanded="true" />
-                <element signature="e#13105#13106#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="5137">
+              <caret line="505" column="64" selection-start-line="505" selection-start-column="64" selection-end-line="505" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -59,6 +97,7 @@
       <find>getdata</find>
       <find>&gt;</find>
       <find>&lt;</find>
+      <find>tempDataSendSeqNum</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -74,15 +113,12 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/RetransmitTask.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/MServerSocketController.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferStorageChunkComparator.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/MultipathWritingPolicy.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/FlowIDToControllerMapping.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread2Path.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/DataMessage.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/MWrappedInputStream.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/logger/MSocketLogger.java" />
         <option value="$PROJECT_DIR$/logging.properties" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/MSocketClient.java" />
@@ -90,11 +126,15 @@
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroudMultiPathWritingThread.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/ByteRangeInfo.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/ResendIfNeededThread.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferStorageChunk.java" />
-        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java" />
         <option value="$PROJECT_DIR$/edu/umass/cs/msocket/ConnectionInfo.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/RTTBasedWritingPolicy.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread2Path.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java" />
+        <option value="$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java" />
       </list>
     </option>
   </component>
@@ -112,7 +152,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -142,10 +181,11 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559109346554" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559234411820" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.1541502" />
@@ -228,7 +268,7 @@
     <frame x="0" y="23" width="1440" height="802" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4976415" visible="true" weight="0.25250357" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4976415" visible="true" weight="0.25608012" />
       <window_info id="Structure" order="1" sideWeight="0.5023585" side_tool="true" weight="0.3065476" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -236,7 +276,7 @@
       <window_info id="Capture Tool" order="5" />
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info active="true" anchor="bottom" id="Find" order="1" visible="true" weight="0.32816902" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32816902" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.27605635" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -303,27 +343,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="changed all the comparison operators" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/FlowPathResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="30" column="13" selection-start-line="30" selection-start-column="13" selection-end-line="30" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/FlowPath.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-122">
-          <caret line="31" column="13" selection-start-line="31" selection-start-column="13" selection-end-line="31" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/FlowIDToControllerMapping.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1262">
-          <caret line="125" column="18" selection-start-line="125" selection-start-column="18" selection-end-line="125" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/DataMessage.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="254">
@@ -340,26 +359,6 @@
             <element signature="e#1613#1614#0" expanded="true" />
             <element signature="e#1643#1644#0" expanded="true" />
             <element signature="e#1666#1667#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="50" column="43" selection-start-line="50" selection-start-column="43" selection-end-line="50" selection-end-column="43" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1786">
-          <caret line="134" column="34" selection-start-line="134" selection-start-column="34" selection-end-line="134" selection-end-column="34" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -448,13 +447,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3663">
           <caret line="226" column="56" selection-start-line="226" selection-start-column="56" selection-end-line="226" selection-end-column="56" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="428">
-          <caret line="100" column="38" selection-start-line="100" selection-start-column="38" selection-end-line="100" selection-end-column="38" />
         </state>
       </provider>
     </entry>
@@ -596,31 +588,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/FullDuplicationWritingPolicy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3525">
-          <caret line="43" column="13" selection-start-line="43" selection-start-column="13" selection-end-line="43" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/MultipathSchedulerInterface.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-405">
           <caret line="35" column="22" selection-start-line="35" selection-start-column="22" selection-end-line="35" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/RTTBasedWritingPolicy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="46">
-          <caret line="43" column="13" selection-start-line="43" selection-start-column="13" selection-end-line="43" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/ContigousWritingPolicy.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="35" column="13" selection-start-line="35" selection-start-column="13" selection-end-line="35" selection-end-column="13" />
         </state>
       </provider>
     </entry>
@@ -672,28 +643,95 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java">
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/FullDuplicationWritingPolicy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="234" column="46" selection-start-line="234" selection-start-column="46" selection-end-line="234" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/ContigousWritingPolicy.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="142">
-          <caret line="412" column="14" selection-start-line="412" selection-start-column="14" selection-end-line="412" selection-end-column="14" />
-          <folding>
-            <element signature="e#10698#10699#0" expanded="true" />
-            <element signature="e#10743#10744#0" expanded="true" />
-            <element signature="e#11020#11021#0" expanded="true" />
-            <element signature="e#11051#11052#0" expanded="true" />
-            <element signature="e#11149#11150#0" expanded="true" />
-            <element signature="e#11178#11179#0" expanded="true" />
-          </folding>
+          <caret line="190" column="50" selection-start-line="190" selection-start-column="50" selection-end-line="190" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="461" column="90" selection-start-line="461" selection-start-column="90" selection-end-line="461" selection-end-column="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/common/policies/RTTBasedWritingPolicy.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="142">
+          <caret line="254" column="18" selection-start-line="254" selection-start-column="18" selection-end-line="254" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/BackgroudMultiPathWritingThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="72" column="14" selection-start-line="72" selection-start-column="14" selection-end-line="72" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/BackgroundWritingThread2Path.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="476" column="11" lean-forward="true" selection-start-line="476" selection-start-column="11" selection-end-line="476" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/ConnectionInfo.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="129">
-          <caret line="62" column="44" lean-forward="true" selection-start-line="62" selection-start-column="44" selection-end-line="62" selection-end-column="44" />
+        <state relative-caret-position="5137">
+          <caret line="505" column="64" selection-start-line="505" selection-start-column="64" selection-end-line="505" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/SocketInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-240">
+          <caret line="487" column="19" selection-start-line="487" selection-start-column="19" selection-end-line="487" selection-end-column="19" />
           <folding>
-            <element signature="e#13077#13078#0" expanded="true" />
-            <element signature="e#13105#13106#0" expanded="true" />
+            <element signature="e#10588#10589#0" expanded="true" />
+            <element signature="e#10626#10627#0" expanded="true" />
+            <element signature="e#10698#10699#0" expanded="true" />
+            <element signature="e#10743#10744#0" expanded="true" />
+            <element signature="e#11089#11090#0" expanded="true" />
+            <element signature="e#11118#11119#0" expanded="true" />
+            <element signature="e#11305#11306#0" expanded="true" />
+            <element signature="e#11360#11361#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferHeapImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-38">
+          <caret line="125" column="51" selection-start-line="125" selection-start-column="51" selection-end-line="125" selection-end-column="51" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/OutBuffer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="227" column="31" selection-start-line="227" selection-start-column="31" selection-end-line="227" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edu/umass/cs/msocket/InBufferOutOrder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="148" column="33" selection-start-line="148" selection-start-column="33" selection-end-line="148" selection-end-column="33" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

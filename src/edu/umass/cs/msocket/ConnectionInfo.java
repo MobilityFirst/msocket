@@ -503,7 +503,7 @@ public class ConnectionInfo
 
   public boolean notAckedInAWhile(SocketInfo Obj)
   {
-    if ((Obj.getRecvdBytes() - Obj.getLastNumBytesRecv()) >= ACK_SEND_THRESH)
+    if ((Obj.getRecvdBytes() - Obj.getLastNumBytesRecv()) - ACK_SEND_THRESH >= 0)
       return true;
     else
       return false;

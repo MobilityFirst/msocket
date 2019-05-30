@@ -203,7 +203,7 @@ public class OutBuffer
     for (int i = 0; i < sbuf.size(); i++)
     {
       byte[] b = sbuf.get(i);
-      if (curStart + b.length - dataBaseSeq > 0)
+      if ((curStart + b.length) - dataBaseSeq > 0)
       {
         int srcPos = (int) Math.max(0, dataBaseSeq - curStart);
         buf.put(b, srcPos, b.length - srcPos);
@@ -225,7 +225,7 @@ public class OutBuffer
     for (int i = 0; i < sbuf.size(); i++)
     {
       byte[] b = sbuf.get(i);
-      if (curStart + b.length - startSeqNum > 0)
+      if ((curStart + b.length) - startSeqNum > 0)
       {
         int srcPos = (int) Math.max(0, startSeqNum - curStart);
         int copy = 0;

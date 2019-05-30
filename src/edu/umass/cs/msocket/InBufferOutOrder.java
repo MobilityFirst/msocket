@@ -134,7 +134,7 @@ public class InBufferOutOrder
         // FIXME: check for long to int conversion
         int cpylen = CurChunk.chunkSize - srcPos;
         int actlen = 0;
-        if ((numread + cpylen) > length)
+        if ((numread + cpylen) - length > 0)
         {
           actlen = length - numread;
         }
@@ -146,7 +146,7 @@ public class InBufferOutOrder
         System.arraycopy(CurChunk.chunkData, srcPos, b, offset+numread, actlen);
         numread += actlen;
         dataReadSeq += actlen;
-        if (numread >= length)
+        if (numread - length >= 0)
           break;
       }
     }

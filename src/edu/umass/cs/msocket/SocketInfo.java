@@ -406,7 +406,7 @@ public class SocketInfo
 
   public synchronized void setRecvdBytesOtherSide(long RecvdBytes)
   {
-    if (RecvdBytes > numBytesRecvOtherSide)
+    if (RecvdBytes - numBytesRecvOtherSide > 0)
       numBytesRecvOtherSide = RecvdBytes;
   }
   

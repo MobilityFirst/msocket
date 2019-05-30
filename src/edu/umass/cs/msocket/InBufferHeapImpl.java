@@ -123,7 +123,7 @@ public class InBufferHeapImpl {
 				// FIXME: check for long to int conversion
 				int cpylen = curChunk.chunkSize - srcPos;
 				int actlen = 0;
-				if ((numread + cpylen) > length)
+				if ((numread + cpylen) - length > 0)
 				{
 					actlen = length - numread;
 				}
