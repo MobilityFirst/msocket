@@ -2,18 +2,18 @@
  * Mobility First - Global Name Resolution Service (GNS)
  * Copyright (C) 2013 University of Massachusetts - Emmanuel Cecchet.
  * Contact: cecchet@cs.umass.edu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -34,7 +34,7 @@ import edu.umass.cs.msocket.MultipathPolicy;
 import edu.umass.cs.msocket.SocketInfo;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
-public class BlackBoxWritingPolicy extends MultipathWritingPolicy 
+public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 {
 	private MultipathSchedulerInterface writingInterface				= null;
 
@@ -42,33 +42,29 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	{
 		this.cinfo = cinfo;
 		writingInterface = new RoundRobinMultipathScheduler(cinfo);
-		//cinfo.startRetransmissionThread();
-		//cinfo.startEmptyQueueThread();
 	}
-	
-	
+
+
 	@Override
 	public void writeAccordingToPolicy(byte[] b, int offset, int length,
-			int MesgType) throws IOException 
+			int MesgType) throws IOException
 	{
 		double lenDouble = length;
 		int numChunks = (int)Math.ceil(lenDouble/MWrappedOutputStream.WRITE_CHUNK_SIZE);
-		
-		//int begSeqNum = cinfo.getDataSendSeq();
-		
+
 		writingInterface.initializeScheduler(cinfo.getDataSendSeq(), numChunks, getActivePathIDs());
-		
+
 		List<ChunkInformation> chunkInfoList = writingInterface.getSchedulingScheme();
-		
+
 		List<ChunkInformation> actualChunkWrite = new LinkedList<ChunkInformation>();
-		
+
 		int remaining = length;
-		
+
 		for(int i=0; i<chunkInfoList.size(); )
 		{
 			int actualPathID = -1;
 			ChunkInformation chunkInfo  = chunkInfoList.get(i);
-			
+
 			int currChunkLength;
 			if(remaining < MWrappedOutputStream.WRITE_CHUNK_SIZE)
 			{
@@ -78,26 +74,26 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 			{
 				currChunkLength = MWrappedOutputStream.WRITE_CHUNK_SIZE;
 			}
-			
+
 			int actualOffset = offset + length - remaining;
-			boolean success = writeChunk(cinfo.getSocketInfo(chunkInfo.getPathID()), chunkInfo.getChunkStartSeqNum(), 
+			boolean success = writeChunk(cinfo.getSocketInfo(chunkInfo.getPathID()), chunkInfo.getChunkStartSeqNum(),
 					b, actualOffset, currChunkLength);
-			
-			
+
+
 			// unable to follow black box advice
 			if( !success )
 			{
 				//try writing over any path
 				Vector<SocketInfo> socketMapValues = new Vector<SocketInfo>();
 			    socketMapValues.addAll(cinfo.getAllSocketInfo());
-			    
+
 		        int j = 0;
 		        while ( j < socketMapValues.size() )
 		        {
 		          SocketInfo value = socketMapValues.get(j);
 		          if( value.getStatus() )
 		          {
-		        	  success = writeChunk(value, chunkInfo.getChunkStartSeqNum(), 
+		        	  success = writeChunk(value, chunkInfo.getChunkStartSeqNum(),
 		  					b, actualOffset, currChunkLength);
 		        	  // written successfully
 		        	  if(success)
@@ -108,15 +104,15 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 		          }
 		          j++;
 		        }
-			} 
+			}
 			else
 			{
 				actualPathID = chunkInfo.getPathID();
 			}
-			
+
 			if(!success)
 	        {
-	        	// if couldn't write then block on the 
+	        	// if couldn't write then block on the
 	        	// outputstream selector.
 	        	cinfo.blockOnOutputStreamSelector();
 	        } else
@@ -127,22 +123,22 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	        	i++;
 	        }
 		}
-		
+
 		writingInterface.informChunkWrite(actualChunkWrite);
 	}
 
-	protected SocketInfo getNextSocketToWrite() throws IOException 
+	protected SocketInfo getNextSocketToWrite() throws IOException
 	{
 		return null;
 	}
-	
+
 	private List<Integer> getActivePathIDs()
 	{
 		List<Integer> pathIDList = new LinkedList<Integer>();
-		
+
 		Vector<SocketInfo> socketMapValues = new Vector<SocketInfo>();
 	    socketMapValues.addAll(cinfo.getAllSocketInfo());
-	    
+
         int i = 0;
         while (i < socketMapValues.size())
         {
@@ -155,16 +151,16 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
         }
 		return pathIDList;
 	}
-	
+
 	private boolean writeChunk(SocketInfo sockObj, int startSeqNum, byte[] bytebuf, int bufferOffset, int chunkLength) throws IOException
 	{
 		if (sockObj != null)
 	      {
 	        while (!sockObj.acquireLock());
-	        
+
 	        sockObj.byteInfoVectorOperations(SocketInfo.QUEUE_REMOVE, cinfo.getDataBaseSeq(), -1);
 	        int tobesent = chunkLength;
-	        
+
 	        try
 	        {
 	          if (sockObj.getneedToReqeustACK() )
@@ -173,7 +169,7 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	            //sockObj.releaseLock();
 	            //continue;
 	          }
-	          
+
 	          DataMessage dm = new DataMessage(DataMessage.DATA_MESG, startSeqNum, cinfo.getDataAckSeq(), tobesent, 0, bytebuf,
 	        		  bufferOffset);
 	          byte[] writebuf = dm.getBytes();
@@ -184,7 +180,7 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	          // at receiving side, receiver will take care of redundantly
 	          // received data
 
-	          
+
 		        if ((Integer) sockObj.queueOperations(SocketInfo.QUEUE_SIZE, null) > 0)
 		        {
 		          cinfo.attemptSocketWrite(sockObj);
@@ -196,21 +192,20 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 		        	sockObj.queueOperations(SocketInfo.QUEUE_PUT, writebuf);
 		        	sockObj.byteInfoVectorOperations(SocketInfo.QUEUE_PUT, startSeqNum, tobesent);
 		        }
-		
+
 		        cinfo.attemptSocketWrite(sockObj);
 		        //if (cinfo.getServerOrClient() == MSocketConstants.CLIENT)
 		        {
-		          // MSocketLogger.getLogger().fine("Using socketID " + sockObj.getSocketIdentifer() + "Remote IP " + sockObj.getSocket().getInetAddress()
-		              // + "for writing " + "" + "tempDataSendSeqNum " + startSeqNum);
+
 		        MSocketLogger.getLogger().log(Level.FINE,"Using socketID: {0}, Remote IP: {1}, for writing tempDataSendSeqNum {2}.", new Object[]{sockObj.getSocketIdentifer(),sockObj.getSocket().getInetAddress(),startSeqNum});
 		        }
-	          
+
 		      sockObj.updateSentBytes(tobesent);
 	          sockObj.releaseLock();
 	        }
 	        catch (IOException ex)
 	        {
-	          // MSocketLogger.getLogger().fine("Write exception caused");
+
 	          MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
 	          sockObj.setStatus(false);
 	          sockObj.setneedToReqeustACK(true);
@@ -238,24 +233,24 @@ public class BlackBoxWritingPolicy extends MultipathWritingPolicy
 	            }
 	          }
 	        }
-	        
+
 	        if (cinfo.getMSocketState() == MSocketConstants.CLOSED)
 	        {
 	          throw new IOException(" socket already closed");
 	        }
-	        
+
 	      }
-		
+
 		return true;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Informs the ack arrival to the black box.
 	 */
 	public void informAckArrival(ChunkInformation chunkAckList)
 	{
 		writingInterface.informAckArrival(chunkAckList);
 	}
-	
+
 }

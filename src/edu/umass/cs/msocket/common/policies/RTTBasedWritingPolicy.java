@@ -2,18 +2,18 @@
  * Mobility First - Global Name Resolution Service (GNS)
  * Copyright (C) 2013 University of Massachusetts - Emmanuel Cecchet.
  * Contact: cecchet@cs.umass.edu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -37,7 +37,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
 /**
  * This class implements RTT based scheduling policy. For more about policy
  * details refer to the tech report.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -121,7 +121,7 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
           // at receiving side, receiver will take care of redundantly
           // received data
 
-          
+
 	        if ((Integer) Obj.queueOperations(SocketInfo.QUEUE_SIZE, null) > 0)
 	        {
 	          cinfo.attemptSocketWrite(Obj);
@@ -133,15 +133,14 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
 	          Obj.queueOperations(SocketInfo.QUEUE_PUT, writebuf);
 	          Obj.byteInfoVectorOperations(SocketInfo.QUEUE_PUT, tempDataSendSeqNum, tobesent);
 	        }
-	
+
 	        cinfo.attemptSocketWrite(Obj);
 	        if (cinfo.getServerOrClient() == MSocketConstants.CLIENT)
 	        {
-	          // MSocketLogger.getLogger().fine("Using socketID " + Obj.getSocketIdentifer() + "Remote IP " + Obj.getSocket().getInetAddress()
-	              // + "for writing " + "" + "tempDataSendSeqNum " + tempDataSendSeqNum);
+
 	        MSocketLogger.getLogger().log(Level.FINE,"Using socketID {0}, Remote IP {1}, for writing tempDataSendSeqNum: {2}.", new Object[]{Obj.getSocketIdentifer(),Obj.getSocket().getInetAddress(),tempDataSendSeqNum});
           }
-          
+
           Obj.updateSentBytes(tobesent);
           currpos += tobesent;
           remaining -= tobesent;
@@ -151,7 +150,7 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
         }
         catch (IOException ex)
         {
-          // MSocketLogger.getLogger().fine("Write exception caused");
+
           MSocketLogger.getLogger().log(Level.FINE,"Write exception caused");
           Obj.setStatus(false);
           Obj.setneedToReqeustACK(true);
@@ -190,7 +189,7 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
       }
     }
 
-    
+
 	  Vector<SocketInfo> socketList = new Vector<SocketInfo>();
 	  socketList.addAll((Collection<? extends SocketInfo>) cinfo.getAllSocketInfo());
 	  String print = "";
@@ -203,17 +202,17 @@ public class RTTBasedWritingPolicy extends MultipathWritingPolicy
 	          + " RecvdBytesOtherSide " + Obj.getRecvdBytesOtherSide() + " ";
 	    }
 	  }
-	  // MSocketLogger.getLogger().fine(print);
+
 	  // need to empty the write queues here, can't return
 	  // before that, otherwise it would desynchronize the output stream
 	  //cinfo.emptyTheWriteQueues();
   }
 
 protected SocketInfo getNextSocketToWrite() throws IOException {
-	
+
 	Vector<SocketInfo> socketMapValues = new Vector<SocketInfo>();
     socketMapValues.addAll(cinfo.getAllSocketInfo());
-    
+
 	int i = 0;
     SocketInfo value = null;
     SocketInfo retvalue = null;
@@ -326,7 +325,7 @@ protected SocketInfo getNextSocketToWrite() throws IOException {
 
 /**
  * Max num chunks indicate good path, transmit on that first
- * 
+ *
  * @param socketMapValues
  * @return
  */
@@ -403,7 +402,6 @@ private void calculateThroughputForPaths(Vector<SocketInfo> socketMapValues)
       {
         double frac = (value.getRecvdBytesOtherSide() * 1.0) / minOtherSideRecv;
         value.setNumRemChunks(Math.round(frac));
-        // MSocketLogger.getLogger().fine("set by minOtherSideRecv " + Math.round(frac) + " socketID " + value.getSocketIdentifer());
         MSocketLogger.getLogger().log(Level.FINE,"Set by minOtherSideRecv {0}, socketID {1}.", new Object[]{Math.round(frac),value.getSocketIdentifer()});
         assert Math.round(frac) != 0;
       }
@@ -412,8 +410,6 @@ private void calculateThroughputForPaths(Vector<SocketInfo> socketMapValues)
       {
         double frac = (maxRTT * 1.0) / value.getEstimatedRTT();
         value.setNumRemChunks(Math.round(frac));
-        // MSocketLogger.getLogger().fine("set by minRTT " + Math.round(frac) + " socketID " + value.getSocketIdentifer()
-            // + " value.getEstimatedRTT() " + value.getEstimatedRTT() + " minRTT " + maxRTT);
         MSocketLogger.getLogger().log(Level.FINE,"Set by minRTT: {0}, socketID: {1}, EstimatedRTT: {2}, maxRTT: {3}.",new Object[]{Math.round(frac),value.getSocketIdentifer(),value.getEstimatedRTT(),maxRTT});
         assert Math.round(frac) != 0;
       }
