@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -33,14 +33,14 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
  * This class implements the connection to the proxy. MServerSocket uses this
  * class to addProxy, removeProxy and accept connection from the proxy.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -108,7 +108,8 @@ public class ConnectionToProxyServer
       SocketChannel RegisteredChannel = Obj.getUnderlyingChannel();
       RegisteredChannel.configureBlocking(false);
 
-      MSocketLogger.getLogger().fine("putiting new proxy in register queue");
+
+      MSocketLogger.getLogger().log(Level.FINE,"putiting new proxy in register queue");
       registerQueueOperations(PUT, Obj);
     }
 
@@ -117,20 +118,21 @@ public class ConnectionToProxyServer
   public void removeProxy(String Key, ProxyInfo Obj) throws IOException
   {
     synchronized (removeProxyMonitor)
-    { 
+    {
       serverController.removeProxyInfo(Key);
 
       // close the channel
       Obj.closeChannel();
       Obj.setActive(false);
 
-      Obj.getSelectorKey().cancel(); 
+      Obj.getSelectorKey().cancel();
     }
   }
 
   public MSocket accept() throws IOException
   {
-    MSocketLogger.getLogger().fine("Proxy accept() called");
+
+    MSocketLogger.getLogger().log(Level.FINE,"Proxy accept() called");
     MSocket ms = null;
 
     while (!serverController.isClosed())
@@ -182,7 +184,7 @@ public class ConnectionToProxyServer
           ProxyInfo ProxyObj = (ProxyInfo) key.attachment();
           SocketChannel SourceChannel = ProxyObj.getUnderlyingChannel();
           try
-          { 
+          {
           boolean exit = true;
           do
           {
@@ -204,15 +206,16 @@ public class ConnectionToProxyServer
               scm = SetupControlMessage.getSetupControlMessage(buf.array());
               if (scm.mesgType == SetupControlMessage.NEW_CON_REQ)
               {
-                MSocketLogger.getLogger().fine("NEW_CON_REQ mesg recv from proxy");
+
+                MSocketLogger.getLogger().log(Level.FINE,"NEW_CON_REQ mesg recv from proxy");
                 SocketChannel newChannel = SocketChannel.open();
-                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(), 
+                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(),
                 		ProxyObj.getProxyPort()));
-                
+
                 while (!newChannel.finishConnect());
-                
-                MSocketLogger.getLogger().fine("Server's data channel port " 
-                					+ newChannel.socket().getLocalPort());
+
+
+                MSocketLogger.getLogger().log(Level.FINE,"Server's data channel port {0}", newChannel.socket().getLocalPort());
                 ms = new ServerMSocket(newChannel, serverController, scm);
                 keyIterator.remove(); // imp bug: important to remove the
                                       // current key here, so that it can be
@@ -221,37 +224,38 @@ public class ConnectionToProxyServer
               }
               else if (scm.mesgType == SetupControlMessage.MIGRATE_SOCKET_REQ)
               {
-                MSocketLogger.getLogger().fine("MIGRATE_SOCKET_REQ mesg recv from proxy");
+
+                MSocketLogger.getLogger().log(Level.FINE,"MIGRATE_SOCKET_REQ mesg recv from proxy");
                 SocketChannel newChannel = SocketChannel.open();
-                
-                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(), 
+
+                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(),
                 					ProxyObj.getProxyPort()));
-                
+
                 while (!newChannel.finishConnect());
-                
-                MSocketLogger.getLogger().fine("Server's data channel port " 
-                					+ newChannel.socket().getLocalPort());
+
+                MSocketLogger.getLogger().log(Level.FINE,"Server's data channel port {0}",newChannel.socket().getLocalPort() );
                 ms = new ServerMSocket(newChannel, serverController, scm);
                 exit = false;
               }
               else if (scm.mesgType == SetupControlMessage.ADD_SOCKET_REQ)
               {
-                MSocketLogger.getLogger().fine("ADD_SOCKET_REQ mesg recv from proxy");
+
+                MSocketLogger.getLogger().log(Level.FINE,"ADD_SOCKET_REQ mesg recv from proxy");
                 SocketChannel newChannel = SocketChannel.open();
-                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(), 
+                newChannel.connect(new InetSocketAddress(ProxyObj.getProxyName(),
                 		ProxyObj.getProxyPort()));
-                
+
                 while (!newChannel.finishConnect());
 
-                MSocketLogger.getLogger().fine("Server's data channel port " 
-                							+ newChannel.socket().getLocalPort());
+
+                MSocketLogger.getLogger().log(Level.FINE,"Server's data channel port {0}", newChannel.socket().getLocalPort());
                 ms = new ServerMSocket(newChannel, serverController, scm);
                 exit = false;
 
               }
               else if (scm.mesgType == SetupControlMessage.KEEP_ALIVE)
               {
-            	MSocketLogger.getLogger().fine("KEEP ALIVE mesg recv from proxy");
+            	MSocketLogger.getLogger().log(Level.FINE,"KEEP ALIVE mesg recv from proxy");
                 //ProxyObj.setLastKeepAlive(serverController.getLocalClock());
 
                 exit = false;
@@ -268,12 +272,12 @@ public class ConnectionToProxyServer
 	      {
 	    	  ex.printStackTrace();
 	      }
-	      
+
         }
         keyIterator.remove();
       }
     }
-    
+
     return null;
   }
 
@@ -282,10 +286,8 @@ public class ConnectionToProxyServer
   {
     byte[] GUID = new byte[SetupControlMessage.SIZE_OF_GUID];
     GUID = CommonMethods.hexStringToByteArray(serverGuid);
-    
-    MSocketLogger.getLogger().fine("serverGuid " + serverGuid + " GUID to be sent " + GUID + " length "
-        + CommonMethods.hexStringToByteArray(serverGuid).length+" reverse "+CommonMethods.bytArrayToHex(GUID)+ " num of bytes "+ GUID.length);
 
+        MSocketLogger.getLogger().log(Level.FINE,"serverGuid: {0}, GUID to be sent: {1}, length: {2}, Reverse: {3}, GUID Length: {4}.", new Object[]{serverGuid,GUID,CommonMethods.hexStringToByteArray(serverGuid).length,CommonMethods.bytArrayToHex(GUID),GUID.length});
     SetupControlMessage scm = new SetupControlMessage(SCToUse.socket().getLocalAddress(), ControllerPort, lfid, -1,
         mstype, SocketId, -1, GUID);
     ByteBuffer buf = ByteBuffer.wrap(scm.getBytes());
@@ -316,8 +318,7 @@ public class ConnectionToProxyServer
     SocketChannel proxyChannel = proxyObj.getUnderlyingChannel();
     Socket socket = proxyChannel.socket();
 
-    MSocketLogger.getLogger().fine("Connected to proxy at " + socket.getInetAddress() + ":" + socket.getPort());
-
+    MSocketLogger.getLogger().log(Level.FINE,"Connected to proxy at {0}:{1}", new Object[]{socket.getInetAddress(),socket.getPort()});
     setupControlWrite(-1, SetupControlMessage.CONTROL_SOCKET, -1, -1, proxyChannel, -1);
 
     // Read remote port, address, and flowID

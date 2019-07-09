@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -24,14 +24,14 @@ package edu.umass.cs.msocket;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
  * This class defines the data message format, every data is sent encapsulated
  * in the data message. The class also defines the serialization and
  * de-serialization of the data message
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -76,9 +76,9 @@ public class DataMessage
                                                                                                        // for
                                                                                                        // socket
                                                                                                        // performance
-  
+
   final byte[]                 msg;
-  
+
   // stores the beginning position of data copy in the given buffer.
   private final int arrayCopyOffset;
 
@@ -125,7 +125,8 @@ public class DataMessage
     	buf.put(msg, arrayCopyOffset, length);
     	if(length>0)
     	{
-    		MSocketLogger.getLogger().fine("DataMessage: msg[0] "+msg[0]);
+
+        MSocketLogger.getLogger().log(Level.FINE,"DataMessage msg[0]: {1}", msg[0]);
     	}
       }
     buf.flip();
@@ -158,7 +159,7 @@ public class DataMessage
   public String toString()
   {
     String s = "";
-    s += Type + ", " + sendSeq + ", " + ackSeq + ", " + length + ", " + (msg != null ? new String(msg) : "");
+    s += "Type: "+ Type + ",sendSeq: " + sendSeq + ",ackSeq: " + ackSeq + ",length: " + length + ",msg: " + (msg != null ? new String(msg) : "");
     return s;
   }
 
@@ -170,6 +171,6 @@ public class DataMessage
 
     DataMessage dec = DataMessage.getDataMessage(enc);
     enc[11] = 98;
-    MSocketLogger.getLogger().fine(dec.toString());
+    // MSocketLogger.getLogger().fine(dec.toString());
   }
 }

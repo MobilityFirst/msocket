@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -31,7 +31,7 @@ import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.HashMap;
-
+import java.util.logging.Level;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
@@ -48,7 +48,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * This class implements the proxy forwarding, implements the proxy listening
  * socket and proxy connection splicing thread. main() method of this class
  * starts the proxy forwarding on the node.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -183,7 +183,7 @@ public class ProxyForwarder
 
   /**
    * Returns the address the control channel is listening
-   * 
+   *
    * @return
    */
   public SocketAddress getProxyListeningAddress()
@@ -194,7 +194,7 @@ public class ProxyForwarder
   /**
    * function to start proxy forwarder at proxy, it will initialize all other
    * components
-   * 
+   *
    * @param args, args[0] is the proxy name or IP, args[1] proxy port
    * @throws Exception
    * @throws NumberFormatException
@@ -241,11 +241,13 @@ public class ProxyForwarder
           SocketChannel RegisteredChannel = Socket.getUnderlyingChannel();
           RegisteredChannel.configureBlocking(false);
 
-          MSocketLogger.getLogger().fine("Splice PUT before register");
+
+          MSocketLogger.getLogger().log(Level.FINE, "Splice PUT before register.");
           RegisterQueueInfo regObj = new RegisterQueueInfo(Socket, RegisteredChannel);
           registerQueueOperations(PUT, regObj);
 
-          MSocketLogger.getLogger().fine("Splice PUT after register");
+
+          MSocketLogger.getLogger().log(Level.FINE, "Splice PUT after register");
           return Obj.getProxyId();
         }
         else
@@ -259,7 +261,8 @@ public class ProxyForwarder
           SocketChannel RegisteredChannel = Socket.getUnderlyingChannel();
           RegisteredChannel.configureBlocking(false);
 
-          MSocketLogger.getLogger().fine("Splice PUT before register");
+
+          MSocketLogger.getLogger().log(Level.FINE, "Splice PUT before register");
           RegisterQueueInfo regObj = new RegisterQueueInfo(Socket, RegisteredChannel);
           registerQueueOperations(PUT, regObj);
 
@@ -291,7 +294,7 @@ public class ProxyForwarder
   /**
    * Thread class that proxy forwarder uses for every task, like listening for
    * connection, forwarding packets
-   * 
+   *
    * @author ayadav
    */
   public class ProxyForwarderThread implements Runnable
@@ -321,10 +324,12 @@ public class ProxyForwarder
               ProxyMSocket RetSocket = ((ProxyServerSocket) (TaskObj)).accept();
               String Key = RetSocket.getUnderlyingChannel().socket().getInetAddress().toString();
               Key = Key + ":" + RetSocket.getUnderlyingChannel().socket().getPort();
-              MSocketLogger.getLogger().fine("Key for socket map " + RetSocket.getStringGUID());
+
+              MSocketLogger.getLogger().log(Level.FINE, "Key for socket map {0}", RetSocket.getStringGUID());
               if (RetSocket.getSocketType() == ProxyForwarder.CONTROL_SOC)
               {
-                MSocketLogger.getLogger().fine("Control Socket inserted into Map ");
+
+                MSocketLogger.getLogger().log(Level.FINE, "Control Socket inserted into Map");
                 PForwarderObj.ProxyControlChannelMap(ProxyForwarder.PUT, RetSocket.getStringGUID(), RetSocket);
               }
               else if (RetSocket.getSocketType() == ProxyForwarder.DATA_SOC)
@@ -450,8 +455,8 @@ public class ProxyForwarder
             {
               if (Obj.workingperations(ProxyMSocket.GET, false) == true)
               {
-                MSocketLogger.getLogger().fine("proxy sending keep alive at " + localClock + "remote address "
-                    + Obj.getUnderlyingChannel().socket().getRemoteSocketAddress());
+
+                MSocketLogger.getLogger().log(Level.FINE,"Proxy sending keep alive at {0}, Remote Address {1}", new Object[]{localClock,Obj.getUnderlyingChannel().socket().getRemoteSocketAddress() } );
                 Obj.setupControlWrite(InetAddress.getLocalHost(), -1, -1, -1, SetupControlMessage.KEEP_ALIVE, -1, -1
                 		, Obj.getByteGUID(), Obj.getUnderlyingChannel());
               }
@@ -500,7 +505,7 @@ public class ProxyForwarder
 
   /**
    * for implementing executor service
-   * 
+   *
    * @author ayadav
    */
   private class Handler implements Runnable
@@ -540,15 +545,15 @@ public class ProxyForwarder
 
         if (numread > 0)
         {
-          MSocketLogger.getLogger().fine("Splicer: Read from source channel " + numread + "src channel port "
-              + SourceChannel.socket().getPort() + " proxyId " + ChannelObj.getProxyId());
+
+          MSocketLogger.getLogger().log(Level.FINE, "Splicer: Read from source channel {0} source channel port {1} proxyId {2}.",new Object[]{numread,SourceChannel.socket().getPort(),ChannelObj.getProxyId() });
           bytebuf.flip();
           while (bytebuf.hasRemaining())
           {
             int numwrite = DestinationChannel.write(bytebuf);
             if (numwrite > 0)
-              MSocketLogger.getLogger().fine("Splicer: Written into dest channel " + numwrite + " dest channel port "
-                  + DestinationChannel.socket().getPort());
+
+            MSocketLogger.getLogger().log(Level.FINE,"Splicer: Written into dest channel {0} destination channel port {1}", new Object[]{numwrite,DestinationChannel.socket().getPort()});
           }
           numBytesSpliced += numread;
         }
@@ -557,7 +562,8 @@ public class ProxyForwarder
       catch (Exception e)
       {
 
-        MSocketLogger.getLogger().fine("Exception in splicing");
+
+        MSocketLogger.getLogger().log(Level.FINE,"Exception in splicing");
         e.printStackTrace();
         key.cancel();
       }
@@ -566,5 +572,5 @@ public class ProxyForwarder
       ChannelObj.grabLockOrgetBlocked(false);
     }
   }
-  
+
 }

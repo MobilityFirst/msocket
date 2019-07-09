@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -35,7 +35,7 @@ import edu.umass.cs.gnsclient.client.util.GuidEntry;
 
 /**
  * This class defines a Watchdog
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -58,7 +58,7 @@ public class Watchdog extends Thread implements MembershipChangeCallback, Status
 
   /**
    * Creates a new <code>Watchdog</code> object
-   * 
+   *
    * @param gnsClient GNS connection
    * @param watchdogGuid GUID entry for this watchdog service
    * @param targetGuid GUID of the lists we have to read
@@ -138,7 +138,8 @@ public class Watchdog extends Thread implements MembershipChangeCallback, Status
   @Override
   public void statusChanged(String guid, ServiceStatus oldStatus, ServiceStatus newStatus)
   {
-    logger.info("GUID " + guid + ": Status changed from " + oldStatus + " to " + newStatus);
+
+    logger.log(Level.INFO, " GUID {0}: Status changed from {1} to {2}.", new Object[]{guid,oldStatus,newStatus});
     try
     {
       // Remove from the old list

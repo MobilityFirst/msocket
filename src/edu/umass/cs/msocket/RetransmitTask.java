@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -27,12 +27,13 @@ import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
  * This class implements a timer to retransmit a message over a UDP channel.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -52,7 +53,7 @@ public class RetransmitTask extends TimerTask
   /**
    * in the constructor invocation either servercontroller is null or Mapping is
    * null, used for both server controller and client UDP controller,
-   * 
+   *
    * @param m
    * @param Mapping
    * @param servercontroller
@@ -84,7 +85,7 @@ public class RetransmitTask extends TimerTask
   }
 
   /**
-	 * 
+	 *
 	 */
   public void run()
   {
@@ -93,13 +94,14 @@ public class RetransmitTask extends TimerTask
 
       if (cmsg.getType() == ControlMessage.ACK_ONLY)
       {
-        MSocketLogger.getLogger().fine("Sending ack " + cmsg);
+
+        MSocketLogger.getLogger().log(Level.FINE, "Sending ACK {0}", cmsg);
         retransmit();
       }
-      else if (cinfo.getCtrlBaseSeq() <= cmsg.getSendseq())
+      else if (cinfo.getCtrlBaseSeq() - cmsg.getSendseq() <= 0)
       {
         if (txCount > 0)
-          MSocketLogger.getLogger().fine("Retransmitting message " + cmsg + " coz baseseq=" + cinfo.getCtrlBaseSeq());
+        MSocketLogger.getLogger().log(Level.FINE, "Retransmitting message {0} coz BaseSeq = {1}", new Object[]{cmsg, cinfo.getCtrlBaseSeq()});
         retransmit();
         txCount++;
         if (txCount > MAX_RETRANSMIT)
@@ -109,13 +111,14 @@ public class RetransmitTask extends TimerTask
       }
       else
       {
-        MSocketLogger.getLogger().fine("Completed delivery of message " + cmsg);
+
+        MSocketLogger.getLogger().log(Level.FINE,"Completed delivery of message {0}.", cmsg);
         timer.cancel();
       }
     }
     catch (IOException e)
     {
-      MSocketLogger.getLogger().fine("IOException while retransmitting packet " + cmsg + "; canceling retransmission attempts");
+      MSocketLogger.getLogger().log(Level.FINE,"IOException while retransmitting packet {0}; canceling retransmission attempts.", cmsg);
       timer.cancel();
       e.printStackTrace();
     }

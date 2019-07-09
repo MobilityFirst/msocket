@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.KeepAliveStaticThread;
 import edu.umass.cs.msocket.MServerSocketController;
 import edu.umass.cs.msocket.TemporaryTasksES;
@@ -39,7 +39,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * This class implements the server side mobility manager. MServerSocket
  * registers with the mobility manager and then mobility manager migrates the
  * listening address of the server, if the device active addresses change.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -60,7 +60,7 @@ public class MobilityManagerServer implements Runnable
 
   /**
    * TODO: registerWithManager definition.
-   * 
+   *
    * @param mServerSocketController
    */
   public synchronized static void registerWithManager(MServerSocketController mServerSocketController)
@@ -77,19 +77,20 @@ public class MobilityManagerServer implements Runnable
     running = false;
     TemporaryTasksES.shutdownES();
     KeepAliveStaticThread.stopKeepAlive();
-    DefaultGNSClient.getGnsClient().close(); 
+    DefaultGNSClient.getGnsClient().close();
   }
 
   /**
    * TODO: unregisterWithManager definition.
-   * 
+   *
    * @param mServerSocketController
    */
   public synchronized static void unregisterWithManager(MServerSocketController mServerSocketController)
   {
     createSingleton();
     removeServer();
-    MSocketLogger.getLogger().fine("num registered with " + getConnectionStateSize());
+    // MSocketLogger.getLogger().fine("num registered with " + getConnectionStateSize());
+    MSocketLogger.getLogger().log(Level.FINE,"Num registered with {0}",getConnectionStateSize());
   }
 
   @Override
@@ -120,7 +121,7 @@ public class MobilityManagerServer implements Runnable
           if (!active)
           {
             notWorkingIPs.add(activeInterfaceAddress.get(i));
-            MSocketLogger.getLogger().fine("not working IPs " + activeInterfaceAddress.get(i));
+            MSocketLogger.getLogger().log(Level.FINE,"IPs not working {0}.",activeInterfaceAddress.get(i) );
           }
         }
 
@@ -148,7 +149,8 @@ public class MobilityManagerServer implements Runnable
     {
       e.printStackTrace();
     }
-    MSocketLogger.getLogger().fine("MobilityManagerServer thread exit");
+
+    MSocketLogger.getLogger().log(Level.FINE,"MobilityManagerServer thread exit");
   }
 
   private synchronized static Vector<ConnectionStateServer> getConnectionState(String key)
@@ -205,7 +207,8 @@ public class MobilityManagerServer implements Runnable
   {
     // FIXME: need to check if this ip address is still valid , before inserting
     String localIpAddress = mServerSocketController.getMServerSocket().getInetAddress().getHostAddress();
-    MSocketLogger.getLogger().fine("insertIntoConnectionStateMap " + localIpAddress);
+
+    MSocketLogger.getLogger().log(Level.FINE,"insertIntoConnectionStateMap {0}", localIpAddress);
     if (managerConnectionStateMap.containsKey(localIpAddress))
     {
       ConnectionStateServer cstate = new ConnectionStateServer(mServerSocketController);
@@ -248,8 +251,8 @@ public class MobilityManagerServer implements Runnable
       try
       {
         String newInterface = getNewInterface(POLICY_RANDOM);
-        MSocketLogger.getLogger().fine("performMigration newInterface " + newInterface);
 
+        MSocketLogger.getLogger().log(Level.FINE,"performMigration newInterface {0}", newInterface);
         if (newInterface == "") // no active interface to migrate to
         {
           Vector<ConnectionStateServer> Vect = getConnectionState(newInterface);
@@ -267,8 +270,8 @@ public class MobilityManagerServer implements Runnable
         int newPort = 0;
         cstate.mServerSocketController.getMServerSocket().migrate(InetAddress.getByName(newInterface), newPort);
 
-        MSocketLogger.getLogger().fine("Completed server migration to interface " + newInterface + "port " + newPort);
 
+        MSocketLogger.getLogger().log(Level.FINE,"Completed server migration to interface {0} port {1}.", new Object[]{newInterface,newPort});
         Vector<ConnectionStateServer> vect = getConnectionState(newInterface);
         if (vect == null)
         {
@@ -281,7 +284,8 @@ public class MobilityManagerServer implements Runnable
       {
 
         // migration failed for some reason, put it in "" IP vector of manager.
-        MSocketLogger.getLogger().fine("migration failed");
+
+        MSocketLogger.getLogger().log(Level.FINE,"migration failed");
         String failedIP = "";
         Vector<ConnectionStateServer> vect = getConnectionState(failedIP);
         if (vect == null)
@@ -307,7 +311,7 @@ public class MobilityManagerServer implements Runnable
   /**
    * Checks if the singleton object is created or not, if not it creates the
    * object and then the object is returned.
-   * 
+   *
    * @return the singleton object
    */
   private static void createSingleton()

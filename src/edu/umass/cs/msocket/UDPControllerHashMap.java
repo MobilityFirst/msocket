@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -26,6 +26,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
@@ -34,7 +35,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * interfaces on a MSocket client side. MSocket client asks for a UDP controller
  * on a interface, if there is already a running one, then this class returns
  * that, otherwise starts a new one and then returns that.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -54,7 +55,9 @@ public class UDPControllerHashMap
   public static synchronized void registerWithController(InetAddress ControllerIPAddress, ConnectionInfo cinfo)
       throws SocketException
   {
-    MSocketLogger.getLogger().fine("RegisterWithController " + ControllerIPAddress.toString());
+
+    MSocketLogger.getLogger().log(Level.FINE, "RegisterWithController {0}", new Object[]{ControllerIPAddress.toString()});
+
     createSingleton();
 
     // UDP socket already there
@@ -83,7 +86,8 @@ public class UDPControllerHashMap
   {
     try
     {
-      MSocketLogger.getLogger().fine("RegisterWithController " + ControllerIPAddress.toString());
+
+      MSocketLogger.getLogger().log(Level.FINE,"RegisterWithController {0}", new Object[]{ControllerIPAddress.toString()});
       createSingleton();
 
       // UDP socekt already there
@@ -94,12 +98,14 @@ public class UDPControllerHashMap
       }
       else
       {
-        MSocketLogger.getLogger().fine("non existent controller IP, shoudl nt happen");
+
+        MSocketLogger.getLogger().log(Level.FINE,"Non existent controller IP, shouldn't happen. ");
       }
     }
     catch (Exception ex)
     {
-      MSocketLogger.getLogger().fine("unregisterWithController excp " + ex.getMessage());
+
+      MSocketLogger.getLogger().log(Level.FINE,"UnregisterWithController excepttion {0}. ", new Object[]{ex.getMessage()});
     }
   }
 
@@ -109,7 +115,8 @@ public class UDPControllerHashMap
    */
   public static synchronized void startUDPController(InetAddress ControllerIPAddress) throws SocketException
   {
-    MSocketLogger.getLogger().fine("ControllerIPAddress " + ControllerIPAddress.toString());
+
+    MSocketLogger.getLogger().log(Level.FINE,"ControllerIPAddress {0}. ", new Object[]{ControllerIPAddress.toString()});
     createSingleton();
 
     // UDP socket already there
@@ -160,7 +167,7 @@ public class UDPControllerHashMap
 
   /**
    * update controller
-   * 
+   *
    * @param OldIPAddress
    * @param NewIPAddress
    * @param flowID
@@ -207,7 +214,7 @@ public class UDPControllerHashMap
   /**
    * Checks if the singleton object is created or not, if not it creates the
    * object and then the object is returned.
-   * 
+   *
    * @return the singleton object
    */
   private static void createSingleton()
@@ -215,5 +222,5 @@ public class UDPControllerHashMap
     if (UDPControllerHashMapObject == null)
       UDPControllerHashMapObject = new UDPControllerHashMap();
   }
-  
+
 }

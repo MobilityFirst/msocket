@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -35,7 +35,7 @@ import edu.umass.cs.msocket.gns.DefaultGNSClient;
 
 /**
  * This class defines a TimerKeepalive
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -48,7 +48,7 @@ public class TimerKeepalive extends Thread
 
   /**
    * Creates a new <code>GnsTimerKeepalive</code> object
-   * 
+   *
    * @param gnsCredentials
    * @param myGuid
    * @param publishFrequency
@@ -58,26 +58,27 @@ public class TimerKeepalive extends Thread
   {
     this.guid = myGuid;
     this.publishFrequency = publishFrequency;
-    logger.fine("Publishing start time");
+
+    logger.log(Level.FINE, " Publishing start time.");
     final long now = System.currentTimeMillis();
-    
+
     DefaultGNSClient.getGnsClient().execute
-    	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), Constants.START_TIME, 
+    	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), Constants.START_TIME,
     			new JSONArray().put(now), myGuid));
-    
+
     DefaultGNSClient.getGnsClient().execute(GNSCommand.aclAdd
     		(AclAccessType.READ_WHITELIST, myGuid, Constants.START_TIME, null));
-    
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), Constants.TIME_REFRESH_INTERVAL,
             new JSONArray().put(publishFrequency), myGuid) );
-    		
-    
+
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.aclAdd
     		(AclAccessType.READ_WHITELIST, myGuid, Constants.TIME_REFRESH_INTERVAL, null) );
-    
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.fieldReplaceOrCreateList
     		(guid.getGuid(), Constants.CURRENT_TIME, new JSONArray().put(now), myGuid) );
-    
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.aclAdd
     		(AclAccessType.READ_WHITELIST, myGuid, Constants.CURRENT_TIME, null) );
     logger.setLevel(Level.FINE);
@@ -116,8 +117,9 @@ public class TimerKeepalive extends Thread
     	  DefaultGNSClient.getGnsClient().execute(GNSCommand.fieldReplaceList
     			  ( guid.getGuid(), Constants.CURRENT_TIME,
     	            new JSONArray().put(last), guid) );
-    	  
-        logger.fine("Updated current time to " + last);
+
+
+        logger.log(Level.FINE,"Updated current time to {0}.", last);
       }
       catch (Exception e)
       {

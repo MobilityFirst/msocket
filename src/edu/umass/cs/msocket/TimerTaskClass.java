@@ -2,18 +2,18 @@
  * Mobility First - Global Name Resolution Service (GNS)
  * Copyright (C) 2013 University of Massachusetts - Emmanuel Cecchet.
  * Contact: cecchet@cs.umass.edu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -27,7 +27,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
-
+import java.util.logging.Level;
 import edu.umass.cs.msocket.common.CommonMethods;
 import edu.umass.cs.msocket.gns.Integration;
 import edu.umass.cs.msocket.logger.MSocketLogger;
@@ -43,7 +43,7 @@ class TimerTaskClass
 
   /**
    * Creates a new <code>TimerTaskClass</code> object
-   * 
+   *
    * @param mSocket
    */
   TimerTaskClass(ConnectionInfo cinfo)
@@ -54,16 +54,18 @@ class TimerTaskClass
 
   private void proxyFailureCheck() throws Exception
   {
-    MSocketLogger.getLogger().fine("inside proxyFailureCheck");
+
+    MSocketLogger.getLogger().log(Level.FINE,"inside proxyFailureCheck");
     Vector<SocketInfo> vect = new Vector<SocketInfo>();
     vect.addAll(cinfo.getAllSocketInfo());
-    MSocketLogger.getLogger().fine("vect size " + vect.size());
+
+    MSocketLogger.getLogger().log(Level.FINE,"Vector Size: {0}", vect.size());
     int i = 0;
     while ( i < vect.size() )
     {
       SocketInfo value = vect.get(i);
 
-      MSocketLogger.getLogger().fine("proxyFailureCheck running " + value.getLastKeepAlive() + " " + KeepAliveStaticThread.getLocalClock());
+      MSocketLogger.getLogger().log(Level.FINE,"proxyFailureCheck running.LastKeepAlive: {0}, Local Clock: {1}", new Object[]{value.getLastKeepAlive(),KeepAliveStaticThread.getLocalClock()});
       {
         if (((KeepAliveStaticThread.getLocalClock() - value.getLastKeepAlive()) > proxyFailureTimeout))
         /*
@@ -73,8 +75,8 @@ class TimerTaskClass
          * if GNS has same proxy address, then do not migrate
          */
         {
-          System.out.println(cinfo.getServerOrClient()+" Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
-        		  " getLastKeepAlive " + value.getLastKeepAlive() + "Socket Id " + value.getSocketIdentifer());
+          // System.out.println(cinfo.getServerOrClient()+" Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() +
+        		  // " getLastKeepAlive " + value.getLastKeepAlive() + "Socket Id " + value.getSocketIdentifer());
           if (CommonMethods.getActiveInterfaceInetAddresses().size() > 0)
             handleProxyFailure(value);
         }
@@ -85,13 +87,13 @@ class TimerTaskClass
 
   /**
    * query GNS, and migrate the specific path
-   * 
+   *
    * @throws Exception
    */
   private void handleProxyFailure(SocketInfo SocketObj) throws Exception
   {
-      System.out.println(cinfo.getServerOrClient()+ " Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() + 
-    		  " getLastKeepAlive " + SocketObj.getLastKeepAlive());
+      // System.out.println(cinfo.getServerOrClient()+ " Inside handleProxyFailure getLocalClock " + KeepAliveStaticThread.getLocalClock() +
+    		  // " getLastKeepAlive " + SocketObj.getLastKeepAlive());
 
       InetSocketAddress proxyAddress = getActiveProxyAddress();
       if (proxyAddress == null)
@@ -103,11 +105,10 @@ class TimerTaskClass
       {
         if (proxyAddress != null)
         {
-          MSocketLogger.getLogger().fine(" migrateSocketwithId called with proxy address " + proxyAddress.getAddress() + ":"
-              + proxyAddress.getPort() + " socketId " + SocketObj.getSocketIdentifer() );
-
+          MSocketLogger.getLogger().log(Level.FINE,"migrateSocketwithId called with proxy address {0}:{1}, socketId {2}.", new Object[]{proxyAddress.getAddress(),proxyAddress.getPort(),SocketObj.getSocketIdentifer()});
           cinfo.closeAll(SocketObj.getSocketIdentifer());
-          MSocketLogger.getLogger().fine("close done");
+
+          MSocketLogger.getLogger().log(Level.FINE,"Close done.");
           cinfo.migrateSocketwithId(proxyAddress.getAddress(), proxyAddress.getPort(),
               SocketObj.getSocketIdentifer(), MSocketConstants.SERVER_MIG);
         }
@@ -116,7 +117,7 @@ class TimerTaskClass
 
   /**
    * queries GNS and returns one active proxy address
-   * 
+   *
    * @return
    * @throws Exception
    */
@@ -133,12 +134,13 @@ class TimerTaskClass
     }
     catch (Exception ex)
     {
-      MSocketLogger.getLogger().fine("GnsIntegration.getSocketAddressFromGNS exception");
+
+      MSocketLogger.getLogger().log(Level.FINE,"GnsIntegration.getSocketAddressFromGNS exception");
     }
     return sockAdd;
   }
-  
-  
+
+
   public void run()
   {
       switch (cinfo.getServerOrClient())
@@ -155,9 +157,9 @@ class TimerTaskClass
           if (ret)
           {
             cinfo.multiSocketKeepAliveRead();
-			  
+
 			cinfo.sendKeepAliveOnAllPaths();
-			  
+
             cinfo.setState(ConnectionInfo.ALL_READY, false);
           }
           break;
@@ -170,15 +172,15 @@ class TimerTaskClass
 			//
 			if (ret)
 			{
-			  
+
 			  cinfo.multiSocketKeepAliveRead();
-			  
+
 			  cinfo.sendKeepAliveOnAllPaths();
-			  
+
 			  cinfo.setState(ConnectionInfo.ALL_READY, false);
 			}
-			MSocketLogger.getLogger().fine("client reading keep alive complete");
-            
+
+      MSocketLogger.getLogger().log(Level.FINE,"Client reading keep alive complete");
 			try
 			{
 				proxyFailureCheck();
@@ -193,14 +195,15 @@ class TimerTaskClass
 			}
 			catch (Exception e)
 			{
-				MSocketLogger.getLogger().fine("Mostly GNS connectivity failure, or migration failure");
+
+        MSocketLogger.getLogger().log(Level.FINE,"Mostly GNS connectivity failure, or migration failure");
 				e.printStackTrace();
-			}		
+			}
 			break;
         }
       }
   }
-  
+
   // commented code
   /*public void run()
   {
@@ -221,9 +224,9 @@ class TimerTaskClass
           if (ret)
           {
             this.mSocket.cinfo.multiSocketKeepAliveRead();
-			  
+
 			this.mSocket.cinfo.sendKeepAliveOnAllPaths();
-			  
+
             this.mSocket.cinfo.setState(ConnectionInfo.ALL_READY, false);
           }
           break;
@@ -238,15 +241,15 @@ class TimerTaskClass
 			if (ret)
 			{
 			  MSocket.MSocketLogger.getLogger().fine("got the lock");
-			  
+
 			  this.mSocket.cinfo.multiSocketKeepAliveRead();
-			  
+
 			  this.mSocket.cinfo.sendKeepAliveOnAllPaths();
-			  
+
 			  this.mSocket.cinfo.setState(ConnectionInfo.ALL_READY, false);
 			}
 			MSocket.MSocketLogger.getLogger().fine("client reading keep alive complete");
-            
+
 			try
 			{
 				proxyFailureCheck();
@@ -264,7 +267,7 @@ class TimerTaskClass
 				MSocket.MSocketLogger.getLogger().fine("Mostly GNS connectivity failure, or migration failure");
 				e.printStackTrace();
 			}
-			
+
 			break;
         }
       }
@@ -279,5 +282,5 @@ class TimerTaskClass
       }
     }
   }*/
-  
+
 }

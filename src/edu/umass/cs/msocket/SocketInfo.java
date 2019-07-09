@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -27,13 +27,14 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
 /**
  * This class keeps the information about each flowpath. It stores the socket,
  * dataChannel sequence number of data flowing through that flowpath.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -56,7 +57,7 @@ public class SocketInfo
   private SocketChannel         dataChannel                    = null;
   private Socket                socket                         = null;
   private int                   SocketIdentifier               = -1;
-  
+
   // offset, in seq num, of data read from the current chunk
   private long                  chunkReadOffsetSeqNum          = 0;
   /*
@@ -91,41 +92,41 @@ public class SocketInfo
    * one go. so this variable maintain the offset till which it's been written.
    */
   private int                   currentChunkWriteOffset        = 0;
-  
+
   // keeps track of num of bytes recv since the last ack was sent
   private long lastNumBytesRecv								   = 0;
-  
+
   // stores the seq num till which data has been sent in handle migration case
   private long handleMigSeqNum 								   = 0;
-  
+
   // to store byte ranges
   private Vector<ByteRangeInfo> byteInfoVector;
 
   private final Object          socketLockMonitor              = new Object();
-  
+
   // to request ACK after migration
   private boolean needToRequestACK							   = false;
-  
+
   private long estimatedRTT								   	   = 0;
-  
+
   // keeps track of how many more can be sent over it. According to Thpt
   // ratio.
   private long numRemChunks							   		   = 0;
-  
+
   // indicates if app has requested to remove this flowpath
   // or it has received a request from other side
   private boolean inClosing									   = false;
-  
+
   // true indicates that this flowpath was closed by remove flowpath
   // method
   private boolean closed									   = false;
-  
+
   //true indicates that this flowpath was closed by remove flowpath
   // method
   private int numCloseFPRecvd								   = 0;
-  
+
   private int numCloseFPRecvdOtherSide						   = 0;
-  
+
   public SocketInfo(SocketChannel dataChannel, Socket socket, int SocketIdentifier)
   {
     this.dataChannel = dataChannel;
@@ -187,7 +188,7 @@ public class SocketInfo
         }
         case QUEUE_REMOVE :
         {
-        	// start SeqNum acts as database seq num or ack num. 
+        	// start SeqNum acts as database seq num or ack num.
         	// previous byte ranges can be removed
 			freeByteRanges(startSeqNum);
         }
@@ -226,7 +227,7 @@ public class SocketInfo
 
   /**
    * Set dataChannel and socket, also resets various counters
-   * 
+   *
    * @param dataChannel
    * @param socket
    */
@@ -243,19 +244,19 @@ public class SocketInfo
     numBytesRecv = 0;
     numBytesRecvOtherSide = 0;
     lastKeepAlive = 0;
-    
+
     // no pending chunks
  	currentChunkWriteOffset=0;
 
     sendingQueue.clear();
-    
+
     // do not clear byInfoVector, as it stores chunk needs to be sent in migration
  	//byteInfoVector.clear();
   }
 
   /**
    * lock to update critical info
-   * 
+   *
    * @return
    */
   public boolean acquireLock()
@@ -300,7 +301,7 @@ public class SocketInfo
 
   /**
    * socket active/working or not, true : working, false: not working
-   * 
+   *
    * @return
    */
   public boolean getStatus()
@@ -311,7 +312,8 @@ public class SocketInfo
   public synchronized void setStatus(boolean status)
   {
     active = status;
-    MSocketLogger.getLogger().fine("inside set status");
+
+    MSocketLogger.getLogger().log(Level.FINE, "Inside set status");
     if (status == false)
     {
       try
@@ -322,7 +324,8 @@ public class SocketInfo
       catch (Exception ex)
       {
         ex.printStackTrace();
-        MSocketLogger.getLogger().fine("exceptio in closing during status set");
+
+        MSocketLogger.getLogger().log(Level.FINE, "Exception in closing during status set");
       }
     }
   }
@@ -344,7 +347,7 @@ public class SocketInfo
 
   /**
    * tells how much bytes can be read without encountering data message header
-   * 
+   *
    * @return
    */
   public int canReadDirect()
@@ -356,7 +359,7 @@ public class SocketInfo
   {
 	  chunkEndSeqNum = s;
   }
-  
+
   public  int  getChunkEndSeqNum()
   {
 	  return chunkEndSeqNum;
@@ -384,22 +387,23 @@ public class SocketInfo
   public synchronized void updateSentBytes(long toBeAdded)
   {
     numBytesSent += toBeAdded;
-    MSocketLogger.getLogger().fine("SentBytes Updated " + numBytesSent + " SocketID " + SocketIdentifier);
+
+    MSocketLogger.getLogger().log(Level.FINE, "SentBytes Updated {0} SocketID {1}.", new Object[]{numBytesSent, SocketIdentifier});
   }
 
   public synchronized void updateRecvdBytes(long toBeAdded)
   {
     numBytesRecv += toBeAdded;
   }
-  
+
   public synchronized void setLastNumBytesRecv() {
 		lastNumBytesRecv = numBytesRecv;
 	}
-  
+
   public synchronized void setHandleMigSeqNum(long handleMigSeqNum) {
 		this.handleMigSeqNum = handleMigSeqNum;
 	}
-	
+
 	public long getHandleMigSeqNum() {
 		return this.handleMigSeqNum;
 	}
@@ -409,8 +413,8 @@ public class SocketInfo
     if (RecvdBytes > numBytesRecvOtherSide)
       numBytesRecvOtherSide = RecvdBytes;
   }
-  
-  public long getLastNumBytesRecv() 
+
+  public long getLastNumBytesRecv()
   {
 		return lastNumBytesRecv;
   }
@@ -457,100 +461,100 @@ public class SocketInfo
   {
     return this.lastKeepAlive;
   }
-  
-  public boolean getneedToReqeustACK() 
+
+  public boolean getneedToReqeustACK()
   {
   	return needToRequestACK;
   }
 
-  public void setneedToReqeustACK( boolean value ) 
+  public void setneedToReqeustACK( boolean value )
   {
 		// each time this flag changes reset it to 0
 		handleMigSeqNum = 0;
 		needToRequestACK = value;
   }
-  
+
   public void setEstimatedRTT(long updateRTT)
   {
 	  estimatedRTT =  updateRTT;
   }
-  
+
   public long getEstimatedRTT()
   {
 	  return estimatedRTT;
   }
-  
+
   public long getNumRemChunks()
   {
 	  return numRemChunks;
   }
-  
+
   public void decrementNumRemChunks()
   {
 	  numRemChunks--;
   }
-  
-  public void setNumRemChunks(long l) 
+
+  public void setNumRemChunks(long l)
   {
 	  this.numRemChunks = l;
   }
-  
+
   /*
    * is to true if the flowpath is closing
    */
   public void setClosing()
   {
-	inClosing = true;  
+	inClosing = true;
   }
-  
+
   public boolean getClosing()
   {
-	return inClosing;  
+	return inClosing;
   }
-  
+
   public void updateNumFPRecvd()
   {
 	  this.numCloseFPRecvd++;
   }
-  
+
   public int getNumFPRecvd()
   {
 	  return this.numCloseFPRecvd;
   }
-  
+
   public int getNumFPRecvdOtherSide()
   {
 	  return this.numCloseFPRecvdOtherSide;
   }
-  
+
   public void setNumFPRecvdOtherSide(int numFPOtherSide)
   {
 	  this.numCloseFPRecvdOtherSide = numFPOtherSide;
   }
-  
+
   private void freeByteRanges( long dataBaseSeqNum )
   {
 	  int freeIndex=-1;
-	  for( int i=0; i<byteInfoVector.size(); i++ ) 
+	  for( int i=0; i<byteInfoVector.size(); i++ )
 	  {
 		  ByteRangeInfo curObj = byteInfoVector.get(i);
 		  // required for considering holes ,
 		  // FIXME: may not have checked for repeated data
-		  if( ( dataBaseSeqNum > curObj.getStartSeqNum() ) && 
-				  ( dataBaseSeqNum <= (curObj.getStartSeqNum()+curObj.getLength()) ) ) 
+		  if( ( dataBaseSeqNum - curObj.getStartSeqNum() > 0) &&
+				  ( dataBaseSeqNum - (curObj.getStartSeqNum()+curObj.getLength()) <= 0) )
 		  {
 			  freeIndex=i;
 			  break;
 		  }
 	  }
-			
+
 	  int i=0;
 	  while( i < freeIndex )
 	  {
-		  byteInfoVector.remove(0);  //remove the first element, 
+		  byteInfoVector.remove(0);  //remove the first element,
 		  							// as element slides left
 		  i++;
 	  }
   }
-  
+
 }

@@ -36,11 +36,11 @@ public class InBufferStorageChunkComparator implements Comparator<InBufferStorag
 	    {
 	        // Assume neither string is null. Real code should
 	        // probably be more robust
-	        if ( x.startSeqNum < y.startSeqNum )
+	        if ( x.startSeqNum - y.startSeqNum  < 0)
 	        {
 	            return -1;
 	        }
-	        if (x.startSeqNum > y.startSeqNum )
+	        if (x.startSeqNum - y.startSeqNum > 0)
 	        {
 	            return 1;
 	        }
