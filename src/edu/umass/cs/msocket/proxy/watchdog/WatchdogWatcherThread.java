@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -38,7 +38,7 @@ import edu.umass.cs.msocket.common.Constants;
 /**
  * This class defines a WatchdogWatcherThread that regularly polls the
  * CURRENT_TIME field of the GUID to monitor its progress.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -56,7 +56,7 @@ public class WatchdogWatcherThread extends Thread
 
   /**
    * Creates a new <code>WatchdogListScanner</code> object
-   * 
+   *
    * @param gnsClient GNS connection
    * @param watchdogGuid GUID entry for this watchdog service
    * @param targetGuid GUID of the listname we have to read
@@ -78,7 +78,7 @@ public class WatchdogWatcherThread extends Thread
 
   /**
    * Register a callback to be notified of status changes
-   * 
+   *
    * @param callback
    */
   public void registerStatusChangeCallback(StatusChangeCallback callback)
@@ -88,7 +88,7 @@ public class WatchdogWatcherThread extends Thread
 
   /**
    * Unregister a previously registered callback
-   * 
+   *
    * @param callback the callback to unregister
    * @return true if the callback was removed, false if it has not been found
    */
@@ -119,7 +119,7 @@ public class WatchdogWatcherThread extends Thread
     {
       refreshFrequencyInMs = gnsClient.fieldReadArray(targetGuid, Constants.TIME_REFRESH_INTERVAL, watchdogGuid).getLong(
           0);
-      // logger.info("GUID " + targetGuid + " refreshes every " + refreshFrequencyInMs + " ms");
+
       logger.log(Level.INFO, " GUID {0}, refreshes every {1} ms", new Object[]{targetGuid, refreshFrequencyInMs});
     }
     catch (Exception e)
@@ -175,7 +175,7 @@ public class WatchdogWatcherThread extends Thread
   /**
    * If the status has changed, all callbacks are notified and currentStatus is
    * updated to the new status.
-   * 
+   *
    * @param newStatus the new status of the service
    */
   private void notifyStatusChange(ServiceStatus newStatus)

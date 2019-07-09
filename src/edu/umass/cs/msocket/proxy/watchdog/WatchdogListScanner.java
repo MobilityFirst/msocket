@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -36,7 +36,7 @@ import edu.umass.cs.gnsclient.client.util.GuidEntry;
 
 /**
  * This class defines a WatchdogListScanner
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -54,7 +54,7 @@ public class WatchdogListScanner extends Thread
 
   /**
    * Creates a new <code>WatchdogListScanner</code> object
-   * 
+   *
    * @param gnsClient GNS connection
    * @param watchdogGuid GUID entry for this watchdog service
    * @param targetGuid GUID of the listname we have to read
@@ -75,7 +75,7 @@ public class WatchdogListScanner extends Thread
   /**
    * Register a callback to be notified of membership changes (additions or
    * deletions)
-   * 
+   *
    * @param callback
    */
   public void registerMembershipChangeCallback(MembershipChangeCallback callback)
@@ -85,7 +85,7 @@ public class WatchdogListScanner extends Thread
 
   /**
    * Unregister a previously registered callback
-   * 
+   *
    * @param callback the callback to unregister
    * @return true if the callback was removed, false if it has not been found
    */
@@ -140,7 +140,7 @@ public class WatchdogListScanner extends Thread
         {
           if (!guidList.contains(guid))
           {
-            // logger.fine("Found new guid " + guid + " in list " + listName);
+
             logger.log(Level.FINE, "Found new guid {0} in list {1}", new Object[]{guid, listName});
             guidList.add(guid);
             // Notify callbacks
@@ -155,7 +155,7 @@ public class WatchdogListScanner extends Thread
         {
           if (!newList.contains(guid))
           {
-            // logger.fine(guid + " is no more in list " + listName);
+
             logger.log(Level.FINE, "{0} is no longer in the list {1}.", new Object[]{guid, listName});
             // Notify callbacks
             for (MembershipChangeCallback callback : callbacks)
@@ -177,7 +177,7 @@ public class WatchdogListScanner extends Thread
 
   /**
    * Returns the listName value.
-   * 
+   *
    * @return Returns the listName.
    */
   public String getListName()
@@ -187,7 +187,7 @@ public class WatchdogListScanner extends Thread
 
   /**
    * Returns the guidList value.
-   * 
+   *
    * @return Returns the guidList.
    */
   public List<String> getGuidList()
@@ -197,7 +197,7 @@ public class WatchdogListScanner extends Thread
 
   /**
    * Returns the refreshFrequencyInMs value.
-   * 
+   *
    * @return Returns the refreshFrequencyInMs.
    */
   public long getRefreshFrequencyInMs()

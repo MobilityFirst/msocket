@@ -23,13 +23,13 @@ public class GNSCalls
 {
 	// should be same as defined in context service code
 	public static final String NOTIFICATION_SET               	= "NOTIFICATION_SET";
-	
+
 	//private static final String defaultGns = KeyPairUtils.getDefaultGnsFromPreferences();
-	//public static final GNSClientCommands gnsClient 
+	//public static final GNSClientCommands gnsClient
 	//			= new GNSClientCommands(defaultGns.split(":")[0], Integer.parseInt(defaultGns.split(":")[1]));
-	
+
 	//private static final GuidEntry myGuidEntry = KeyPairUtils.getDefaultGuidEntryFromPreferences(defaultGns);
-	
+
 	public static void updateMyLocationInGns(String localAlias, double Lat, double Longi)
 	{
 		try
@@ -47,7 +47,7 @@ public class GNSCalls
 		     // MSocketLogger.getLogger().fine
 		     	// ("Updating location for " + localAlias + " to " + Longi+" " + Lat);
 		     MSocketLogger.getLogger().log(Level.FINE,"Updating location for {0} to {1}:{2}", new Object[]{localAlias,Longi,Lat});
-		     
+
 		     DefaultGNSClient.getGnsClient().execute(GNSCommand.setLocation(myGuid, Longi, Lat));
 		}
 		catch(Exception ex)
@@ -55,7 +55,7 @@ public class GNSCalls
 			ex.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Takes alias of group, which is query and reads group members
 	 * , if reading from gns fails then request is sent to contextservice
@@ -71,38 +71,38 @@ public class GNSCalls
 		//String queryHash = getSHA1(query);
 		//String guidString = gnsClient.lookupGuid(queryHash);
 		// group should be read by all, atleast for now
-		
+
 		GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
 				(GNSCommand.groupGetMembers(groupGUID, DefaultGNSClient.getMyGuidEntry()));
-		
+
 		grpMem = commandRes.getResultJSONArray();
 		return grpMem;
 	}
-	
-	public static String getGroupGUID(String query) throws 
+
+	public static String getGroupGUID(String query) throws
 										UnsupportedEncodingException, IOException, ClientException
 	{
 		String queryHash = getSHA1(query);
-		
-		GNSCommand commandRes = 
+
+		GNSCommand commandRes =
 						DefaultGNSClient.getGnsClient().execute(GNSCommand.lookupGUID(queryHash));
-		
+
 		String guidString = commandRes.getResultString();
 		return guidString;
 	}
-	
+
 	public static void writeKeyValue(String localName,
 		      String key, double value) throws Exception
 	{
 		    String GNSKey   = key;
 		    double GNSValue = value;
-		    
+
 		    try
 		    {
-				// MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
+
 				MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", localName);
 				GuidEntry myGuid = KeyPairUtils.getGuidEntry(DefaultGNSClient.getDefaultGNSName(), localName);
-				
+
 			    /*
 			     * Take a lock on the GNS connection object to prevent concurrent queries to
 			     * the GNS on the same connection as the library is not thread-safe from
@@ -110,51 +110,51 @@ public class GNSCalls
 			     */
 			      if (myGuid == null)
 			      {
-			        // MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
+
 			        MSocketLogger.getLogger().log(Level.FINE,"No keys found for service {0}. Generating new GUID and keys.",localName);
-			        
+
 			        GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
 			        		(GNSCommand.createGUID(
-			        		DefaultGNSClient.getGnsClient().getGNSProvider(), 
+			        		DefaultGNSClient.getGnsClient().getGNSProvider(),
 			        		DefaultGNSClient.getMyGuidEntry(), localName));
-			        
+
 			        myGuid = (GuidEntry) commandRes.getResult();
 			        // storing alias in gns record, need it to find it when we have GUID
 			        // from group members
 			        DefaultGNSClient.getGnsClient().execute(
-			        	GNSCommand.fieldCreateList(myGuid.getGuid(), 
+			        	GNSCommand.fieldCreateList(myGuid.getGuid(),
 			        		Constants.ALIAS_FIELD, new JSONArray().put(localName), myGuid));
-			        
-			        
+
+
 			        JSONArray valJSONArray = new JSONArray();
 			        valJSONArray.put(GNSValue);
 			        valJSONArray.put(System.currentTimeMillis());
-			        
-			        
+
+
 			        DefaultGNSClient.getGnsClient().execute
-			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), 
+			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(),
 			        			GNSKey, valJSONArray, myGuid));
 			      }
 			      else
 			      {
 			    	  // System.out.println("GUID already registered, just replacing the field value "
 			            // + localName + " values " + GNSValue);
-			    	  
+
 			    	  JSONArray valJSONArray = new JSONArray();
 				      valJSONArray.put(GNSValue);
 				      valJSONArray.put(System.currentTimeMillis());
-				        
+
 			    	  long start = System.currentTimeMillis();
-			        
+
 			    	  DefaultGNSClient.getGnsClient().execute
-			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), 
+			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(),
 			        			GNSKey, valJSONArray, myGuid));
-			    	  
-			    	  
+
+
 			        long end = System.currentTimeMillis();
-			        
+
 			        // System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
-			        
+
 			        // JSONArray arr= gnsClient.fieldRead(myGuid.getGuid(), GNSKey, myGuid);
 			        //System.out.println("read result "+gnsClient.lookupGuidRecord(myGuid.getGuid()));
 			      }
@@ -163,19 +163,19 @@ public class GNSCalls
 				ex.printStackTrace();
 			}
 	}
-	
+
 	public static void writeKeyValue(String localName,
 		      String key, String value) throws Exception
 	{
 		    String GNSKey   = key;
 		    String GNSValue = value;
-		    
+
 		    try
 		    {
-				// MSocketLogger.getLogger().fine("Looking for entity " + localName + " GUID and certificates...");
+
 				MSocketLogger.getLogger().log(Level.FINE,"Looking for entity {0} GUID and certificates...", localName);
 				GuidEntry myGuid = KeyPairUtils.getGuidEntry(DefaultGNSClient.getDefaultGNSName(), localName);
-				
+
 			    /*
 			     * Take a lock on the GNS connection object to prevent concurrent queries to
 			     * the GNS on the same connection as the library is not thread-safe from
@@ -183,22 +183,21 @@ public class GNSCalls
 			     */
 			      if (myGuid == null)
 			      {
-			        // MSocketLogger.getLogger().fine("No keys found for service " + localName + ". Generating new GUID and keys");
 			        // Create a new GUID
 			        MSocketLogger.getLogger().log(Level.FINE,"No keys found for service {0}. Generating new GUID and keys", localName);
 			        GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
-			        		(DefaultGNSClient.getGnsClient().getGNSProvider(), 
+			        		(DefaultGNSClient.getGnsClient().getGNSProvider(),
 			        				DefaultGNSClient.getMyGuidEntry(), localName));
-			        
-			        
+
+
 			        myGuid = (GuidEntry) commandRes.getResult();
-			        
+
 			        DefaultGNSClient.getGnsClient().execute
-			        	(GNSCommand.fieldCreateList(myGuid.getGuid(), 
+			        	(GNSCommand.fieldCreateList(myGuid.getGuid(),
 			        			Constants.ALIAS_FIELD, new JSONArray().put(localName), myGuid));
-			        
+
 			        DefaultGNSClient.getGnsClient().execute
-			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), 
+			        	(GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(),
 			        			GNSKey, new JSONArray().put(GNSValue), myGuid) );
 
 			      }
@@ -206,32 +205,32 @@ public class GNSCalls
 			      {
 			    	  // System.out.println("GUID already registered, just replacing the field value "
 			            // + localName + " values " + GNSValue);
-			    	  
+
 			    	  long start = System.currentTimeMillis();
-			        
+
 			    	  DefaultGNSClient.getGnsClient().execute(
-			    			GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(), 
+			    			GNSCommand.fieldReplaceOrCreateList(myGuid.getGuid(),
 			    					GNSKey, new JSONArray().put(GNSValue), myGuid));
-			    	  
+
 			        long end = System.currentTimeMillis();
-			        
+
 			        // System.out.println("writeKeyValue: fieldReplaceOrCreateList "+(end-start)+" curr Time "+System.currentTimeMillis());
-			        
+
 			        // JSONArray arr= gnsClient.fieldRead(myGuid.getGuid(), GNSKey, myGuid);
 			        //System.out.println("read result "+gnsClient.lookupGuidRecord(myGuid.getGuid()));
 			      }
-			      
+
 			} catch(Exception ex)
 			{
 				ex.printStackTrace();
 			}
 	}
-	  
+
 	  public static String getKeyValue(String guid, String field) throws Exception
 	  {
 		  GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
 				  	(GNSCommand.fieldReadArray(guid, field, null));
-		  
+
 		  JSONArray queryResult = commandRes.getResultJSONArray();
 		  if(queryResult.length() > 0)
 		  {
@@ -241,7 +240,7 @@ public class GNSCalls
 			  return "";
 		  }
 	  }
-	  
+
 	  public static String getAlias(String guid) throws Exception
 	  {
 		  GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
@@ -249,33 +248,33 @@ public class GNSCalls
 		  JSONObject record = commandRes.getResultJSONObject();
 	      return record.getString("name");
 	  }
-	  
-	  public static String getSHA1(String stringToHash) 
+
+	  public static String getSHA1(String stringToHash)
 	  {
 		   //Hashing.consistentHash(input, buckets);
 		   MessageDigest md=null;
-		   try 
+		   try
 		   {
 			   md = MessageDigest.getInstance("SHA-256");
-		   } 
-		   catch (NoSuchAlgorithmException e) 
+		   }
+		   catch (NoSuchAlgorithmException e)
 		   {
 			   e.printStackTrace();
 		   }
-		   
+
 		   md.update(stringToHash.getBytes());
-		   
+
 		   byte byteData[] = md.digest();
-		 
+
 		   //convert the byte to hex format method 1
 		   StringBuffer sb = new StringBuffer();
-		   for (int i = 0; i < byteData.length; i++) 
+		   for (int i = 0; i < byteData.length; i++)
 		   {
 		   		sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
 		   }
 		   return sb.toString();
 	  }
-	  
+
 	  /**
 	   * adds the given address in the notification set
 	   * @param socketAddress
@@ -298,14 +297,14 @@ public class GNSCalls
 			    	  JSONArray arr = new JSONArray();
 			    	  arr.put(addrString);
 			    	  boolean alreadyThere = false;
-			    	  
-			    	  // separate try because if notification set field is not there then it will throw 
+
+			    	  // separate try because if notification set field is not there then it will throw
 			    	  // exception. Exception shoudl be caught and notification set updated.
 			    	  try
 			    	  {
 			    		  GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.fieldReadArray
 				    			  (groupGUID,NOTIFICATION_SET, DefaultGNSClient.getMyGuidEntry()));
-			    		  
+
 				    	  JSONArray notSet = commandRes.getResultJSONArray();
 				    	  System.out.println("\n\n notSet size "+notSet.length());
 				    	  for(int i=0;i < notSet.length();i++)
@@ -319,8 +318,7 @@ public class GNSCalls
 				    	  }
 			    	  } catch(Exception ex)
 			    	  {
-			    		  // MSocketLogger.getLogger().fine("exception due to filed not there. not important");
-			    	  	MSocketLogger.getLogger().log(Level.FINE,"Exception due to filed not there. Not important");
+			    		  MSocketLogger.getLogger().log(Level.FINE,"Exception due to filed not there. Not important");
 			    		  //ex.printStackTrace();
 			    	  }
 			    	  if(!alreadyThere)
@@ -328,17 +326,17 @@ public class GNSCalls
 			    		  // System.out.println("addrString "+addrString+" added to the notification set");
 			    		  DefaultGNSClient.getGnsClient().execute(
 			    				  GNSCommand.fieldAppend
-					    		  (groupGUID, NOTIFICATION_SET, arr, 
+					    		  (groupGUID, NOTIFICATION_SET, arr,
 					    				  DefaultGNSClient.getMyGuidEntry()));
 			    	  }
-			      } 
+			      }
 			} catch(Exception ex)
 			{
 				ex.printStackTrace();
 			}
 		}
-		
-		
+
+
 	 /**
 	   * returns the GUIDs
 	   * @param coordJson
@@ -350,31 +348,31 @@ public class GNSCalls
 	  {
 		  GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
 		  	(GNSCommand.selectNear(GNSCommandProtocol.LOCATION_FIELD_NAME, coordJson, radius));
-		  
-		  
+
+
 		  JSONArray queryResult = commandRes.getResultJSONArray();
-		  
-		  
-		  // MSocketLogger.getLogger().fine("size of selected GUIDs "+ queryResult.length() );
+
+
+
 		  MSocketLogger.getLogger().log(Level.FINE,"Size of selected GUIDs {0}", queryResult.length());
-		        
-        // returns the list of GUIDs, read whole records and return 
+
+        // returns the list of GUIDs, read whole records and return
         /*JSONArray queryRecords = new JSONArray();
-			        
-			        for (int i = 0; i < queryResult.length(); i++) 
+
+			        for (int i = 0; i < queryResult.length(); i++)
 				    {
 				    	JSONObject obj = gnsClient.lookupGuidRecord(queryResult.getString(i));
 				    	queryRecords.put(obj);
-				    	
+
 //				    	try {
 //					        JSONObject record = queryResult.getJSONObject(i);
-//					        
+//
 //					        Iterator<?> keys = record.keys();
 	//
 //					        //while( keys.hasNext() )
 	 * 						{
 //					        //    String key = (String)keys.next();
-//					        //    
+//					        //
 //					        //    System.out.println("Keys of JSON Object "+key);
 //					        //    //if( jObject.get(key) instanceof JSONObject ){
 //							//
@@ -384,11 +382,11 @@ public class GNSCalls
 //					        String attrGNSValue = record.getString(field);
 //					        String compvalue = "[\""+ value+"\"]";
 //					        System.out.println("guidString "+guidString+" attrGNSValue "+attrGNSValue);
-//					        if( attrGNSValue.equals(compvalue) ) 
+//					        if( attrGNSValue.equals(compvalue) )
 	 * 						{
 //					        	currMem.add(guidString);
 //					        }
-//				    	} catch(Exception ex) 
+//				    	} catch(Exception ex)
 //				    	{
 //				    		MSocketLogger.getLogger().fine("field not found exception in JSON Object" + ex.toString());
 //				    		ex.printStackTrace();

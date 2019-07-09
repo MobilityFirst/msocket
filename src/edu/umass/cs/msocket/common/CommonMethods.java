@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -38,12 +38,12 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * This class implements common methods as static functions, these are accessed
  * from many places. Getting active interface address of a device is implemented
  * here
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
 public class CommonMethods
-{	
+{
   public static Vector<String> getActiveInterfaceStringAddresses()
   {
     Vector<String> CurrentInterfaceIPs = new Vector<String>();
@@ -111,9 +111,9 @@ public class CommonMethods
     }
     return CurrentInterfaceIPs;
   }
-  
+
   /**
-   * convert byte[] GUID into String rep of hex, for indexing at proxy 
+   * convert byte[] GUID into String rep of hex, for indexing at proxy
    * @param a
    * @return
    */
@@ -128,22 +128,22 @@ public class CommonMethods
     toBeReturned = toBeReturned.toUpperCase();
     return toBeReturned;
   }
-  
-  public static byte[] hexStringToByteArray(String s) 
+
+  public static byte[] hexStringToByteArray(String s)
   {
 	  int len = s.length();
 	  byte[] data = new byte[len / 2];
-	  for (int i = 0; i < len; i += 2) 
+	  for (int i = 0; i < len; i += 2)
 	  {
 		  data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
 				  + Character.digit(s.charAt(i+1), 16));
 	  }
 	  return data;
   }
-  
+
   /**
    * returns the public IP
-   * 
+   *
    * @return
    * @throws Exception
    */
@@ -165,7 +165,7 @@ public class CommonMethods
       }
       catch (Exception ex)
       {
-        // MSocketLogger.getLogger().fine("excp in public IP determine returnPublicIP");
+
         MSocketLogger.getLogger().log(Level.FINE,"Exception in public IP determine returnPublicIP");
         if (i == numTry)
         {
@@ -201,14 +201,14 @@ public class CommonMethods
 
   /**
    * returns preferably public Ip, or any other local Ip, or null if none
-   * 
+   *
    * @return
    * @throws Exception
    */
   public static InetAddress returnLocalPublicIP() throws IOException
   {
     Vector<InetAddress> CurrentInterfaceIPs = CommonMethods.getActiveInterfaceInetAddresses();
-    
+
     String pubIP = returnPublicIP();
     for (int i = 0; i < CurrentInterfaceIPs.size(); i++)
     {
@@ -217,7 +217,7 @@ public class CommonMethods
         return CurrentInterfaceIPs.get(i);
       }
     }
-    
+
     if (CurrentInterfaceIPs.size() > 0)
     {
       return CurrentInterfaceIPs.get(0);
@@ -227,5 +227,5 @@ public class CommonMethods
       return null;
     }
   }
-  
+
 }

@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -36,7 +36,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * This class implements the setup control message format, serialization and
  * de-serialization. Setup control messages are sent in the beginning to
  * establish the connection.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -173,7 +173,7 @@ public class SetupControlMessage
                                                                           // server
 
   public static final int  MIGRATE_SOCKET_RESET = 13;
-  
+
 
   public static final int  SIZE_OF_GUID         = 20;                     // 20
                                                                           // bytes
@@ -208,7 +208,7 @@ public class SetupControlMessage
 
   public final byte[]      GUID                 = new byte[SIZE_OF_GUID];
 
-  public SetupControlMessage(InetAddress ia, int p, long connid, 
+  public SetupControlMessage(InetAddress ia, int p, long connid,
 		  int as, int mstype, int socketid,
       int proxyid, byte[] guid)
   {
@@ -218,7 +218,7 @@ public class SetupControlMessage
     this.ackSeq = as;
     this.mesgType = mstype;
     this.socketID = socketid;
-    
+
     this.proxyID = proxyid;
     System.arraycopy(guid, 0, this.GUID, 0, SIZE_OF_GUID);
   }
@@ -254,7 +254,7 @@ public class SetupControlMessage
     byte[] GUID = new byte[SIZE_OF_GUID];
     buf.get(GUID);
 
-    SetupControlMessage cm = new SetupControlMessage(InetAddress.getByAddress(ia), port, 
+    SetupControlMessage cm = new SetupControlMessage(InetAddress.getByAddress(ia), port,
     		connID, ackSeq, mesgType,
        socketId, proxyId, GUID);
     return cm;
@@ -265,7 +265,7 @@ public class SetupControlMessage
     String s = "[" + iaddr + ", " + port + ", " + connID + "]";
     return s;
   }
-  
+
   /**
    * Reads setup control message from a channel
    * Synchronization of this methid is caller's responsibility
@@ -281,13 +281,13 @@ public class SetupControlMessage
     int ret = 0;
     while (ret < SetupControlMessage.SIZE)
     {
-      // MSocketLogger.getLogger().fine("setup control read happening");
+
       MSocketLogger.getLogger().log(Level.FINE,"Setup control read happening");
       InputStream is = scToUse.socket().getInputStream();
       try
       {
         int currRead = is.read(buf.array(), ret, SetupControlMessage.SIZE - ret);
-        // MSocketLogger.getLogger().fine("read " + ret + " bytes");
+
         MSocketLogger.getLogger().log(Level.FINE,"Read {0} bytes", ret);
         if (currRead == -1)
         {
@@ -304,13 +304,13 @@ public class SetupControlMessage
         throw new SocketTimeoutException("Timeout while establishing connection with MServerSocket.");
       }
     }
-    // MSocketLogger.getLogger().fine("setup control read complete");
+
     MSocketLogger.getLogger().log(Level.FINE,"Setup control read complete");
 
     SetupControlMessage scm = SetupControlMessage.getSetupControlMessage(buf.array());
     return scm;
   }
-  
+
   /**
    * Synchronization of this method is callers responsibility
    * @param ControllerAddress
@@ -327,8 +327,8 @@ public class SetupControlMessage
    */
   public static void setupControlWrite
   		(InetAddress ControllerAddress, long lfid, int mstype, int ControllerPort,
-	      SocketChannel SCToUse, int SocketId, int ProxyId, byte[] GUID, 
-	      long connectTime, ConnectionInfo cinfo) 
+	      SocketChannel SCToUse, int SocketId, int ProxyId, byte[] GUID,
+	      long connectTime, ConnectionInfo cinfo)
 	    		  throws IOException
   {
 	  int DataAckSeq = 0;
@@ -338,12 +338,12 @@ public class SetupControlMessage
 			  DataAckSeq = cinfo.getDataAckSeq();
 	      }
 	  }
-	  
-	  if (mstype == SetupControlMessage.NEW_CON_MESG || 
+
+	  if (mstype == SetupControlMessage.NEW_CON_MESG ||
 			  mstype == SetupControlMessage.ADD_SOCKET)
 	  {
 		  DataAckSeq = (int) connectTime;
-		  // MSocketLogger.getLogger().fine("Connect time " + DataAckSeq);
+
       MSocketLogger.getLogger().log(Level.FINE,"Connect time {0}",DataAckSeq);
 	  }
 
@@ -356,8 +356,7 @@ public class SetupControlMessage
 	      SCToUse.write(buf);
 	    }
 
-	    // MSocketLogger.getLogger().fine("Sent IP:port " + ControllerPort + "; ackSeq = " + (cinfo != null ? DataAckSeq : 0));
-      MSocketLogger.getLogger().log(Level.FINE,"Controller Port: {0}; ackSeq = {1}",new Object[]{ControllerPort,(cinfo != null ? DataAckSeq : 0)});
+	     MSocketLogger.getLogger().log(Level.FINE,"Controller Port: {0}; ackSeq = {1}",new Object[]{ControllerPort,(cinfo != null ? DataAckSeq : 0)});
 	  }
 
   public static void main(String[] args)
@@ -377,5 +376,5 @@ public class SetupControlMessage
       e.printStackTrace();
     }
   }
-  
+
 }

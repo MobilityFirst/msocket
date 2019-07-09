@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -43,7 +43,7 @@ import edu.umass.cs.msocket.proxy.ProxyInfo;
 
 /**
  * This class defines a LocationService
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -60,7 +60,7 @@ public class LocationService extends Thread
 
   /**
    * Creates a new <code>LocationService</code> object
-   * 
+   *
    * @param proxyGroupName
    * @param locationServiceName
    * @param gnsCredentials
@@ -74,28 +74,27 @@ public class LocationService extends Thread
   /**
    * Establish a connection with the GNS, register the proxy in the proxy group,
    * start a monitoring socket and register its IP in the GNS,
-   * 
+   *
    * @throws Exception
    */
   public void registerLocationServiceInGns() throws Exception
   {
-    // logger.info("Looking for location service " + locationServiceName + " GUID and certificates...");
+
     logger.log(Level.INFO," Looking for location service {0} GUID and certificates...", locationServiceName);
     GuidEntry locationServiceGuid = KeyPairUtils.getGuidEntry(
     		DefaultGNSClient.getDefaultGNSName(), locationServiceName);
 
     if (locationServiceGuid == null)
     {
-      // logger.info("No keys found for location service " + locationServiceName 
-    		//   + ". Generating new GUID and keys");
+
       logger.log(Level.INFO, "No keys found for location service {0}. Generating new GUID and keys.", locationServiceName);
       GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(GNSCommand.createGUID
-    		  (DefaultGNSClient.getGnsClient().getGNSProvider(), 
+    		  (DefaultGNSClient.getGnsClient().getGNSProvider(),
     				  DefaultGNSClient.getMyGuidEntry(), locationServiceName));
-      
+
       locationServiceGuid = (GuidEntry) commandRes.getResult();
     }
-    // logger.info("We are guid " + locationServiceGuid.getGuid());
+
     logger.log(Level.INFO, " We are guid {0}.", locationServiceGuid.getGuid());
 
     // Determine our IP
@@ -103,7 +102,7 @@ public class LocationService extends Thread
     BufferedReader in;
     try
     {
-      // logger.info("Determining public IP");
+
       logger.log(Level.INFO, " Determining public IP");
       // Determine our external IP address by contacting http://icanhazip.com
       URL whatismyip = new URL("http://icanhazip.com");
@@ -168,18 +167,18 @@ public class LocationService extends Thread
       logger.log(Level.WARNING, "Failed to locate IP address " + e);
 
     }
-    
+
     GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(
     		GNSCommand.lookupGUID(proxyGroupName));
-    
+
     // Look for the group GUID
     String groupGuid = commandRes.getResultString();
 
     // Check if we are a member of the group
-    
+
     commandRes = DefaultGNSClient.getGnsClient().execute
     				(GNSCommand.groupGetMembers(groupGuid, locationServiceGuid));
-    
+
     JSONArray members = commandRes.getResultJSONArray();
     boolean isVerified = false;
     for (int i = 0; i < members.length(); i++)
@@ -190,24 +189,24 @@ public class LocationService extends Thread
         break;
       }
     }
-    
+
     // Make sure we advertise ourselves as a location service (readable for
     // everyone)
-    
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.fieldReplaceOrCreateList
     		(locationServiceGuid.getGuid(), Constants.SERVICE_TYPE_FIELD,
             new JSONArray().put(Constants.LOCATION_SERVICE), locationServiceGuid) );
-    
-    
-    DefaultGNSClient.getGnsClient().execute( 
-    		GNSCommand.aclAdd(AclAccessType.READ_WHITELIST, 
+
+
+    DefaultGNSClient.getGnsClient().execute(
+    		GNSCommand.aclAdd(AclAccessType.READ_WHITELIST,
     				locationServiceGuid, Constants.SERVICE_TYPE_FIELD, null) );
 
-    
+
     // Update our location
-    
+
     DefaultGNSClient.getGnsClient().execute( GNSCommand.setLocation
-    		(locationServiceGuid, locationServiceInfo.getLatLong().getLongitude(), 
+    		(locationServiceGuid, locationServiceInfo.getLatLong().getLongitude(),
     				locationServiceInfo.getLatLong().getLatitude()) );
 
     if (!isVerified)
@@ -250,18 +249,18 @@ public class LocationService extends Thread
 
         // Publish location service IP in the GNS
         final String ipPort = locationServiceInfo.getIpAddress() + ":" + ss.getLocalPort();
-        // logger.info("Publishing Location service IP (" + ipPort + ") in GNS.");
+
         logger.log(Level.INFO, " Publishing Location service IP ({0}) in GNS.", ipPort);
         //final GuidEntry guidEntry = gnsCredentials.getGuidEntry();
-        
-        
+
+
         DefaultGNSClient.getGnsClient().execute( GNSCommand.fieldReplaceOrCreateList
         		(locationServiceGuid.getGuid(), Constants.LOCATION_SERVICE_IP,
                 new JSONArray().put(ipPort), locationServiceGuid));
-        
+
         DefaultGNSClient.getGnsClient().execute( GNSCommand.aclAdd
         	(AclAccessType.READ_WHITELIST, locationServiceGuid, Constants.LOCATION_SERVICE_IP, null) );
-        
+
 
         // Start the thread that collect information about proxy status
         statusThread = new ProxyStatusThread(proxyGroupName);
@@ -286,7 +285,7 @@ public class LocationService extends Thread
 
   /**
    * Returns the statusThread value.
-   * 
+   *
    * @return Returns the statusThread.
    */
   public ProxyStatusThread getStatusThread()
@@ -296,7 +295,7 @@ public class LocationService extends Thread
 
   /**
    * Returns the proxyInfo value.
-   * 
+   *
    * @return Returns the proxyInfo.
    */
   public ProxyInfo getLocationServiceInfo()

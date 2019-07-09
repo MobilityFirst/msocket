@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -52,7 +52,7 @@ import edu.umass.cs.msocket.mobility.MobilityManagerServer;
 /**
  * This class implements the MSeverSocket. Applications can use MServerSoceket
  * to start a server and start accepting connections.
- * 
+ *
  * @author aditya
  */
 public class MServerSocket extends ServerSocket
@@ -85,32 +85,32 @@ public class MServerSocket extends ServerSocket
   private String                  serverGUID          = "";
   private boolean                 isBound;
   private boolean                 isClosed;
-  
+
   // boolean indicating if a non legacy gns constructor invoked.
   private boolean 				  gnsConstuctorInvoked	= false;
 
   /**
    * Creates an unbound server socket.
-   * 
+   *
    * @throws IOException IO error when loading implementation
    */
   public MServerSocket() throws IOException
   {
 	  ssc = ServerSocketChannel.open();
   }
-  
+
   /**
-   * Create a server with the specified port, listen backlog, and local IP address to bind to. 
+   * Create a server with the specified port, listen backlog, and local IP address to bind to.
    * The bindAddr argument can be used on a multi-homed host for a ServerSocket that will only accept connect requests to one of its addresses.
-   *  If bindAddr is null, it will default accepting connections on any/all local addresses. 
-   *  The port must be between 0 and 65535, inclusive. 
-   *  A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range. 
+   *  If bindAddr is null, it will default accepting connections on any/all local addresses.
+   *  The port must be between 0 and 65535, inclusive.
+   *  A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range.
    *  This port number can then be retrieved by calling getLocalPort.
-   *  
-   *  The backlog argument is the requested maximum number of pending connections on the socket. 
-   *  Its exact semantics are implementation specific. In particular, an implementation may impose a maximum length or may choose to ignore the parameter altogther. 
-   *  The value provided should be greater than 0. If it is less than or equal to 0, then an implementation specific default will be used. 
-   * 
+   *
+   *  The backlog argument is the requested maximum number of pending connections on the socket.
+   *  Its exact semantics are implementation specific. In particular, an implementation may impose a maximum length or may choose to ignore the parameter altogther.
+   *  The value provided should be greater than 0. If it is less than or equal to 0, then an implementation specific default will be used.
+   *
    * @param port - the port number, or 0 to use a port number that is automatically allocated.
    * @param backlog - requested maximum length of the queue of incoming connections.
    * @param bindAddr - the local InetAddress the server will bind to
@@ -121,18 +121,18 @@ public class MServerSocket extends ServerSocket
 	  this();
 	  bind(new InetSocketAddress(bindAddr, port), backlog);
   }
-  
+
   /**
-   * Creates a server socket and binds it to the specified local port number, with the specified backlog. 
-   * A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range. 
+   * Creates a server socket and binds it to the specified local port number, with the specified backlog.
+   * A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range.
    * This port number can then be retrieved by calling getLocalPort.
-   * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter. 
+   * The maximum queue length for incoming connection indications (a request to connect) is set to the backlog parameter.
    * If a connection indication arrives when the queue is full, the connection is refused.
-   * The backlog argument is the requested maximum number of pending connections on the socket. 
-   * Its exact semantics are implementation specific. 
-   * In particular, an implementation may impose a maximum length or may choose to ignore the parameter altogther. 
-   * The value provided should be greater than 0. If it is less than or equal to 0, then an implementation specific default will be used. 
-   * 
+   * The backlog argument is the requested maximum number of pending connections on the socket.
+   * Its exact semantics are implementation specific.
+   * In particular, an implementation may impose a maximum length or may choose to ignore the parameter altogther.
+   * The value provided should be greater than 0. If it is less than or equal to 0, then an implementation specific default will be used.
+   *
    * @param port - the port number, or 0 to use a port number that is automatically allocated.
    * @param backlog - requested maximum length of the queue of incoming connections.
    * @throws IOException - if an I/O error occurs when opening the socket.
@@ -142,14 +142,14 @@ public class MServerSocket extends ServerSocket
 	  this();
 	  bind(new InetSocketAddress(InetAddress.getLocalHost(), port), backlog);
   }
-  
+
   /**
-   * Creates a server socket, bound to the specified port. 
-   * A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range. 
+   * Creates a server socket, bound to the specified port.
+   * A port number of 0 means that the port number is automatically allocated, typically from an ephemeral port range.
    * This port number can then be retrieved by calling getLocalPort.
-   * The maximum queue length for incoming connection indications (a request to connect) is set to 50. 
+   * The maximum queue length for incoming connection indications (a request to connect) is set to 50.
    * If a connection indication arrives when the queue is full, the connection is refused.
-   * 
+   *
    * @param port - the port number, or 0 to use a port number that is automatically allocated.
    * @throws IOException - if an I/O error occurs when opening the socket.
    */
@@ -160,10 +160,10 @@ public class MServerSocket extends ServerSocket
   }
 
   /**
-   * Creates a new MServerSocket using the given GNS credentials, using no proxies, 
+   * Creates a new MServerSocket using the given GNS credentials, using no proxies,
    * a random port number chosen automatically by the system. The
    * given name is published in the GNS as an alias to be looked up by clients.
-   * 
+   *
    * @param serverName the name to give to this socket in the GNS
    * @param gnsCredentials the GNS credentials to use to register the name in
    *          the GNS
@@ -179,7 +179,7 @@ public class MServerSocket extends ServerSocket
    * proxy policy and a random port number chosen automatically by the system.
    * The given name is published in the GNS as an alias to be looked up by
    * clients.
-   * 
+   *
    * @param serverName the name to give to this socket in the GNS
    * @param proxySelection a {@link ProxySelectionPolicy} defining how to choose
    *          a proxy
@@ -194,7 +194,7 @@ public class MServerSocket extends ServerSocket
    * Creates a new MServerSocket using the given GNS credentials and the default
    * proxy policy. The given port number is bound locally. The given name is
    * published in the GNS as an alias to be looked up by clients.
-   * 
+   *
    * @param serverName the name of the service/server to register in the GNS
    * @param serverPort the port number to bind
    * @param proxyPolicy a {@link ProxySelectionPolicy} defining how to choose a
@@ -215,7 +215,7 @@ public class MServerSocket extends ServerSocket
 
   /**
    * Call accept to start accepting connections
-   * 
+   *
    * @see java.net.ServerSocket#accept()
    */
   public MSocket accept() throws IOException, SocketTimeoutException
@@ -264,7 +264,7 @@ public class MServerSocket extends ServerSocket
   /**
    * Closes the MServerSocket, closes all accepted connections and frees the
    * state. MServerSocket close doesn't close MobilityManagerServer
-   * 
+   *
    * @see java.net.ServerSocket#close()
    */
   public void close() throws IOException
@@ -276,7 +276,7 @@ public class MServerSocket extends ServerSocket
 
     controller.close();
     MobilityManagerServer.unregisterWithManager(controller);
-    
+
     if( this.gnsConstuctorInvoked )
     {
 	    try
@@ -285,7 +285,6 @@ public class MServerSocket extends ServerSocket
 	    }
 	    catch (Exception e)
 	    {
-	    	// MSocketLogger.getLogger().fine("Failed to unregister server socket " + getServerName() + " from GNS"+ e.getMessage());
 	       MSocketLogger.getLogger().log(Level.FINE,"Failed to unregister server socket {0} from GNS {1}.", new Object[]{getServerName(),e.getMessage()});
       }
     }
@@ -298,7 +297,7 @@ public class MServerSocket extends ServerSocket
    * in the GNS as an alias to be looked up by clients using the given GNS
    * credentials. Note that the endpoint should be an IP address reachable by
    * clients.
-   * 
+   *
    * @param serverName the name of the service/server to register in the GNS
    * @param endpoint The IP address & port number to bind to.
    * @param backlog The listen backlog length.
@@ -312,12 +311,12 @@ public class MServerSocket extends ServerSocket
     if (isBound)
       throw new IOException("MServerSocket already bound");
 
-    
+
     initializeServerSocket(serverName, new NoProxyPolicy(), endpoint, backlog);
   }
 
   /**
-   * 
+   *
    * @see java.net.ServerSocket#bind(java.net.SocketAddress)
    */
   public void bind(SocketAddress endpoint) throws IOException
@@ -329,7 +328,7 @@ public class MServerSocket extends ServerSocket
    * Binds the socket to the address specified, since there is no name or GUID
    * given, so the server is not registered in GNS, nor is connected to the
    * proxies. Mainly, to support legacy operations.
-   * 
+   *
    * @see java.net.ServerSocket#bind(java.net.SocketAddress, int)
    */
   public void bind(SocketAddress endpoint, int backlog) throws IOException
@@ -338,7 +337,7 @@ public class MServerSocket extends ServerSocket
 	  	ss = ssc.socket();
 	    ss.bind(endpoint, backlog);
 	    serverListeningPort = ss.getLocalPort();
-	
+
 	    if (controller == null)
 	    { // enabling UDP control socket
 	      controller = new MServerSocketController(this);
@@ -347,12 +346,12 @@ public class MServerSocket extends ServerSocket
 	      controller.startKeepAliveThread();
 	    }
 	    //controller.setGNSCredential(gnsCredentials);
-	
+
 	    AcceptConnectionQueueObj = new AcceptConnectionQueue();
 	    AcceptThreadPoolObj = new AcceptThreadPool(ssc);
-	
+
 	    (new Thread(AcceptThreadPoolObj)).start();
-	    
+
 	    // application has not opened it with server name
 	    if(!serverAlias.equals(""))
 	    {
@@ -362,19 +361,19 @@ public class MServerSocket extends ServerSocket
 	    	}
 	    	catch (Exception ex)
 	    	{
-	    		// MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+
           MSocketLogger.getLogger().log(Level.FINE, "registration with GNS failed {0}.", ex);
 	    		//ex.printStackTrace();
 	    	}
 	    }
-	    
+
 	    MobilityManagerServer.registerWithManager(controller);
 	    isBound = true;
   }
 
   /**
    * Returns the address to which the server socket is locally bounded
-   * 
+   *
    * @see java.net.ServerSocket#getInetAddress()
    */
   public InetAddress getInetAddress()
@@ -401,7 +400,7 @@ public class MServerSocket extends ServerSocket
   /**
    * MServerSocket can't return channel to the application, this method will
    * always return null
-   * 
+   *
    * @see java.net.ServerSocket#getChannel()
    */
   public ServerSocketChannel getChannel()
@@ -428,7 +427,7 @@ public class MServerSocket extends ServerSocket
   /**
    * Sets SO_TIMEOUT of accept for the MServerSocket MServerSocket accept will
    * throw an exception after SO_TIMEOUT
-   * 
+   *
    * @see java.net.ServerSocket#setSoTimeout(int)
    */
   public void setSoTimeout(int timeout) throws SocketException
@@ -448,7 +447,7 @@ public class MServerSocket extends ServerSocket
   /**
    * mSockets currently do not support timeouts. This method systematically
    * throws a SocketException.
-   * 
+   *
    * @see java.net.ServerSocket#setReuseAddress(boolean)
    */
   public void setReuseAddress(boolean on) throws SocketException
@@ -459,7 +458,7 @@ public class MServerSocket extends ServerSocket
   /**
    * mSockets currently do not support reuse address. This method systematically
    * returns false.
-   * 
+   *
    * @see java.net.ServerSocket#getReuseAddress()
    */
   public boolean getReuseAddress() throws SocketException
@@ -505,7 +504,7 @@ public class MServerSocket extends ServerSocket
 
   /**
    * Returns the server alias, if it is set.
-   * 
+   *
    * @return
    */
   public String getServerName()
@@ -515,7 +514,7 @@ public class MServerSocket extends ServerSocket
 
   /**
    * Returns the proxySelection value.
-   * 
+   *
    * @return Returns the proxySelection.
    */
   public ProxySelectionPolicy getProxySelection()
@@ -526,7 +525,7 @@ public class MServerSocket extends ServerSocket
   /**
    * Migrates the server's listening address and also migrates all the already
    * accepted connections using the current proxy selection policy.
-   * 
+   *
    * @param localAddress new local address to bind the listening socket
    * @param localPort new local port to bind the listening socket
    * @throws Exception if no proxy can be found or the migration failed
@@ -539,14 +538,14 @@ public class MServerSocket extends ServerSocket
   /**
    * Migrates the server's listening address and also migrates all the already
    * accepted connections
-   * 
+   *
    * @param localAddress new local address to bind the listening socket
    * @param localPort new local port to bind the listening socket
    * @param proxySelectionPolicy the proxy selection policy to use when
    *          migrating the sockets
    * @throws Exception
    */
-  public void migrate(InetAddress localAddress, int localPort, 
+  public void migrate(InetAddress localAddress, int localPort,
 		  ProxySelectionPolicy proxySelectionPolicy)
       throws IOException
   {
@@ -565,13 +564,13 @@ public class MServerSocket extends ServerSocket
       if (this.proxySelection.hasAvailableProxies())
       {
         Vector<ProxyInfo> vect = new Vector<ProxyInfo>();
-        
+
         vect.addAll( controller.getAllProxyInfo());
-        
+
         for (int i = 0; i < vect.size(); i++)
         {
           ProxyInfo Obj = vect.get(i);
-          // MSocketLogger.getLogger().fine("removing proxy " + Obj.getProxyInfo());
+
           MSocketLogger.getLogger().log(Level.FINE,"Removing proxy {0}.", Obj.getProxyInfo());
           try
           {
@@ -630,20 +629,20 @@ public class MServerSocket extends ServerSocket
 		      }
 		      catch (Exception ex)
 		      {
-		        // MSocketLogger.getLogger().fine("registration with GNS failed "+ex);
+
             MSocketLogger.getLogger().log(Level.FINE,"registration with GNS failed {0}.", ex);
 		        ex.printStackTrace();
 		      }
 	      }
-        
+
         controller.initMigrateChildren(localAddress, serverListeningPort, UDPPort);
       }
 
-      // MSocketLogger.getLogger().fine("MServerSocket new UDP port of server " + UDPPort);
+
       MSocketLogger.getLogger().log(Level.FINE,"MServerSocket new UDP port of server {0}",UDPPort );
     }
   }
-  
+
   //
   // private methods
   //
@@ -681,17 +680,17 @@ public class MServerSocket extends ServerSocket
 	    }
 
 	    List<InetSocketAddress> proxyVector = Integration.getNewProxy(proxyPolicy);
-	    
-	    
+
+
 	    if (proxyVector != null)
 	    {
-	    	try 
+	    	try
 	    	{
 	    		Integration.unregisterWithGNS(serverAlias);
 	    	}
 	    	catch(IOException ex)
 	    	{
-	    			// MSocketLogger.getLogger().fine("Unregister failed, contuining to register");
+
             MSocketLogger.getLogger().log(Level.FINE,"Unregister failed, contuining to register");
 	    			ex.printStackTrace();
 	    	}
@@ -706,16 +705,16 @@ public class MServerSocket extends ServerSocket
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        
+
 	        if(firstTime)
 	        {
 	        	serverGUID = Integration.getGUIDOfAlias(serverAlias);
 	            controller.setProxyConnObj(new ConnectionToProxyServer(serverGUID, controller));
 	            firstTime = false;
 	        }
-	        
+
 	        ProxyInfo proxyInfo = new ProxyInfo(retProxy.getHostName(), retProxy.getPort());
-	        // MSocketLogger.getLogger().fine("proxy host name "+retProxy.getHostName() +" port "+retProxy.getPort());
+
           MSocketLogger.getLogger().log(Level.FINE,"Proxy host name {0}, port: {1}", new Object[]{retProxy.getHostName(),retProxy.getPort()});
 	        proxyInfo.setActive(true);
 	        controller.getProxyConnObj().addProxy(proxyInfo.getProxyInfo(), proxyInfo);
@@ -740,18 +739,18 @@ public class MServerSocket extends ServerSocket
 	      }
 	    }
 	    MobilityManagerServer.registerWithManager(controller);
-	    
+
 	    AcceptConnectionQueueObj = new AcceptConnectionQueue();
 	    AcceptThreadPoolObj = new AcceptThreadPool(ssc);
 
 	    (new Thread(AcceptThreadPoolObj)).start();
-	    
+
 	    isBound = true;
 	}
 
   private void BlockForAccept()
   {
-    // MSocketLogger.getLogger().fine("accept called");
+
     MSocketLogger.getLogger().log(Level.FINE,"accept called");
     synchronized (monitor)
     {
@@ -767,7 +766,7 @@ public class MServerSocket extends ServerSocket
         }
       }
     }
-    // MSocketLogger.getLogger().fine("new connection socket ready");
+
     MSocketLogger.getLogger().log(Level.FINE,"new connection socket ready");
   }
 
@@ -798,27 +797,27 @@ public class MServerSocket extends ServerSocket
 
   /**
    * for implementing executor service
-   * 
+   *
    * @author ayadav
    */
   private class Handler implements Runnable
   {
 	  private final SocketChannel connectionSocketChannel;
 	  private final MSocket proxyMSocket;
-	  
+
 	  public Handler(SocketChannel connectionSocketChannel, MSocket proxyMSocket)
 	  {
 		  this.connectionSocketChannel = connectionSocketChannel;
 		  this.proxyMSocket = proxyMSocket;
 	  }
-	  
+
 	  public void run()
 	  {
 		  if (!proxySelection.hasAvailableProxies())
 		  {
 			  	// read and service request on socket
 			  	// FIXME: check for how to handle exceptions here
-			  	// MSocketLogger.getLogger().fine("new connection accepted by socket channel");
+
           MSocketLogger.getLogger().log(Level.FINE,"New connection accepted by socket channel");
 				ServerMSocket ms = null;
 				try
@@ -832,35 +831,33 @@ public class MServerSocket extends ServerSocket
 					// close and reject socket so that client reconnects again
 					// do not put in active queue as currently done
 					// transition into all ready state as well
-					// MSocketLogger.getLogger().fine("Failed to accept new connection"
-									// + e.getMessage());
+
           MSocketLogger.getLogger().log(Level.FINE,"Failed to accept new connection {0}.", e.getMessage());
 					return;
 				}
-			
-				// MSocketLogger.getLogger().fine("Accepted connection from " 
-							// + ms.getInetAddress() + ":" + ms.getPort());
+
+
         MSocketLogger.getLogger().log(Level.FINE,"Accepted connection from {0}:{1}", new Object[]{ms.getInetAddress(),ms.getPort()});
 			      if (ms.isNew())
 			      {
-			
+
 			        // FIXME: what to do here for exception
 			        controller.setConnectionInfo(ms.getConnID());
-			
+
 			        AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.PUT, ms);
 			        synchronized (monitor)
 			        {
 			          monitor.notifyAll();
 			        }
 			      }
-			      // MSocketLogger.getLogger().fine("MServerSocket Handler thread exits");
+
             MSocketLogger.getLogger().log(Level.FINE,"MServerSocket Handler thread exits");
-		  } 
+		  }
 		  else
 		  {
 	    		if(proxyMSocket != null)
 	    		{
-	    			AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.PUT, 
+	    			AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.PUT,
 	    					proxyMSocket);
 			        synchronized (monitor)
 			        {
@@ -914,7 +911,7 @@ public class MServerSocket extends ServerSocket
           continue;
         }
       }
-      // MSocketLogger.getLogger().fine("AcceptThreadPool exits");
+
       MSocketLogger.getLogger().log(Level.FINE,"AcceptThreadPool exits");
     }
 
@@ -924,5 +921,5 @@ public class MServerSocket extends ServerSocket
       pool.shutdownNow();
     }
   }
-  
+
 }

@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -54,7 +54,7 @@ import edu.umass.cs.msocket.proxy.location.ProxyStatusInfo;
 /**
  * This class defines a mixed proxy selection policy based on load and
  * geolocation
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -69,7 +69,7 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
 
   /**
    * Creates a new <code>GeoLoadProxyPolicy</code> object
-   * 
+   *
    * @param proxyGroupName name of the proxy group
    * @param gnsCredentials The GNS credentials to use, usually the account GUID
    *          and default GNS (if null default GNS credentials are used). If the
@@ -105,10 +105,10 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
     JSONArray guids;
     try
     {
-    	GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute( 
-    			GNSCommand.fieldReadArray(proxyGroupName, 
+    	GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute(
+    			GNSCommand.fieldReadArray(proxyGroupName,
     					Constants.ACTIVE_LOCATION_FIELD, DefaultGNSClient.getMyGuidEntry()) );
-    	
+
     	guids = commandRes.getResultJSONArray();
     }
     catch (Exception e)
@@ -121,14 +121,14 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
     {
       // Retrieve the location service IP and connect to it
       String locationGuid = guids.getString(i);
-      
+
       GNSCommand commandRes = DefaultGNSClient.getGnsClient().execute
-      	(GNSCommand.fieldReadArray(locationGuid, 
+      	(GNSCommand.fieldReadArray(locationGuid,
       		Constants.LOCATION_SERVICE_IP, DefaultGNSClient.getMyGuidEntry()));
 
       String locationIP = commandRes.getResultJSONArray().getString(0);
-      
-      // logger.fine("Contacting location service " + locationIP + " to request " + numProxies + " proxies");
+
+
       logger.log(Level.FINE,"Contacting location service {0} to request {1} proxies", new Object[]{locationIP,numProxies});
       // Location IP is stored as host:port
       StringTokenizer st = new StringTokenizer(locationIP, ":");
@@ -155,7 +155,7 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
       }
       catch (Exception e)
       {
-        // logger.info("Failed to obtain proxy from location service" + locationIP + " (" + e + ")");
+
         logger.log(Level.INFO,"Failed to obtain proxy from location service {0} ({1}).", new Object[]{locationIP,e});
       }
     }
@@ -226,7 +226,7 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
       }
       catch (JSONException e)
       {
-        // logger.warning("Unable to get load information from proxy " + proxyStatusInfo.getGuid() + ": " + e);
+
         logger.log(Level.WARNING,"Unable to get load information from proxy {0}:{1}", new Object[]{proxyStatusInfo.getGuid(),e});
       }
 
@@ -264,7 +264,7 @@ public class GeoLoadProxyPolicy extends ProxySelectionPolicy
 
   /**
    * Returns the numProxies value.
-   * 
+   *
    * @return Returns the numProxies.
    */
   public int getNumProxies()

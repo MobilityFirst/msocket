@@ -2,18 +2,18 @@
  * Mobility First - Global Name Resolution Service (GNS)
  * Copyright (C) 2013 University of Massachusetts - Emmanuel Cecchet.
  * Contact: cecchet@cs.umass.edu
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -29,7 +29,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
 /**
  * This class defines an InternalMSocket used by MServerSocket for its
  * connections with MSocket clients.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -40,17 +40,17 @@ public class ServerMSocket extends MSocket
 
   // is the msocket a new msocket or just created to facilitate migration
   private boolean                 isNew            = true;
-  
+
 
   /**
    * Creates a new <code>InternalMSocket</code> object
-   * 
+   *
    * @param newChannel
    * @param serverController
    * @param clientSCM
    * @throws IOException
    */
-  public ServerMSocket(SocketChannel newChannel, 
+  public ServerMSocket(SocketChannel newChannel,
 		  MServerSocketController serverController,
       SetupControlMessage clientSCM) throws IOException
   {
@@ -67,7 +67,7 @@ public class ServerMSocket extends MSocket
   /**
    * Returns whether this socket is new or a migrated socket. For the
    * applications, it will always return to be a new socket.
-   * 
+   *
    * @return true: if the socket is new, false: if it is a migrated socket
    */
   public boolean isNew()
@@ -80,9 +80,6 @@ public class ServerMSocket extends MSocket
    */
   private void setupServerController(SetupControlMessage scm)
   {
-    // MSocketLogger.getLogger().fine
-    // ("Received IP:port " + scm.port + ":" + scm.iaddr + " for connID " 
-    		// + connectionInfo.getConnID() + "; ackSeq = " + scm.ackSeq);
     MSocketLogger.getLogger().log(Level.FINE,"Received IP:port -> {0}:{1} for connID: {2}; ackSeq = {3}.",new Object[]{scm.port,scm.iaddr,connectionInfo.getConnID(),scm.ackSeq});
     connectionInfo.setRemoteControlAddress(scm.iaddr);
     connectionInfo.setRemoteControlPort(scm.port);
@@ -91,7 +88,7 @@ public class ServerMSocket extends MSocket
   // Server reads first, then writes
   // have to be synchronized, multiple threads calls it.
   // otherwise socketID might get same
-  private synchronized void setupControlServer(SocketChannel newChannel, 
+  private synchronized void setupControlServer(SocketChannel newChannel,
 		  SetupControlMessage clientSCM)
       throws IOException
   {
@@ -116,20 +113,16 @@ public class ServerMSocket extends MSocket
       case SetupControlMessage.NEW_CON_MESG :
       case SetupControlMessage.NEW_CON_REQ :
       {
-        // MSocketLogger.getLogger().fine("NEW_CON_MESG recv at server from " 
-        		// + newChannel.socket().getInetAddress() + " scm.ackSeq "
-        		// + scm.ackSeq);
         MSocketLogger.getLogger().log(Level.FINE,"NEW_CON_MESG recv at server from {0}, scm.ackSeq: {1}", new Object[]{newChannel.socket().getInetAddress(),scm.ackSeq});
-        SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
+        SetupControlMessage.setupControlWrite(serverController.getLocalAddress(),
         		localConnID, SetupControlMessage.NEW_CON_MESG_REPLY,
-            serverController.getLocalPort(), newChannel, scm.socketID, 
+            serverController.getLocalPort(), newChannel, scm.socketID,
             scm.proxyID, scm.GUID, 0, connectionInfo);
 
         // new flowID is computed as average of both proposals for new
         // connections
         long connID = (localConnID + scm.connID) / 2;
         serverController.setConnectionInfo(connID);
-        // MSocketLogger.getLogger().fine("Created new flow ID " + connID);
         MSocketLogger.getLogger().log(Level.FINE,"Created new flow ID {0}.",connID);
         connectionInfo = serverController.getConnectionInfo(connID);
         setupServerController(scm);
@@ -146,12 +139,11 @@ public class ServerMSocket extends MSocket
 
         connectionInfo.inputQueuePutSocketInfo(sockInfo);
         connectionInfo.outputQueuePutSocketInfo(sockInfo);
-        
+
         connectionInfo.setServerOrClient(MSocketConstants.SERVER);
-        
+
         connectionInfo.setMSocketState(MSocketConstants.ACTIVE);
         serverController.getConnectionInfo(connID).setState(ConnectionInfo.ALL_READY, true);
-        // MSocketLogger.getLogger().fine("Set server state to ALL_READY");
         MSocketLogger.getLogger().log(Level.FINE,"Set server state to ALL_READY");
 
         //localTimer = new Timer();
@@ -166,13 +158,11 @@ public class ServerMSocket extends MSocket
       case SetupControlMessage.ADD_SOCKET :
       case SetupControlMessage.ADD_SOCKET_REQ :
       {
-        // MSocketLogger.getLogger().fine("ADD_SOCKET recv at server from " + newChannel.socket().getInetAddress() + " scm.ackSeq "
-            // + scm.ackSeq);
         MSocketLogger.getLogger().log(Level.FINE,"ADD_SOCKET recv at server from {0}, scm.ackSeq {1}", new Object[]{newChannel.socket().getInetAddress(),scm.ackSeq});
-        SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
-        		connectionInfo.getConnID(), 
+        SetupControlMessage.setupControlWrite(serverController.getLocalAddress(),
+        		connectionInfo.getConnID(),
         		SetupControlMessage.ADD_SOCKET_REPLY,
-        		serverController.getLocalPort(), 
+        		serverController.getLocalPort(),
         		newChannel, scm.socketID, scm.proxyID, scm.GUID, 0, connectionInfo);
         // need to set it here
         newChannel.configureBlocking(false);
@@ -194,11 +184,10 @@ public class ServerMSocket extends MSocket
         // migrate a previous connection. send reset.
         if (connectionInfo == null)
         {
-          // MSocketLogger.getLogger().fine("sending MIGRATE_SOCKET_RESET");
           MSocketLogger.getLogger().log(Level.FINE,"Sending MIGRATE_SOCKET_RESET.");
-          SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
+          SetupControlMessage.setupControlWrite(serverController.getLocalAddress(),
         		  scm.connID, SetupControlMessage.MIGRATE_SOCKET_RESET,
-              serverController.getLocalPort(), newChannel, 
+              serverController.getLocalPort(), newChannel,
               scm.socketID, scm.proxyID, scm.GUID, 0, connectionInfo);
           isNew = false;
         }
@@ -206,9 +195,9 @@ public class ServerMSocket extends MSocket
         {
           // System.out.println("MIGRATE_SOCKET arrvied");
           MSocketLogger.getLogger().log(Level.FINE,"MIGRATE_SOCKET arrvied");
-          SetupControlMessage.setupControlWrite(serverController.getLocalAddress(), 
+          SetupControlMessage.setupControlWrite(serverController.getLocalAddress(),
         		  scm.connID, SetupControlMessage.MIGRATE_SOCKET_REPLY,
-              serverController.getLocalPort(), newChannel, 
+              serverController.getLocalPort(), newChannel,
               scm.socketID, scm.proxyID, scm.GUID, 0, connectionInfo);
 
           setupServerController(scm);
@@ -252,7 +241,7 @@ public class ServerMSocket extends MSocket
 
           ResendIfNeededThread RensendObj = new ResendIfNeededThread(connectionInfo);
           (new Thread(RensendObj)).start();
-          
+
           // System.out.println("MIGRATE_SOCKET complete");
           MSocketLogger.getLogger().log(Level.FINE,"MIGRATE_SOCKET complete");
 
@@ -262,5 +251,5 @@ public class ServerMSocket extends MSocket
       }
     }
   }
-  
+
 }

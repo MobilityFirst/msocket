@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -48,7 +48,7 @@ import edu.umass.cs.msocket.logger.MSocketLogger;
  * This class is for accepting connections at the proxy, It implements the
  * proxy's listening server socket. It accepts the connection from both servers
  * and clients.
- * 
+ *
  * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
  * @version 1.0
  */
@@ -101,7 +101,7 @@ public class ProxyServerSocket extends ServerSocket
 
     AcceptThreadPoolObj = new AcceptThreadPool(ssc);
     (new Thread(AcceptThreadPoolObj)).start();
-  }  
+  }
 
   public InetSocketAddress getProxyListeningAddress()
   {
@@ -109,7 +109,7 @@ public class ProxyServerSocket extends ServerSocket
   }
 
   /**
-   * 
+   *
    */
   public InetAddress getInetAddress()
   {
@@ -122,7 +122,7 @@ public class ProxyServerSocket extends ServerSocket
   }
 
   /**
-	 * 
+	 *
 	 */
   public void bind(SocketAddress endpoint) throws IOException, SecurityException, IllegalArgumentException
   {
@@ -216,7 +216,7 @@ public class ProxyServerSocket extends ServerSocket
     {
       // read and service request on socket
       // FIXME: check for how to handle exceptions here
-      // MSocketLogger.getLogger().fine("new connection accepted by socket channel");
+
       MSocketLogger.getLogger().log(Level.FINE, "New connection accepted by socket channel.");
       ProxyMSocket ms = null;
       try
@@ -232,7 +232,7 @@ public class ProxyServerSocket extends ServerSocket
         // transitoion into all ready state as well
       }
 
-      // MSocketLogger.getLogger().fine("Accepted connection from " + ms.getInetAddress() + ":" + ms.getPort());
+
       MSocketLogger.getLogger().log(Level.FINE,"Accepted connection from {0}:{1}.", new Object[]{ms.getInetAddress(),ms.getPort()});
       AcceptConnectionQueueObj.getFromQueue(AcceptConnectionQueue.PUT, ms);
       synchronized (monitor)
@@ -245,7 +245,7 @@ public class ProxyServerSocket extends ServerSocket
 
   private void BlockForAccept()
   {
-    // MSocketLogger.getLogger().fine("accept called");
+
     MSocketLogger.getLogger().log(Level.FINE, " Accept Called");
     synchronized (monitor)
     {
@@ -261,12 +261,12 @@ public class ProxyServerSocket extends ServerSocket
         }
       }
     }
-    // MSocketLogger.getLogger().fine("new connection socket ready");
+
     MSocketLogger.getLogger().log(Level.FINE, "New connection socket ready");
   }
 
   /**
-	 * 
+	 *
 	 */
   private class AcceptThreadPool implements Runnable
   {
@@ -307,7 +307,7 @@ public class ProxyServerSocket extends ServerSocket
   /**
    * returns a non loop back IPv4 interface address on the proxy to start
    * listening on
-   * 
+   *
    * @return
    */
   private InetAddress getActiveInterfaceAddresses()
@@ -332,7 +332,7 @@ public class ProxyServerSocket extends ServerSocket
             }
             else
             {
-              // MSocketLogger.getLogger().fine("Interface IP " + IP);
+
               MSocketLogger.getLogger().log(Level.FINE, "Interface IP {0}.", IP);
               CurrentInterfaceIPs.add(inetAddress);
             }

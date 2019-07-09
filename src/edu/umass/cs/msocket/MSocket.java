@@ -8,12 +8,12 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  * http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
- * limitations under the License. 
+ * limitations under the License.
  *
  * Initial developer(s): Arun Venkataramani, Aditya Yadav, Emmanuel Cecchet.
  * Contributor(s): ______________________.
@@ -47,21 +47,21 @@ import edu.umass.cs.msocket.mobility.MobilityManagerClient;
 /**
  * This class implements the MSocket, applications can use MSocket to connect to
  * a listening server
- * 
+ *
  * @author ayadav
  */
 
 public class MSocket extends Socket implements MultipathInterface
 {
 	/**
-	 * Denotes the type of connection msocket client wants to establish, 
+	 * Denotes the type of connection msocket client wants to establish,
 	 * MSOCKET_SERVER establishes connection to msocket server.
 	 * LEGACY_SERVER establishes connection to legacy socket server.
-	 * 
+	 *
 	 * @author <a href="mailto:cecchet@cs.umass.edu">Emmanuel Cecchet</a>
 	 * @version 1.0
 	 */
-	
+
   public static enum MSocketType {MSOCKET_SERVER, LEGACY_SERVER};
   /**
    * MSocket handshake timeout (used when connecting to a non MServerSocket to
@@ -84,7 +84,7 @@ public class MSocket extends Socket implements MultipathInterface
   private boolean             isConnected;
   private boolean             isBound;
   private boolean             isClosed;
-  
+
   protected ConnectionInfo    connectionInfo			= null;
 
   /**
@@ -96,7 +96,7 @@ public class MSocket extends Socket implements MultipathInterface
   private InputStream         min                       = null;
   private OutputStream        mout                      = null;
 
-  
+
 
   /**
    * socket channel used in supporting legacy socket bind connect operations
@@ -118,18 +118,18 @@ public class MSocket extends Socket implements MultipathInterface
    */
   public MSocket()
   {
-	  try 
+	  try
 	  {
 		legacyChannel = SocketChannel.open();
-	  } catch (IOException e) 
+	  } catch (IOException e)
 	  {
 		e.printStackTrace();
 	  }
   }
-  
+
   /**
    * Creates a socket and connects it to the specified remote address on the specified remote port.
-   * The Socket will also bind() to the local address and port supplied. 
+   * The Socket will also bind() to the local address and port supplied.
    * If the specified local address is null then the system will pick the address.
    * A local port number of zero will let the system pick up a free port in the bind operation.
 
@@ -142,24 +142,24 @@ public class MSocket extends Socket implements MultipathInterface
   public MSocket(InetAddress address, int port, InetAddress localAddr, int localPort) throws IOException
   {
 	    this();
-	    
+
 	    if(localAddr == null)
 		{
 	    	Vector<InetAddress> Interfaces = CommonMethods.getActiveInterfaceInetAddresses();
 	    	localAddr = Interfaces.get(1 % Interfaces.size());
 		}
-	    
+
 	    bind(new InetSocketAddress(localAddr, localPort));
 	    connect(new InetSocketAddress(address, port));
   }
-  
+
   /**
-   * Creates a MSocket and connects it to the specified remote host on the specified remote port. 
+   * Creates a MSocket and connects it to the specified remote host on the specified remote port.
    * The MSocket will also bind() to the local address and port supplied.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * The it throws an UnknownHostException.
    * A local port number of zero will let the system pick up a free port in the bind operation.
-   * 
+   *
    * @param host - the name of the remote host.
    * @param port - the remote port
    * @param localAddr - the local address the socket is bound to, or null for the anyLocal address.
@@ -173,40 +173,40 @@ public class MSocket extends Socket implements MultipathInterface
 		  Vector<InetAddress> Interfaces = CommonMethods.getActiveInterfaceInetAddresses();
 		  localAddr = Interfaces.get(1 % Interfaces.size());
 	  }
-	  
+
 	  String serverAlias = host;
 	  InetAddress serverIP = null;
 	  int serverPort = port;
 	  int typeOfCon = -1;
 	  String stringGUID = "";
-	
+
 	  boolean connectSucc = false;
-	  
+
 		// handling connect time mobility
 		do
 		{
 		  Random rand = new Random(System.currentTimeMillis());
-		
+
 		  long getSockAddrStart = System.currentTimeMillis();
 		  List<InetSocketAddress> socketAddressFromGNS = Integration.getSocketAddressFromGNS(serverAlias);
 		  long getSockAddrEnd = System.currentTimeMillis();
-		
+
 		  MSocketInstrumenter.updateSocketAddressFromGNS(getSockAddrEnd - getSockAddrStart);
-		
+
 		  InetSocketAddress serverSock = socketAddressFromGNS.get(rand.nextInt(socketAddressFromGNS.size()));
 		  serverIP = serverSock.getAddress();
 		  serverPort = serverSock.getPort();
-		
+
 		  long getGUIDStart = System.currentTimeMillis();
 		  stringGUID = Integration.getGUIDOfAlias(serverAlias);
 		  long getGUIDEnd = System.currentTimeMillis();
-		
+
 		  MSocketInstrumenter.updateGetGUID(getGUIDEnd - getGUIDStart);
-		
+
 		  typeOfCon = MSocketConstants.CON_TO_GNSNAME;
-		
+
 		  MSocketInstrumenter.updateNumConnAttempt();
-		
+
 		  try
 		  {
 		    connect(serverAlias, serverIP, serverPort, localAddr, localPort, typeOfCon, stringGUID);
@@ -214,38 +214,38 @@ public class MSocket extends Socket implements MultipathInterface
 		  }
 		  catch (Exception ex)
 		  {
-			  // MSocketLogger.getLogger().fine(ex.getMessage());
+
         MSocketLogger.getLogger().log(Level.FINE,"{0}", ex.getMessage());
 		    //ex.printStackTrace();
 		    connectSucc = false;
 		  }
 		}
 		while (!connectSucc);
-		
+
 		connectionInfo.setServerOrClient(MSocketConstants.CLIENT);
-		
+
 		registerWithClientManager();
-		
+
 		//localTimer = new Timer();
 		//startLocalTimer();
-		
+
 		//TimerTaskClass Obj = new TimerTaskClass(this);
 		//(new Thread(Obj)).start();
-		
+
 		KeepAliveStaticThread.registerForKeepAlive(connectionInfo);
-		
+
 		isConnected = true;
 		isBound = true;
   }
 
   /**
-   * 
+   *
    * Creates a MSocket and connects it to the specified port number on the name.
-   * It creates as many flowpaths are there are active interfaces at the device at the time of 
+   * It creates as many flowpaths are there are active interfaces at the device at the time of
    * calling.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * The it throws an UnknownHostException.
-   * 
+   *
    * @param host - the host name, or null for the loopback address.
    * @param port - the port number.
    * @throws UnknownHostException - if the host is null or can't be resolved in GNS
@@ -254,34 +254,34 @@ public class MSocket extends Socket implements MultipathInterface
   public MSocket(String host, int port) throws UnknownHostException, IOException
   {
 	this(host, port, null, 0);
-	
+
 	Vector<InetAddress> interfaces = CommonMethods.getActiveInterfaceInetAddresses();
 	int numFlowpaths = interfaces.size();
-	
+
 	for(int i=2; i<=numFlowpaths; i++)
 	{
 		InetSocketAddress localBindAdd = new InetSocketAddress(interfaces.get(i % interfaces.size()), 0);
 		FlowPath fp = addFlowPath(localBindAdd);
-		
+
 		if(fp == null)
 		{
-			// MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+
       MSocketLogger.getLogger().log(Level.FINE,"addFlowPath failed {0}", localBindAdd);
 		} else
 		{
-			// MSocketLogger.getLogger().fine("addFlowPath succeeded"+localBindAdd);
+
       MSocketLogger.getLogger().log(Level.FINE,"addFlowPath succeeded {0}", localBindAdd);
 		}
 	}
   }
 
   /**
-   * Creates a MSocket and connects it to the specified port number at the specified IP address. 
-   * It creates as many flowpaths are there are active interfaces at the device at the time of 
+   * Creates a MSocket and connects it to the specified port number at the specified IP address.
+   * It creates as many flowpaths are there are active interfaces at the device at the time of
    * calling.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * In other words, it is equivalent to specifying an address of the loopback interface.
-   * 
+   *
    * @param address - the IP address.
    * @param port - the port number.
    * @throws IOException - if an I/O error occurs when creating the socket.
@@ -290,33 +290,33 @@ public class MSocket extends Socket implements MultipathInterface
   {
 	// open as many as there are interfaces
     this(address, port, null, 0);
-    
+
     Vector<InetAddress> interfaces = CommonMethods.getActiveInterfaceInetAddresses();
 	int numFlowpaths = interfaces.size();
-	
+
 	for(int i=2; i<=numFlowpaths; i++)
 	{
 		InetSocketAddress localBindAdd = new InetSocketAddress(interfaces.get(i % interfaces.size()), 0);
 		FlowPath fp = addFlowPath(localBindAdd);
-		
+
 		if(fp == null)
 		{
-			// MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
+
       MSocketLogger.getLogger().log(Level.FINE,"addFlowPath failed {0}", localBindAdd);
 		} else
 		{
-			// MSocketLogger.getLogger().fine("addFlowPath succeded"+localBindAdd);
+
       MSocketLogger.getLogger().log(Level.FINE,"addFlowPath succeded {0}", localBindAdd);
 		}
 	}
   }
-  
+
   /**
    * Creates MSocket and connects it to the specified port number on the named host.
    * stream flag is ignored and TCP sockets are always created.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * The it throws an UnknownHostException.
-   * 
+   *
    * @param host - the host name
    * @param port - the port number.
    * @param stream - flag always ignored.
@@ -328,13 +328,13 @@ public class MSocket extends Socket implements MultipathInterface
   {
 	  this(host, port);
   }
-  
+
   /**
    * Creates a MSocket and connects it to the specified port number at the specified IP address.
    * stream argument is ignored and a TCP socket is always created.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * In other words, it is equivalent to specifying an address of the loopback interface.
-   * 
+   *
    * @param host - the IP address.
    * @param port - the port number.
    * @param stream - flag always ignored.
@@ -345,10 +345,10 @@ public class MSocket extends Socket implements MultipathInterface
   {
 	  this(host, port);
   }
-  
+
   /**
    * Constructor not supported by MSocket, will throw an UnsupportedOperationException
-   * 
+   *
    * @param proxy
    * @throws UnsupportedOperationException
    */
@@ -358,14 +358,14 @@ public class MSocket extends Socket implements MultipathInterface
 	  throw new UnsupportedOperationException("Constructor not supported by MSocket");
 
   }
-  
+
   /**
-   * Creates a MSocket and connects it to the specified port number at the specified IP address. 
-   * It creates as many flowpaths are there are active interfaces at the device at the time of 
+   * Creates a MSocket and connects it to the specified port number at the specified IP address.
+   * It creates as many flowpaths are there are active interfaces at the device at the time of
    * calling.
-   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null). 
+   * If the specified host is null it is the equivalent of specifying the address as InetAddress.getByName(null).
    * In other words, it is equivalent to specifying an address of the loopback interface.
-   * 
+   *
    * @param address - the IP address.
    * @param port - the port number.
    * @throws IOException - if an I/O error occurs when creating the socket.
@@ -376,15 +376,15 @@ public class MSocket extends Socket implements MultipathInterface
 	{
 	// open as many as there are interfaces
     this(address, port, null, 0);
-    
+
     Vector<InetAddress> interfaces = CommonMethods.getActiveInterfaceInetAddresses();
 	int numFlowpaths = interfaces.size();
-	
+
 	for(int i=2; i<=numFlowpaths; i++)
 	{
 		InetSocketAddress localBindAdd = new InetSocketAddress(interfaces.get(i % interfaces.size()), 0);
 		FlowPath fp = addFlowPath(localBindAdd);
-		
+
 		if(fp == null)
 		{
 			MSocketLogger.getLogger().fine("addFlowPath failed "+localBindAdd);
@@ -398,7 +398,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Binds the MSocket locally to the specified address
-   * 
+   *
    * @see java.net.Socket#bind(java.net.SocketAddress)
    */
   public void bind(SocketAddress bindpoint) throws IOException
@@ -414,7 +414,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Closes the MSocket and releases the state of the socket. MSocket close()
    * doesn't close MobilityManagerClient
-   * 
+   *
    * @see java.net.Socket#close()
    */
   public void close() throws IOException
@@ -431,11 +431,10 @@ public class MSocket extends Socket implements MultipathInterface
     	  connectionInfo.setMSocketState(MSocketConstants.LAST_ACK);
       }
 
-      // MSocketLogger.getLogger().fine("close() called");
+
       MSocketLogger.getLogger().log(Level.FINE,"close() called");
       sendCloseControlmesg();
-      // MSocketLogger.getLogger().fine("sendCloseControlmesg() done MSocket state " 
-    		  		// + connectionInfo.getMSocketState());
+
       MSocketLogger.getLogger().log(Level.FINE,"sendCloseControlmesg() done MSocket state {0}.",connectionInfo.getMSocketState());
 
       while (connectionInfo.getMSocketState() != MSocketConstants.CLOSED)
@@ -462,10 +461,7 @@ public class MSocket extends Socket implements MultipathInterface
         	connectionInfo.setState(ConnectionInfo.ALL_READY, true);
           if (connectionInfo.getMSocketState() != MSocketConstants.CLOSED)
           {
-            // MSocketLogger.getLogger().fine("Exception during recv ACV, "
-            		// + "trying again, state changed to "
-                // + "ALL_READY for migration to happen. cinfo.getMSocketState() " 
-            		// + connectionInfo.getMSocketState());
+
             MSocketLogger.getLogger().log(Level.FINE,"Exception during recv ACV,trying again, state changed to ALL_READY for migration to happen. cinfo.getMSocketState(): {0}",connectionInfo.getMSocketState());
             ex.printStackTrace();
           }
@@ -475,7 +471,7 @@ public class MSocket extends Socket implements MultipathInterface
     }
     isClosed = true;
   }
-  
+
   /**
    * Connects this socket to the server.
    * @see java.net.Socket#connect(java.net.SocketAddress)
@@ -484,7 +480,7 @@ public class MSocket extends Socket implements MultipathInterface
   {
 	  connect(endpoint, 0);
   }
-  
+
   /**
    * Connects this socket to the server with a specified timeout value.
    * timeout is ignored and it blocks until the connection completes
@@ -496,41 +492,38 @@ public class MSocket extends Socket implements MultipathInterface
 		long connectStart = System.currentTimeMillis();
 		legacyChannel.connect(endpoint);
 		while (!legacyChannel.finishConnect());
-	  
+
 	    long connectEnd = System.currentTimeMillis();
 	    long connectTime = connectEnd - connectStart;
-	
+
 	    Socket socket = legacyChannel.socket();
 	    InetAddress serverIP = ((InetSocketAddress) endpoint).getAddress();
 	    int serverPort = ((InetSocketAddress) endpoint).getPort();
 	    int typeOfCon = MSocketConstants.CON_TO_IP;
-	    
-	
-	    // MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
-	    	// + ":" + socket.getPort() + " - local port "
-	        // + socket.getLocalPort() + " - local IP " 
-	    	// + socket.getLocalAddress());
+
+
+
       MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} - LocalPort: {2} -LocalIP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
-	    setupControlClient("", serverIP, serverPort, typeOfCon, "", 
+	    setupControlClient("", serverIP, serverPort, typeOfCon, "",
 	    		legacyChannel, socket, connectTime);
-	
+
 	    connectionInfo.setMSocketState(MSocketConstants.ACTIVE);
-	
+
 	    connectionInfo.setState(ConnectionInfo.ALL_READY, true);
-	
+
 	    connectionInfo.setServerOrClient(MSocketConstants.CLIENT);
-	
+
 	    registerWithClientManager();
-	
+
 	    //localTimer = new Timer();
 	    //startLocalTimer();
 	    //TimerTaskClass Obj = new TimerTaskClass(this);
 	    //(new Thread(Obj)).start();
-	    
-	    KeepAliveStaticThread.registerForKeepAlive(connectionInfo);   
+
+	    KeepAliveStaticThread.registerForKeepAlive(connectionInfo);
 	    isConnected = true;
   }
-  
+
   /**
    * @see java.net.Socket#getInetAddress()
    */
@@ -546,7 +539,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Local address of any flowpath is returned
-   * 
+   *
    * @see java.net.Socket#getLocalAddress()
    */
   public InetAddress getLocalAddress()
@@ -577,7 +570,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Local port of any flowpath is returned
-   * 
+   *
    * @see java.net.Socket#getLocalPort()
    */
   public int getLocalPort()
@@ -593,7 +586,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Remote socket address of any flowpath is returned
-   * 
+   *
    * @see java.net.Socket#getRemoteSocketAddress()
    */
   public SocketAddress getRemoteSocketAddress()
@@ -609,7 +602,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Local socket address of any flowpath is returned
-   * 
+   *
    * @see java.net.Socket#getLocalSocketAddress()
    */
   public SocketAddress getLocalSocketAddress()
@@ -625,18 +618,18 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Returns the address of the server, this MSocket is connected to
-   * 
+   *
    * @return
    */
   public InetSocketAddress getServerAddress()
   {
-    return new InetSocketAddress(connectionInfo.getServerIP(), 
+    return new InetSocketAddress(connectionInfo.getServerIP(),
     		connectionInfo.getServerPort());
   }
 
   /**
    * MSocket doesn't exposes underlying socket channels.
-   * 
+   *
    * @see java.net.Socket#getChannel()
    * @throws UnsupportedOperationException
    */
@@ -648,7 +641,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Returns the Input stream, should be used for all MSocket read operations
-   * 
+   *
    * @see java.net.Socket#getInputStream()
    */
   public InputStream getInputStream() throws IOException
@@ -664,7 +657,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Returns the output stream, should be used for all mSocket write operations
-   * 
+   *
    * @see java.net.Socket#getOutputStream()
    */
   public OutputStream getOutputStream() throws IOException
@@ -681,7 +674,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Sets TcpNodelay on all the active flow paths, between the server and
    * client
-   * 
+   *
    * @see java.net.Socket#setTcpNoDelay(boolean)
    */
   public void setTcpNoDelay(boolean on) throws SocketException
@@ -708,7 +701,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * sets SoLinger on all the active flow paths, between the server and the
    * client
-   * 
+   *
    * @see java.net.Socket#setSoLinger(boolean, int)
    */
   public void setSoLinger(boolean on, int linger) throws SocketException
@@ -735,7 +728,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets do not support urgent data. This method systematically throws an
    * IOException.
-   * 
+   *
    * @see java.net.Socket#sendUrgentData(int)
    */
   public void sendUrgentData(int data) throws IOException
@@ -746,7 +739,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets do not support urgent data. This method systematically throws a
    * SocketException.
-   * 
+   *
    * @see java.net.Socket#setOOBInline(boolean)
    */
   public void setOOBInline(boolean on) throws SocketException
@@ -757,7 +750,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets do not support urgent data. This method systematically returns
    * false.
-   * 
+   *
    * @see java.net.Socket#getOOBInline()
    */
   public boolean getOOBInline() throws SocketException
@@ -768,7 +761,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets currently do not support timeouts. This method systematically
    * throws a SocketException.
-   * 
+   *
    * @see java.net.Socket#setSoTimeout(int)
    */
   public void setSoTimeout(int timeout) throws SocketException
@@ -779,7 +772,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets currently do not support timeouts. This method systematically
    * returns 0.
-   * 
+   *
    * @see java.net.Socket#getSoTimeout()
    */
   public int getSoTimeout() throws SocketException
@@ -818,7 +811,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Sets the recv buffer size on all the active flowpaths, between the server
    * and the client
-   * 
+   *
    * @see java.net.Socket#setReceiveBufferSize(int)
    */
   public void setReceiveBufferSize(int size) throws SocketException
@@ -856,7 +849,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Sets the traffic class on all the active flow paths, between the server and
    * the client
-   * 
+   *
    * @see java.net.Socket#setTrafficClass(int)
    */
   public void setTrafficClass(int tc) throws SocketException
@@ -875,7 +868,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Sets keep alive on all the active flow paths, between the server and the
    * client.
-   * 
+   *
    * @see java.net.Socket#setKeepAlive(boolean)
    */
   public void setKeepAlive(boolean on) throws SocketException
@@ -902,7 +895,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets currently do not support timeouts. This method systematically
    * throws a SocketException.
-   * 
+   *
    * @see java.net.Socket#setReuseAddress(boolean)
    */
   public void setReuseAddress(boolean on) throws SocketException
@@ -913,7 +906,7 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * mSockets currently do not support reuse address. This method systematically
    * returns false.
-   * 
+   *
    * @see java.net.Socket#getReuseAddress()
    */
   public boolean getReuseAddress() throws SocketException
@@ -987,7 +980,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Sets the performance preferences over all the active flow paths
-   * 
+   *
    * @see java.net.Socket#setPerformancePreferences(int, int, int)
    */
   public void setPerformancePreferences(int connectionTime, int latency, int bandwidth)
@@ -1003,7 +996,7 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Gets the multiPath data Write Policy.
-   * 
+   *
    * @return
    */
   public MultipathPolicy getMultipathPolicy()
@@ -1018,14 +1011,14 @@ public class MSocket extends Socket implements MultipathInterface
    * {@link MSocket#MULTIPATH_POLICY_UNIFORM} to sends uniformly over all the
    * paths or {@link MSocket#MULTIPATH_POLICY_OUTSTAND_RATIO} to choose the
    * least outstanding bytes path, to send the data
-   * 
+   *
    * @param multipathPolicy the multipath policy to use
    */
   public void setMultipathPolicy(MultipathPolicy multipathPolicy)
   {
 	  connectionInfo.setMultipathPolicy(multipathPolicy);
   }
-  
+
   /*
    * Implementation related to MultipathInterface
    */
@@ -1051,7 +1044,7 @@ public class MSocket extends Socket implements MultipathInterface
       return null;
 
     FlowPathResult res = connectionInfo
-        .addSocketToFlow(connectionInfo.getConnID(), 
+        .addSocketToFlow(connectionInfo.getConnID(),
         	SetupControlMessage.ADD_SOCKET, -1, binding == null
             ? null
             : ((InetSocketAddress) binding).getAddress(),
@@ -1059,7 +1052,7 @@ public class MSocket extends Socket implements MultipathInterface
     if (res.getSuccessful())
     {
       SocketInfo sockInfo = connectionInfo.getSocketInfo(res.getSocketID());
-      FlowPath nfp = new FlowPath(res.getSocketID(), 
+      FlowPath nfp = new FlowPath(res.getSocketID(),
     		  sockInfo.getSocket().getLocalSocketAddress(), sockInfo.getSocket()
           .getRemoteSocketAddress());
       return nfp;
@@ -1118,10 +1111,10 @@ public class MSocket extends Socket implements MultipathInterface
   public void migrateFlowPath(FlowPath flowpath, InetAddress localAddress, int localPort)
   {
     int socketIdentifier = flowpath.getFlowPathId();
-    connectionInfo.migrateSocketwithId(localAddress, localPort, 
+    connectionInfo.migrateSocketwithId(localAddress, localPort,
     		socketIdentifier, MSocketConstants.CLIENT_MIG);
   }
-  
+
   /**
    * Returns the connection ID of the MSocket connection,
    * This should be same for the server and the client side MSocket.
@@ -1131,16 +1124,16 @@ public class MSocket extends Socket implements MultipathInterface
   {
 	  return this.connectionInfo.getConnID();
   }
-  
-	 
+
+
   // protected methods
    //
    // private methods
    //
-	  
+
   /**
    * register with mobility manager
-   * 
+   *
    * @throws SocketException
    * @throws UnknownHostException
    */
@@ -1151,22 +1144,21 @@ public class MSocket extends Socket implements MultipathInterface
 
   /**
    * Client calls this
-   * 
+   *
    * @param name
    * @param port
    * @throws Exception
    */
-  private void connect(String serverAlias, InetAddress serverIP, 
-		  int serverPort, InetAddress localIP, int localPort, 
+  private void connect(String serverAlias, InetAddress serverIP,
+		  int serverPort, InetAddress localIP, int localPort,
 		  int typeOfCon, String stringGUID) throws Exception
   {
     legacyChannel = SocketChannel.open();
-    
+
     //bind(new InetSocketAddress(Interfaces.get(1 % Interfaces.size()), 0));
     bind(new InetSocketAddress(localIP, localPort));
 
-    // MSocketLogger.getLogger().fine("connecting to server " 
-    				// + new InetSocketAddress(serverIP, serverPort));
+
     MSocketLogger.getLogger().log(Level.FINE,"connecting to server {0}", new InetSocketAddress(serverIP, serverPort));
     long connectStart = System.currentTimeMillis();
     legacyChannel.connect(new InetSocketAddress(serverIP, serverPort));
@@ -1177,9 +1169,7 @@ public class MSocket extends Socket implements MultipathInterface
 
     Socket socket = legacyChannel.socket();
 
-    // MSocketLogger.getLogger().fine("Connected to server at " 
-    			// + socket.getInetAddress() + ":" + socket.getPort() + "local port "
-        // + socket.getLocalPort() + "local IP " + socket.getLocalAddress());
+
     MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} -Local Port: {2} -Local IP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
     setupControlClient(serverAlias, serverIP, serverPort, typeOfCon, stringGUID, legacyChannel, socket,
         connectTime);
@@ -1197,11 +1187,11 @@ public class MSocket extends Socket implements MultipathInterface
   /**
    * Client writes first, then reads Exchanged int he beginning of connection
    * for handshaking
-   * 
+   *
    * @throws Exception
    */
-  private void setupControlClient(String serverAlias, InetAddress serverIP, int serverPort, 
-		  int typeOfCon, String stringGUID, 
+  private void setupControlClient(String serverAlias, InetAddress serverIP, int serverPort,
+		  int typeOfCon, String stringGUID,
 		  SocketChannel dataChannel, Socket socket, long connectTime)
       throws IOException
   {
@@ -1229,7 +1219,7 @@ public class MSocket extends Socket implements MultipathInterface
 
     if (UDPControllerPort == -1)
     {
-      // MSocketLogger.getLogger().fine("New connection UDPControllerPort " + UDPControllerPort);
+
       MSocketLogger.getLogger().log(Level.FINE,"New connection UDPControllerPort {0}.",UDPControllerPort);
     }
 
@@ -1238,17 +1228,17 @@ public class MSocket extends Socket implements MultipathInterface
 
     if (stringGUID.length() > 0)
     {
-      // MSocketLogger.getLogger().fine("serverGuid: " + stringGUID);
+
       MSocketLogger.getLogger().log(Level.FINE,"serverGuid: {0}", stringGUID);
       GUID = CommonMethods.hexStringToByteArray(stringGUID);
-      // MSocketLogger.getLogger().fine("GUID to be sent: " + GUID + " length " + GUID.length);
+
       MSocketLogger.getLogger().log(Level.FINE,"GUID to be sent {0}, length {1}.",new Object[]{GUID,GUID.length});
     }
 
-    SetupControlMessage.setupControlWrite(controllerIP, localConnID, 
+    SetupControlMessage.setupControlWrite(controllerIP, localConnID,
     		SetupControlMessage.NEW_CON_MESG, UDPControllerPort,
         dataChannel, nextSocketIdentifier, -1, GUID, connectTime, null);
-    
+
     // Read remote port, address, and flowID
     scm = SetupControlMessage.setupControlRead(dataChannel);
 
@@ -1256,13 +1246,13 @@ public class MSocket extends Socket implements MultipathInterface
     {
       // flowID is computed as average of both proposals for new connections
       long connID = (localConnID + scm.connID) / 2;
-      // MSocketLogger.getLogger().fine("Created new flow ID " + connID);
+
       MSocketLogger.getLogger().log(Level.FINE,"Created new flow ID {0}.", connID);
 
       connectionInfo = new ConnectionInfo(connID, null);
 
       setupConnectionInfoFields(serverAlias, serverIP, serverPort, typeOfCon, stringGUID);
-      
+
       connectionInfo.setupClientController(scm);
 
       UDPControllerHashMap.registerWithController(controllerIP, connectionInfo);
@@ -1296,7 +1286,7 @@ public class MSocket extends Socket implements MultipathInterface
   }
 
   // Write local port, address, and flowID
-  private void setupConnectionInfoFields(String serverAlias, InetAddress serverIP, 
+  private void setupConnectionInfoFields(String serverAlias, InetAddress serverIP,
 		  int serverPort, int typeOfCon,
 		  String stringGUID)
   {
@@ -1306,15 +1296,15 @@ public class MSocket extends Socket implements MultipathInterface
 	  connectionInfo.setTypeOfCon(typeOfCon);
 	  connectionInfo.setServerGUID(stringGUID);
   }
-  
+
   // private constructors
   /**
    * Creates a new <code>MSocket</code> object connecting it to the given server
    * name registered in the GNS
-   * 
+   *
    * @param serverName name of the MServerSocket registered in the GNS
    * @throws Exception
-   * 
+   *
    */
   @Deprecated
   private MSocket(String serverGUID) throws Exception
@@ -1325,7 +1315,7 @@ public class MSocket extends Socket implements MultipathInterface
     String stringGUID = "";
 
     Random rand = new Random();
-    List<InetSocketAddress> socketAddressFromGNS = 
+    List<InetSocketAddress> socketAddressFromGNS =
     		Integration.getSocketAddressFromGNS(serverGUID);
     typeOfCon = MSocketConstants.CON_TO_GNSGUID;
 
@@ -1335,11 +1325,11 @@ public class MSocket extends Socket implements MultipathInterface
     serverPort = serverSock.getPort();
     stringGUID = Integration.getGUIDOfAlias(serverGUID);
 
-    
+
     Vector<InetAddress> Interfaces = CommonMethods.getActiveInterfaceInetAddresses();
     InetAddress localIP = Interfaces.get(1 % Interfaces.size());
     int localPort = 0;
-    
+
     connect(serverGUID, serverIP, serverPort, localIP, localPort, typeOfCon, stringGUID);
     connectionInfo.setServerOrClient(MSocketConstants.CLIENT);
 
@@ -1355,10 +1345,10 @@ public class MSocket extends Socket implements MultipathInterface
     isConnected = true;
     isBound = true;
   }
-  
+
   /**
    * Interface for experimental use
-   * 
+   *
    * @param endpoint
    * @param numSockets
    * @param interfaceNum
@@ -1397,12 +1387,10 @@ public class MSocket extends Socket implements MultipathInterface
     int typeOfCon = MSocketConstants.CON_TO_IP;
     int numberOfSockets = numSockets;
 
-    // MSocketLogger.getLogger().fine("Connected to server at " + socket.getInetAddress() 
-    	// + ":" + socket.getPort() + " - local port "
-        // + socket.getLocalPort() + " - local IP " + socket.getLocalAddress());
-    MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} -Local Port: {2} -Local IP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
     
-    setupControlClient("", serverIP, serverPort, typeOfCon, "", legacyChannel, 
+    MSocketLogger.getLogger().log(Level.FINE,"Connected to server at {0}:{1} -Local Port: {2} -Local IP {3}", new Object[]{socket.getInetAddress(),socket.getPort(),socket.getLocalPort(),socket.getLocalAddress()});
+
+    setupControlClient("", serverIP, serverPort, typeOfCon, "", legacyChannel,
     		socket, connectTime);
 
     connectionInfo.setMSocketState(MSocketConstants.ACTIVE);
@@ -1418,7 +1406,7 @@ public class MSocket extends Socket implements MultipathInterface
 
     //TimerTaskClass Obj = new TimerTaskClass(this);
     //(new Thread(Obj)).start();
-    
+
     KeepAliveStaticThread.registerForKeepAlive(connectionInfo);
 
     isConnected = true;
@@ -1428,7 +1416,7 @@ public class MSocket extends Socket implements MultipathInterface
 
 //commented code
 /**
- * 
+ *
  * TODO: startLocalTimer definition.
  *
  */
