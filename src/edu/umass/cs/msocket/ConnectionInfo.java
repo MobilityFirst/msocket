@@ -60,7 +60,7 @@ import edu.umass.cs.msocket.mobility.MobilityManagerClient;
 public class ConnectionInfo
 {
   // max unacked bytes, before which it sends ack
-  private static final long         ACK_SEND_THRESH            = MWrappedOutputStream.WRITE_CHUNK_SIZE * 3;
+  private static final int         ACK_SEND_THRESH            = MWrappedOutputStream.WRITE_CHUNK_SIZE * 3;
   
   // num of close flowpaths message it needs to 
   // recieve before it closes the flowpaths
