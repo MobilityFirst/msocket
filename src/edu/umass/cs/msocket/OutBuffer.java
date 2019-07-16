@@ -45,20 +45,20 @@ public class OutBuffer
    * Same as ConnectionInfo.dataSendSeq, this is the sequence number of the next
    * byte to be sent.
    */
-  long                    dataSendSeq        = 0;
+  int                    dataSendSeq        = 0;
 
   /*
    * dataBaseSeq is the sequence number of the lowest byte that has not been
    * cumulatively acknowledged by the receiver.
    */
-  long                    dataBaseSeq        = 0;
+  int                    dataBaseSeq        = 0;
 
   /*
    * dataStartSeq is the sequence number of first byte in the buffer. It may be
    * less than dataBaseSeq as dataStartSeq is advanced only when dataBaseSeq
    * moves beyond the first whole buffer in the buffer list sbuf.
    */
-  long                    dataStartSeq       = 0;
+  int                    dataStartSeq       = 0;
 
   boolean                 Close_Obuffer      = false;                                      // indicates
                                                                                             // that
@@ -96,7 +96,7 @@ public class OutBuffer
 
   public synchronized boolean add(byte[] src, int offset, int length)
   {
-    if (src.length < offset + length)
+    if (src.length - (offset + length) < 0)
       return false;
     // FIXME: may need to improve here
     if ((getOutbufferSize() + length) - (java.lang.Runtime.getRuntime().maxMemory() / 2) > 0)
@@ -132,7 +132,7 @@ public class OutBuffer
     return add(b, 0, b.length);
   }
 
-  public synchronized boolean ack(long ack)
+  public synchronized boolean ack(int ack)
   {
     if (ack - dataBaseSeq <= 0 || ack - dataSendSeq > 0)
       return false;
@@ -153,7 +153,7 @@ public class OutBuffer
 
   public void freeOutBuffer()
   {
-    long curStart = dataStartSeq;
+    int curStart = dataStartSeq;
     int freeIndex = -1;
     for (int i = 0; i < sbuf.size(); i++)
     {
@@ -180,14 +180,14 @@ public class OutBuffer
     sbuf.clear();
   }
 
-  public synchronized long getDataBaseSeq()
+  public synchronized int getDataBaseSeq()
   {
     return dataBaseSeq;
   }
 
-  public synchronized void setDataBaseSeq(long bs)
+  public synchronized void setDataBaseSeq(int bs)
   {
-    if ((bs - dataStartSeq >= 0) && (bs - dataSendSeq <= 0) && (bs > dataBaseSeq))
+    if ((bs - dataStartSeq >= 0) && (bs - dataSendSeq <= 0) && (bs - dataBaseSeq > 0))
     {
       dataBaseSeq = bs;
       freeOutBuffer();
@@ -203,7 +203,7 @@ public class OutBuffer
     for (int i = 0; i < sbuf.size(); i++)
     {
       byte[] b = sbuf.get(i);
-      if (curStart + b.length - dataBaseSeq > 0)
+      if ((curStart + b.length) - dataBaseSeq > 0)
       {
         int srcPos = (int) Math.max(0, dataBaseSeq - curStart);
         buf.put(b, srcPos, b.length - srcPos);
@@ -217,21 +217,21 @@ public class OutBuffer
     return buf.array();
   }
 
-  public synchronized byte[] getDataFromOutBuffer(long startSeqNum, long EndSeqNum)
+  public synchronized byte[] getDataFromOutBuffer(int startSeqNum, int EndSeqNum)
   {
     if (EndSeqNum - startSeqNum <= 0)
       return null;
     ByteBuffer buf = ByteBuffer.wrap(new byte[(int) (EndSeqNum - startSeqNum)]);
-    long curStart = dataStartSeq;
+    int curStart = dataStartSeq;
 
     for (int i = 0; i < sbuf.size(); i++)
     {
       byte[] b = sbuf.get(i);
-      if (curStart + b.length - startSeqNum > 0)
+      if ((curStart + b.length) - startSeqNum > 0)
       {
         int srcPos = (int) Math.max(0, startSeqNum - curStart);
         int copy = 0;
-        if (buf.remaining() > (b.length - srcPos))
+        if (buf.remaining() - (b.length - srcPos) > 0)
         {
           copy = (b.length - srcPos);
           buf.put(b, srcPos, copy);

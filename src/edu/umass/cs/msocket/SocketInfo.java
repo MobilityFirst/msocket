@@ -59,7 +59,7 @@ public class SocketInfo
   private int                   SocketIdentifier               = -1;
 
   // offset, in seq num, of data read from the current chunk
-  private long                  chunkReadOffsetSeqNum          = 0;
+  private int                  chunkReadOffsetSeqNum          = 0;
   /*
    * how much ahead is the next data message header, before that data is there
    * End seq num of current chunk
@@ -97,8 +97,13 @@ public class SocketInfo
   private long lastNumBytesRecv								   = 0;
 
   // stores the seq num till which data has been sent in handle migration case
+<<<<<<< HEAD
   private long handleMigSeqNum 								   = 0;
 
+=======
+  private int handleMigSeqNum 								   = 0;
+  
+>>>>>>> errorcorrection
   // to store byte ranges
   private Vector<ByteRangeInfo> byteInfoVector;
 
@@ -168,7 +173,7 @@ public class SocketInfo
     }
   }
 
-  public Object byteInfoVectorOperations(int oper, long startSeqNum, int length)
+  public Object byteInfoVectorOperations(int oper, int startSeqNum, int length)
   {
     synchronized (byteInfoVectorMonitor)
     {
@@ -352,7 +357,7 @@ public class SocketInfo
    */
   public int canReadDirect()
   {
-    return (int) (chunkEndSeqNum - chunkReadOffsetSeqNum);
+    return (chunkEndSeqNum - chunkReadOffsetSeqNum);
   }
 
   public synchronized void setchunkEndSeqNum(int s)
@@ -399,18 +404,27 @@ public class SocketInfo
   public synchronized void setLastNumBytesRecv() {
 		lastNumBytesRecv = numBytesRecv;
 	}
+<<<<<<< HEAD
 
   public synchronized void setHandleMigSeqNum(long handleMigSeqNum) {
 		this.handleMigSeqNum = handleMigSeqNum;
 	}
 
 	public long getHandleMigSeqNum() {
+=======
+  
+  public synchronized void setHandleMigSeqNum(int handleMigSeqNum) {
+		this.handleMigSeqNum = handleMigSeqNum;
+	}
+	
+	public int getHandleMigSeqNum() {
+>>>>>>> errorcorrection
 		return this.handleMigSeqNum;
 	}
 
   public synchronized void setRecvdBytesOtherSide(long RecvdBytes)
   {
-    if (RecvdBytes > numBytesRecvOtherSide)
+    if (RecvdBytes - numBytesRecvOtherSide > 0)
       numBytesRecvOtherSide = RecvdBytes;
   }
 

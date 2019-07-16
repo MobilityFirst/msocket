@@ -145,7 +145,7 @@ public class BackgroudMultiPathWritingThread
           int currpos = 0;
 
           int remaining = length;
-          long tempDataSendSeqNum = byteObj.getStartSeqNum();
+          int tempDataSendSeqNum = byteObj.getStartSeqNum();
 
           MultipathPolicy writePolicy = MultipathPolicy.MULTIPATH_POLICY_ROUNDROBIN;
 

@@ -40,7 +40,7 @@ public class InBufferHeapImpl {
 	PriorityQueue<InBufferStorageChunk> rbuf = null;
 
 
-	long                            dataReadSeq        = 0;                                                 // assuming
+	int                            dataReadSeq        = 0;                                                 // assuming
 	                                                                                                           // that
 	                                                                                                           // data
 	                                                                                                           // starts
@@ -48,7 +48,7 @@ public class InBufferHeapImpl {
 	                                                                                                           // 0
 	                                                                                                           // seq
 	                                                                                                           // num
-	long                            byteRecvInInbuffer = 0;                                                 // mainly
+	int                            byteRecvInInbuffer = 0;                                                 // mainly
 	                                                                                                           // for
 	                                                                                                           // ideal
 	                                                                                                           // case
@@ -122,13 +122,12 @@ public class InBufferHeapImpl {
 	    	// inordered data there
 	    	if ( (dataReadSeq - curChunk.startSeqNum >= 0) && ( dataReadSeq - (curChunk.startSeqNum + curChunk.chunkSize) < 0) )
 			{
-				// MSocketLogger.getLogger().info("check this line for max value. Its in inbufferheapimplementation line 121");
 
-				int srcPos = (int) Math.max(0, dataReadSeq - curChunk.startSeqNum);
+				int srcPos =  Math.max(0, dataReadSeq - curChunk.startSeqNum);
 				// FIXME: check for long to int conversion
 				int cpylen = curChunk.chunkSize - srcPos;
 				int actlen = 0;
-				if ((numread + cpylen) > length)
+				if ((numread + cpylen) - length > 0)
 				{
 					actlen = length - numread;
 				}

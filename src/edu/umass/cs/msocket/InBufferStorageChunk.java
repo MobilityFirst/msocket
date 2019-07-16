@@ -32,10 +32,10 @@ package edu.umass.cs.msocket;
 public class InBufferStorageChunk
 {
   byte[]     chunkData;
-  final long startSeqNum;
+  final int startSeqNum;
   final int  chunkSize;
 
-  InBufferStorageChunk(byte[] data, int offset, long startSeqNum, int chunkSize)
+  InBufferStorageChunk(byte[] data, int offset, int startSeqNum, int chunkSize)
   {
     chunkData = new byte[chunkSize];
     System.arraycopy(data, offset, chunkData, 0, chunkSize);

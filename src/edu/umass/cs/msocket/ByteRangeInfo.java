@@ -32,18 +32,18 @@ package edu.umass.cs.msocket;
  */
 public class ByteRangeInfo
 {
-  private long startSeqNum;
+  private int startSeqNum;
   private int  length   = 0;
   private int  socketId = -1;
 
-  ByteRangeInfo(long startSeqNum, int length, int socketId)
+  ByteRangeInfo(int startSeqNum, int length, int socketId)
   {
     this.startSeqNum = startSeqNum;
     this.length = length;
     this.socketId = socketId;
   }
 
-  public long getStartSeqNum()
+  public int getStartSeqNum()
   {
     return startSeqNum;
   }
