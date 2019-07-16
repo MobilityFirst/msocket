@@ -97,13 +97,8 @@ public class SocketInfo
   private long lastNumBytesRecv								   = 0;
 
   // stores the seq num till which data has been sent in handle migration case
-<<<<<<< HEAD
-  private long handleMigSeqNum 								   = 0;
-
-=======
   private int handleMigSeqNum 								   = 0;
-  
->>>>>>> errorcorrection
+
   // to store byte ranges
   private Vector<ByteRangeInfo> byteInfoVector;
 
@@ -404,21 +399,12 @@ public class SocketInfo
   public synchronized void setLastNumBytesRecv() {
 		lastNumBytesRecv = numBytesRecv;
 	}
-<<<<<<< HEAD
 
-  public synchronized void setHandleMigSeqNum(long handleMigSeqNum) {
-		this.handleMigSeqNum = handleMigSeqNum;
-	}
-
-	public long getHandleMigSeqNum() {
-=======
-  
   public synchronized void setHandleMigSeqNum(int handleMigSeqNum) {
 		this.handleMigSeqNum = handleMigSeqNum;
 	}
-	
+
 	public int getHandleMigSeqNum() {
->>>>>>> errorcorrection
 		return this.handleMigSeqNum;
 	}
 
