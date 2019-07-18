@@ -413,7 +413,7 @@ public class BackgroundWritingThread implements Runnable
       if (Obj.getStatus())
       {
         // faster path, sent more bytes in phase1
-        if (Obj.getSentBytes() > bytesSent)
+        if (Obj.getSentBytes() - bytesSent > 0)
         {
           bytesSent = Obj.getSentBytes();
           fastSocketID = Obj.getSocketIdentifer();
@@ -465,7 +465,7 @@ public class BackgroundWritingThread implements Runnable
         {
           // if there is less data outstading, less to get the Acks back,
           // consider it as //finished path
-          if (Obj.getOutStandingBytes() <= (5 * MWrappedOutputStream.WRITE_CHUNK_SIZE))
+          if (Obj.getOutStandingBytes() - (5 * MWrappedOutputStream.WRITE_CHUNK_SIZE) <= 0)
           {
 
           MSocketLogger.getLogger().log(Level.FINE,"SocketID: {0}, is found to have zero outstanding bytes. Remote Address: {1}. Sent Bytes: {2}. Outstanding Bytes: {3}.", new Object[]{Obj.getSocketIdentifer(),Obj.getSocket().getInetAddress(),Obj.getSentBytes(),Obj.getOutStandingBytes()});
@@ -498,7 +498,7 @@ public class BackgroundWritingThread implements Runnable
             {
               minOutBytesPath = finishedPaths.get(i);
             }
-            else if (minOutBytesPath.getOutStandingBytes() > finishedPaths.get(i).getOutStandingBytes())
+            else if (minOutBytesPath.getOutStandingBytes() - finishedPaths.get(i).getOutStandingBytes() > 0)
             {
               minOutBytesPath = finishedPaths.get(i);
             }

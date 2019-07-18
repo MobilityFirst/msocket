@@ -487,7 +487,7 @@ public class ConnectionInfo
     return dataSendSeq;
   }
 
-  public byte[] getDataFromOutBuffer(long startSeqNum, long EndSeqNum)
+  public byte[] getDataFromOutBuffer(int startSeqNum, int EndSeqNum)
   {
     return getObuffer().getDataFromOutBuffer(startSeqNum, EndSeqNum);
   }
@@ -504,13 +504,13 @@ public class ConnectionInfo
 
   public boolean notAckedInAWhile(SocketInfo Obj)
   {
-    if ((Obj.getRecvdBytes() - Obj.getLastNumBytesRecv()) >= ACK_SEND_THRESH)
+    if ((Obj.getRecvdBytes() - Obj.getLastNumBytesRecv()) - ACK_SEND_THRESH >= 0)
       return true;
     else
       return false;
   }
 
-  public long getDataBaseSeq()
+  public int getDataBaseSeq()
   {
     // obuffer.setDataBaseSeq(bs);
     return getObuffer().getDataBaseSeq();
@@ -578,7 +578,7 @@ public class ConnectionInfo
     getObuffer().releaseOutBuffer();
   }
 
-  public void ackOutBuffer(long ack)
+  public void ackOutBuffer(int ack)
   {
     getObuffer().ack(ack);
   }
@@ -1486,7 +1486,7 @@ public class ConnectionInfo
 
     int dataSendSeqNum = getDataSendSeq();
     MSocketLogger.getLogger().log(Level.FINE,"handleMigrationInMultiPath End Seq Num {0}, SocketID {1}.", new Object[]{dataSendSeqNum,Obj.getSocketIdentifer()});
-    int DataAck = (int) getDataBaseSeq();
+    int DataAck = getDataBaseSeq();
     MSocketLogger.getLogger().log(Level.FINE, "DataAckSeq from other side {0}", DataAck);
 
     if (dataSendSeqNum - DataAck > 0)

@@ -381,7 +381,7 @@ private void calculateThroughputForPaths(Vector<SocketInfo> socketMapValues)
           maxRTT = value.getEstimatedRTT();
         }
 
-        if (value.getRecvdBytesOtherSide() < minOtherSideRecv)
+        if (value.getRecvdBytesOtherSide() - minOtherSideRecv < 0)
         {
           minOtherSideRecv = value.getRecvdBytesOtherSide();
         }

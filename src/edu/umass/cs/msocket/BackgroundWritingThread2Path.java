@@ -255,7 +255,6 @@ public class BackgroundWritingThread2Path
   }
 
   /**
-   * @param tempDataSendSeqNum
    * @param Obj
    * @throws IOException
    */
@@ -467,7 +466,7 @@ public class BackgroundWritingThread2Path
         if (Obj.getStatus())
         { // if there is less data outstading, less to get the Acks back,
           // consider it as //finished path
-          if (Obj.getOutStandingBytes() <= (5 * MWrappedOutputStream.WRITE_CHUNK_SIZE))
+          if (Obj.getOutStandingBytes() - (5 * MWrappedOutputStream.WRITE_CHUNK_SIZE) <= 0)
           {
             MSocketLogger.getLogger().log(Level.FINE,"SokcetID: {0}, is found to have zero outstanding bytes. Remote Address: {1}, Bytes Sent on this socket: {2}.", new Object[]{Obj.getSocketIdentifer(),Obj.getSocket().getInetAddress(),Obj.getSentBytes()});
             finishedPaths.add(Obj);
