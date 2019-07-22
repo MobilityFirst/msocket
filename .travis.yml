@@ -13,6 +13,6 @@ before_install:
  #   on_success: always
  #  on_failure: always
 install:
-= apt-get install ant 
+- ant deps 
 script:
 - ant jar
