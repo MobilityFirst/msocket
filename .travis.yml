@@ -7,12 +7,12 @@ jdk:
 before_install:
 - sudo apt-get update -qq
 - sudo apt-get install -qq ant-optional
-notifications:
-  email:
-    on_success: always
-    on_failure: always
-install:
-- sudo apt-get install ant
 
+#notifications:
+ # email:
+ #   on_success: always
+ #  on_failure: always
+install:
+= apt-get install ant 
 script:
 - ant jar
