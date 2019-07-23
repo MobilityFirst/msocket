@@ -89,7 +89,7 @@ public class TCPClient implements Runnable{
         os.write(-1);
         os.flush();
 
-        median_time = calc_median(transferTime);
+        median_time = calc_avg(transferTime);
         System.out.println(median_time);
         socket.close();
 

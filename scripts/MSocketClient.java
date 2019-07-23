@@ -27,6 +27,14 @@ public class MSocketClient implements Runnable {
         median = (long) input[input.length/2];
       return median;
     }
+    public static Long calc_avg(Long[] input){
+            int len = input.length;
+            Long sum = 0L;
+            for(int i=0;i<len;i++){
+                sum = sum  + input[i];
+            }
+            return sum/len;
+    }
     public MSocketClient(){
 
     }
@@ -75,7 +83,7 @@ public class MSocketClient implements Runnable {
         os.write(-1);
         os.flush();
 
-        median_time = calc_median(transferTime);
+        median_time = calc_avg(transferTime);
         System.out.println(median_time);
         ms.close();
 
