@@ -16,8 +16,8 @@ public class TCPClient implements Runnable{
     private static final int    LOCAL_PORT = 5455;
     private static final String LOCALHOST  = "127.0.0.1";
     private static final DecimalFormat df = new DecimalFormat("0.00##");
-    private static final int TOTAL_ROUND = 200;
-    private static final int numBytes = 1000000;
+    private static final int TOTAL_ROUND = 100;
+    private static final int numBytes = 64000000;
 
     public TCPClient(){
 
