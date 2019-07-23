@@ -13,6 +13,7 @@ before_install:
  #   on_success: always
  #  on_failure: always
 install:
-- sudo apt-get install ant 
+- sudo apt-get install ant
 script:
-- ant jar
+- cd scripts
+- ./travis_performance_test.sh
