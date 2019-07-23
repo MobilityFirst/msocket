@@ -15,8 +15,8 @@ public class MSocketClient implements Runnable {
     private static final int    LOCAL_PORT = 5556;
     private static final String LOCALHOST  = "127.0.0.1";
     private static DecimalFormat df = new DecimalFormat("0.00##");
-    private static final int TOTAL_ROUND = 10;
-    private static int numBytes = 64000000;
+    private static final int TOTAL_ROUND = 200;
+    private static int numBytes = 1000000;
 
     public static Long calc_median(Long[] input){
       Arrays.sort(input);
