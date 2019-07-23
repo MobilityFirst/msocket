@@ -11,7 +11,7 @@ rm mstime.txt tcptime.txt *.class
 cd ..
 ant clean
 rm build.number
-
+echo $difference
 if [ $difference -eq 1 ]
 then
   exit 0
