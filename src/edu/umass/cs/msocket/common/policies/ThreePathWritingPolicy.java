@@ -47,14 +47,12 @@ public class ThreePathWritingPolicy extends MultipathWritingPolicy
     @Override
     public void writeAccordingToPolicy(byte[] b, int offset, int length, int MesgType) throws IOException
     {
-        System.out.println("Three path writing policy is called.");
         int threshold = 20000000;
         int currpos = 0;
         int remaining = length;
         int tempDataSendSeqNum = cinfo.getDataSendSeq();
 
         if(length <= threshold){
-            System.out.println("less than threshold condition");
                 cinfo.blockOnOutputStreamSelector();
                 try
                 {
