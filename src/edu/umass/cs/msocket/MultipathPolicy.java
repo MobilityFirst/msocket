@@ -56,5 +56,9 @@ public enum MultipathPolicy
   /**
    * Black box writing policy
    */
-  MULTIPATH_POLICY_BLACKBOX
+  MULTIPATH_POLICY_BLACKBOX,
+  /**
+   * Policy for the special case of three paths
+   */
+  MULTIPATH_POLICY_THREEPATHS
 }

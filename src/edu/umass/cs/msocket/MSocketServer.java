@@ -77,7 +77,6 @@ public class MSocketServer {
                     // get number of bytes to send
                     byte[] numByteArr = new byte[8];
                     try {
-                        System.out.println("waiting before read ");
                         is.read(numByteArr);
                         ByteBuffer wrapped = ByteBuffer.wrap(numByteArr);
                         numRead = wrapped.getInt();
@@ -91,7 +90,6 @@ public class MSocketServer {
 
                         byte[] b = new byte[numRead];
                         new Random().nextBytes(b);
-                        System.out.println("array initialized");
                         try {
                             os.write(b);
                             os.flush();
