@@ -61,7 +61,7 @@ public abstract class MultipathWritingPolicy {
 	  protected void handleMigrationInMultiPath(SocketInfo Obj) throws IOException
 	  {
 
-	    MSocketLogger.getLogger().fine("handleMigrationInMultiPath called");
+	    MSocketLogger.getLogger().log(Level.FINE, "handleMigrationInMultiPath called");
 	    // if queue size is > 0 then it means that there is a non-blocking
 	    // write pending and it should be sent first, instead of migration data
 	    if ((Integer) Obj.queueOperations(SocketInfo.QUEUE_SIZE, null) > 0)

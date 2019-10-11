@@ -66,7 +66,7 @@ public class MWrappedInputStream extends InputStream
     if (cinfo.getMSocketState() == MSocketConstants.CLOSED)
       throw new IOException(" socket already closed");
 
-    MSocketLogger.getLogger().fine(cinfo.getServerOrClient()+" app read called");
+    MSocketLogger.getLogger().log(Level.FINE,"{0} app read called",cinfo.getServerOrClient());
     int nread = 0;
 
     while(nread == 0)
