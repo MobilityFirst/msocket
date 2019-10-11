@@ -33,11 +33,11 @@ import edu.umass.cs.msocket.MultipathPolicy;
 import edu.umass.cs.msocket.SocketInfo;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 
-public class ThreePathWritingPolicy extends MultipathWritingPolicy
+public class ReMP extends MultipathWritingPolicy
 {
     private int                      defaultPolicyInterfaceNum  = 0;
 
-    public ThreePathWritingPolicy(ConnectionInfo cinfo)
+    public ReMP(ConnectionInfo cinfo)
     {
         this.cinfo = cinfo;
 //        cinfo.startRetransmissionThread();
