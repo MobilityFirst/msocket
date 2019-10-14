@@ -31,6 +31,7 @@ import edu.umass.cs.msocket.common.policies.FullDuplicationWritingPolicy;
 import edu.umass.cs.msocket.common.policies.MultipathWritingPolicy;
 import edu.umass.cs.msocket.common.policies.RTTBasedWritingPolicy;
 import edu.umass.cs.msocket.common.policies.RoundRobinWritingPolicy;
+import edu.umass.cs.msocket.common.policies.ReMP;
 import edu.umass.cs.msocket.logger.MSocketLogger;
 import java.util.logging.Level;
 /**
@@ -48,7 +49,7 @@ public class MWrappedOutputStream extends OutputStream
   public static final int      WRITE_CHUNK_SIZE 	= 1000000;
 
   private ConnectionInfo cinfo            			= null;
-  private MultipathPolicy writePolicy				= MultipathPolicy.MULTIPATH_POLICY_RTX_OPT;
+  private MultipathPolicy writePolicy				= MultipathPolicy.MULTIPATH_POLICY_REMP;
 
   /**
    * @param out
@@ -86,6 +87,12 @@ public class MWrappedOutputStream extends OutputStream
 	    		cinfo.setMultipathWritingPolicy(multipathPolicy);
 	    		break;
 	    	}
+        case MULTIPATH_POLICY_REMP:
+        {
+          MultipathWritingPolicy multipathPolicy = new ReMP(cinfo);
+          cinfo.setMultipathWritingPolicy(multipathPolicy);
+          break;
+        }
 	    }
   }
 

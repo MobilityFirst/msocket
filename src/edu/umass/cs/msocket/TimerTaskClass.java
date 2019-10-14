@@ -39,7 +39,7 @@ class TimerTaskClass
   /**
    * Proxy failure timeout in seconds (default is 15 seconds)
    */
-  private static final int proxyFailureTimeout = MSocket.KEEP_ALIVE_FREQ*3;
+  private static final int proxyFailureTimeout = MSocket.KEEP_ALIVE_FREQ*300;
 
   /**
    * Creates a new <code>TimerTaskClass</code> object

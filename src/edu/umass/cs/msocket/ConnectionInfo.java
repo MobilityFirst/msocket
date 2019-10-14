@@ -2508,7 +2508,8 @@ public class ConnectionInfo
 	      SCToUse.write(buf);
 	    }
 
-	    MSocketLogger.getLogger().fine("Sent IP:port " + ControllerPort + "; ackSeq = " + DataAckSeq);
+	    // MSocketLogger.getLogger().fine("Sent IP:port " + ControllerPort + "; ackSeq = " + DataAckSeq);
+      MSocketLogger.getLogger().log(Level.FINE, "Sent IP:port {0}; ackSeq = {1}", new Object[]{ControllerPort,DataAckSeq});
 	  }
 
   private SetupControlMessage setupControlRead(SocketChannel SCToUse) throws IOException
@@ -2845,7 +2846,7 @@ public class ConnectionInfo
       catch (Exception e)
       {
         //e.printStackTrace();
-        MSocketLogger.getLogger().fine(e.getMessage());
+        MSocketLogger.getLogger().log(Level.FINE, e.getMessage());
         // if selector not open, then break
         if (!getInputStreamSelector().isOpen())
         {
@@ -2890,7 +2891,7 @@ public class ConnectionInfo
         }
         catch (Exception e)
         {
-          MSocketLogger.getLogger().fine(e.getMessage());
+          MSocketLogger.getLogger().log(Level.FINE, e.getMessage());
         }
       }
 
@@ -2911,7 +2912,7 @@ public class ConnectionInfo
       catch (Exception e)
       {
         // e.printStackTrace();
-        MSocketLogger.getLogger().fine(e.toString());
+        MSocketLogger.getLogger().log(Level.FINE,e.toString());
 
         // if not open then break from loop
         if (!getOutputStreamSelector().isOpen())
@@ -2926,7 +2927,7 @@ public class ConnectionInfo
       }
       else
       {
-        MSocketLogger.getLogger().fine(this.getServerOrClient() + "unblocked on the selector");
+        // MSocketLogger.getLogger().fine(this.getServerOrClient() + "unblocked on the selector");
         MSocketLogger.getLogger().log(Level.FINE, "{0} unblocked on the selector", this.getServerOrClient());
         Set<SelectionKey> selectedKeys = getOutputStreamSelector().selectedKeys();
         selectedKeys.clear();

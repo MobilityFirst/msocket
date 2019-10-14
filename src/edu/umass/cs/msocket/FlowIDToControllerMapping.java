@@ -244,7 +244,7 @@ public class FlowIDToControllerMapping implements Runnable
     }
     catch (Exception e)
     {
-      MSocketLogger.getLogger().fine(e.toString());
+      MSocketLogger.getLogger().log(Level.FINE,e.toString());
     }
 
     MSocketLogger.getLogger().log(Level.FINE,"FlowIDToControllerMapping UDP recv thread exits");

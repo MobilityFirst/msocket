@@ -515,7 +515,7 @@ public class BackgroundWritingThread implements Runnable
           {
             if (minOutBytesPath.getSocketIdentifer() != socketList.get(i).getSocketIdentifer())
             {
-              
+
               MSocketLogger.getLogger().log(Level.FINE,"SocketID: {0} added to the unfinished path. Sent Bytes: {1}, Outstanding Bytes: {2}.", new Object[]{socketList.get(i).getSocketIdentifer(),socketList.get(i).getSentBytes(),socketList.get(i).getOutStandingBytes()});
               unfinishedPaths.add(socketList.get(i));
             }
@@ -556,7 +556,7 @@ public class BackgroundWritingThread implements Runnable
     catch (IOException e)
     {
       // e.printStackTrace();
-    	MSocketLogger.getLogger().fine(e.getMessage());
+    	MSocketLogger.getLogger().log(Level.FINE, e.getMessage());
     }
 
     long newDataBaseSeqNum = cinfo.getDataBaseSeq();
