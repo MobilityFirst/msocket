@@ -75,7 +75,15 @@ public class ReMP extends MultipathWritingPolicy
                         {
                             while (!Obj.acquireLock());
                             Obj.byteInfoVectorOperations(SocketInfo.QUEUE_REMOVE, cinfo.getDataBaseSeq(), -1);
-                            int tobesent = length;
+                            int tobesent = 0;
+                            if (remaining < MWrappedOutputStream.WRITE_CHUNK_SIZE)
+                            {
+                                tobesent = remaining;
+                            }
+                            else
+                            {
+                                tobesent = MWrappedOutputStream.WRITE_CHUNK_SIZE;
+                            }
                             try{
 
                                 if (Obj.getneedToReqeustACK())
