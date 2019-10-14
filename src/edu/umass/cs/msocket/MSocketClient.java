@@ -1,7 +1,9 @@
+package edu.umass.cs.msocket;
+
 import edu.umass.cs.msocket.FlowPath;
 import edu.umass.cs.msocket.MSocket;
 import edu.umass.cs.msocket.mobility.MobilityManagerClient;
-
+import java.util.Arrays;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -16,18 +18,28 @@ public class MSocketClient {
 
     private static DecimalFormat df = new DecimalFormat("0.00##");
 
-    private static final int TOTAL_ROUND = 200;
+    private static final int TOTAL_ROUND = 500;
 
-    private static int numBytes = 64000000;
+    private static int numBytes = 512000;
 
 
-    public static Long calc_avg(Long[] input){
+    public static double calc_avg(Long[] input){
         int len = input.length;
-        Long sum = 0L;
+        double sum = 0;
         for(int i=0;i<len;i++){
             sum = sum  + input[i];
         }
         return sum/len;
+    }
+
+    public static double calc_median(Long[] input){
+        Arrays.sort(input);
+        double median;
+        if (input.length % 2 == 0)
+            median = ((double)input[input.length/2] + (double)input[input.length/2 - 1])/2;
+        else
+            median = (double) input[input.length/2];
+        return median;
     }
 
     public static void main(String[] args) {
@@ -96,7 +108,8 @@ public class MSocketClient {
             }
             Long[]  transferTime  = new Long[numRound];
             while (rd < numRound) {
-
+                Thread.sleep(5000);
+                System.out.println("[Round number:] " + rd);
                 int numSent = numOfBytes;
                 System.out.println("[Client:] To read " + numSent + " bytes data from input stream...");
 
@@ -110,20 +123,29 @@ public class MSocketClient {
                 int numRead;
                 int totalRead = 0;
 
-                long start = System.nanoTime();
-
+                long app_level_start = System.nanoTime();
+                long write_time_start = System.nanoTime();
                 os.write(bytes);
+                long write_time_elapsed = System.nanoTime() - write_time_start;
+                long read_time_start = System.nanoTime();
                 do {
                     numRead = is.read(b);
                     if (numRead >= 0)
                         totalRead += numRead;
 
                 } while (totalRead < numSent);
+                long read_time_elapsed = System.nanoTime() - read_time_start;
+                long app_level_elapsed = System.nanoTime() - app_level_start;
+                System.out.println("[Write:] " + write_time_elapsed + " ns");
+                System.out.println("[Read:] " + read_time_elapsed/ 1000000  + " ms");
+                System.out.println("[TransferTime:] " + app_level_elapsed + " nano seconds");
 
-                long elapsed = System.nanoTime() - start;
-                System.out.println("[Latency:] " + elapsed + " nano seconds");
-                System.out.println("[Thruput:] " + df.format((numOfBytes/elapsed) * 1000 ) + " MB/s");
-                transferTime[rd] = elapsed;
+                double n_bytes = numOfBytes;
+                n_bytes = n_bytes/1000000.0;
+                double app_level_elap = app_level_elapsed;
+                app_level_elap = app_level_elap / 1000000000.0;
+                System.out.println("[Thruput:] " +  n_bytes/app_level_elap + " MB/s");
+                transferTime[rd] = app_level_elapsed;
                 rd++;
 
             }
@@ -133,8 +155,8 @@ public class MSocketClient {
 
             ms.close();
             System.out.println("Socket closed");
-            System.out.println("this is the average transferTime of " + Integer.toString(numRound) + " rounds :- " + Long.toString(calc_avg(transferTime)));
-
+            System.out.println("this is the average transferTime for MSocket of " + Integer.toString(numRound) + " rounds : " + Double.toString(calc_avg(transferTime)/1000000) + " ms");
+            System.out.println("this is the median transferTime for MSocket of " + Integer.toString(numRound) + " rounds : " + Double.toString(calc_median(transferTime)/1000000) + " ms");
             MobilityManagerClient.shutdownMobilityManager();
         } catch (Exception e) {
             e.printStackTrace();
